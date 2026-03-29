@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Manager Set Service Price</title>
+    </h:head>
+    <h:body>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+            <h1>Manager Set Service Price Page</h1>
+            <ui:include src="link.xhtml"/>
+            <h:outputText value="#{SetServicePriceBean.setPriceSuccessMessage}" rendered="#{not empty SetServicePriceBean.setPriceSuccessMessage}">
+                <h3>#{SetServicePriceBean.setPriceSuccessMessage}</h3>
+            </h:outputText>
+            <h:dataTable id="staffTable" value="#{SetServicePriceBean.services}" var="service"
+                         style="border-spacing: 12px; border: 1px solid black;">
+                <h:column>
+                    <f:facet name="header">Name</f:facet>
+                        #{service.name}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Price</f:facet>
+                        #{service.price}
+                </h:column>
+            </h:dataTable>
+            
+            <h:form>
+                <h:panelGrid columns="3" border="1" style="border-spacing: 6px;">
+                    <h:outputLabel value="Services:" for="services"/>
+                    <h:selectOneRadio id="services" value="#{SetServicePriceBean.selectedServiceId}">
+                        <f:selectItems value="#{SetServicePriceBean.serviceSelectItems}" />
+                    </h:selectOneRadio>
+                    <h:panelGroup>
+                        <h:outputText value="#{SetServicePriceBean.serviceError}" style="color:red;" rendered="#{not empty SetServicePriceBean.serviceError}"/>
+                    </h:panelGroup>
+                    
+                    <h:outputLabel value="Price:" for="price"/>
+                    <h:inputText id="price" value="#{SetServicePriceBean.price}"/>
+                    <h:panelGroup>
+                        <h:outputText value="#{SetServicePriceBean.priceError}" style="color:red;" rendered="#{not empty SetServicePriceBean.priceError}"/>
+                    </h:panelGroup>
+                </h:panelGrid>
+                
+                <div style="display: flex; justify-content: center; margin-top: 10px;">
+                    <h:commandButton value="Set" action="#{SetServicePriceBean.setServicePrice}"/>
+                </div>
+            </h:form>
+        </div>
+    </h:body>
+</html>

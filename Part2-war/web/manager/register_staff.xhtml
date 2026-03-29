@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>Manager Staff Registration</title>
+</h:head>
+<h:body>
+    <h:form>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+            <h1>Manager Staff Registration Page</h1>
+            <ui:include src="link.xhtml"/>
+            <h:panelGrid columns="3" border="1" style="border-spacing: 6px;">
+                <h:outputLabel value="Roles:" for="role"/>
+                <h:selectOneRadio id="role" value="#{RegisterStaffBean.role}">
+                    <f:selectItem itemValue="manager" itemLabel="Manager"/>
+                    <f:selectItem itemValue="counter_staff" itemLabel="Counter Staff"/>
+                    <f:selectItem itemValue="technician" itemLabel="Technician"/>
+                </h:selectOneRadio>
+                <h:panelGroup>
+                    <h:outputText value="#{RegisterStaffBean.roleError}" style="color:red;" rendered="#{not empty RegisterStaffBean.roleError}"/>
+                </h:panelGroup>
+
+                <h:outputLabel value="Name:" for="name"/>
+                <h:inputText id="name" value="#{RegisterStaffBean.name}"/>
+                <h:panelGroup>
+                    <h:outputText value="#{RegisterStaffBean.nameError}" style="color:red;" rendered="#{not empty RegisterStaffBean.nameError}"/>
+                </h:panelGroup>
+                
+                <h:outputLabel value="Password:" for="password"/>
+                <h:inputSecret id="password" value="#{RegisterStaffBean.password}"/>
+                <h:panelGroup>
+                    <h:outputText value="#{RegisterStaffBean.passwordError1}" style="color:red;" rendered="#{not empty RegisterStaffBean.passwordError1}"/>
+                    <h:outputText value="#{RegisterStaffBean.passwordError2}" style="color:red;" rendered="#{not empty RegisterStaffBean.passwordError2}"/>
+                    <h:outputText value="#{RegisterStaffBean.passwordError3}" style="color:red;" rendered="#{not empty RegisterStaffBean.passwordError3}"/>
+                </h:panelGroup>
+ 
+                <h:outputLabel value="Gender:" for="gender"/>
+                <h:selectOneRadio id="gender" value="#{RegisterStaffBean.gender}">
+                    <f:selectItem itemValue="male" itemLabel="Male"/>
+                    <f:selectItem itemValue="female" itemLabel="Female"/>
+                </h:selectOneRadio>
+                <h:panelGroup>
+                    <h:outputText value="#{RegisterStaffBean.genderError}" style="color:red;" rendered="#{not empty RegisterStaffBean.genderError}"/>
+                </h:panelGroup>
+
+                <h:outputLabel value="Phone Number:" for="phone"/>
+                <h:inputText id="phone" maxlength="11" value="#{RegisterStaffBean.phone}"/>
+                <h:panelGroup>
+                    <h:outputText value="#{RegisterStaffBean.phoneNumberError}" style="color:red;" rendered="#{not empty RegisterStaffBean.phoneNumberError}"/>
+                </h:panelGroup>
+
+                <h:outputLabel value="IC Number:" for="ic"/>
+                <h:inputText id="ic" maxlength="12" value="#{RegisterStaffBean.ic}"/>
+                <h:panelGroup>
+                    <h:outputText value="#{RegisterStaffBean.icError}" style="color:red;" rendered="#{not empty RegisterStaffBean.icError}"/>
+                </h:panelGroup>
+
+                <h:outputLabel value="Email Address:" for="email"/>
+                <h:inputText id="email" value="#{RegisterStaffBean.email}"/>
+                <h:panelGroup>
+                    <h:outputText value="#{RegisterStaffBean.emailError}" style="color:red;" rendered="#{not empty RegisterStaffBean.emailError}"/>
+                </h:panelGroup>
+
+                <h:outputLabel value="Living Address:" for="address"/>
+                <h:inputTextarea id="address" rows="4" cols="30" value="#{RegisterStaffBean.address}"/>
+                <h:panelGroup>
+                    <h:outputText value="#{RegisterStaffBean.addressError}" style="color:red;" rendered="#{not empty RegisterStaffBean.addressError}"/>
+                </h:panelGroup>
+            </h:panelGrid>
+            <div style="display: flex; justify-content: center;">
+                <h:commandButton value="Register" action="#{RegisterStaffBean.register}" style="padding: 5px; border-radius: 5%; background-color: white;"/>
+            </div>
+            <h:panelGroup>
+                <h:outputText value="#{RegisterStaffBean.successMessage}" rendered="#{not empty RegisterStaffBean.successMessage}">
+                    <h3>#{RegisterStaffBean.successMessage}</h3>
+                </h:outputText>
+            </h:panelGroup>
+        </div>
+    </h:form>
+</h:body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>Manager Staff Update</title>
+</h:head>
+<h:body>
+    <h:form>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+            <h1>Manager Staff Update Page</h1>
+            <ui:include src="link.xhtml"/>
+            <h:panelGrid columns="3" border="1" style="border-spacing: 6px;">
+                <h:outputLabel value="Roles:" for="role"/>
+                <h:selectOneRadio id="role" value="#{UpdateStaffInfoBean.role}">
+                    <f:selectItem itemValue="manager" itemLabel="Manager"/>
+                    <f:selectItem itemValue="counter_staff" itemLabel="Counter Staff"/>
+                    <f:selectItem itemValue="technician" itemLabel="Technician"/>
+                </h:selectOneRadio>
+                <h:panelGroup>
+                    <h:outputText value="#{UpdateStaffInfoBean.roleError}" style="color:red;" rendered="#{not empty UpdateStaffInfoBean.roleError}"/>
+                </h:panelGroup>
+
+                <h:outputLabel value="Name:" for="name"/>
+                <h:inputText id="name" value="#{UpdateStaffInfoBean.name}"/>
+                <h:panelGroup>
+                    <h:outputText value="#{UpdateStaffInfoBean.nameError}" style="color:red;" rendered="#{not empty UpdateStaffInfoBean.nameError}"/>
+                </h:panelGroup>
+                
+                <h:outputLabel value="Password:" for="password"/>
+                <h:inputText id="password" value="#{UpdateStaffInfoBean.password}"/>
+                <h:panelGroup>
+                    <h:outputText value="#{UpdateStaffInfoBean.passwordError1}" style="color:red;" rendered="#{not empty UpdateStaffInfoBean.passwordError1}"/>
+                    <h:outputText value="#{UpdateStaffInfoBean.passwordError2}" style="color:red;" rendered="#{not empty UpdateStaffInfoBean.passwordError2}"/>
+                    <h:outputText value="#{UpdateStaffInfoBean.passwordError3}" style="color:red;" rendered="#{not empty UpdateStaffInfoBean.passwordError3}"/>
+                </h:panelGroup>
+ 
+                <h:outputLabel value="Gender:" for="gender"/>
+                <h:selectOneRadio id="gender" value="#{UpdateStaffInfoBean.gender}">
+                    <f:selectItem itemValue="male" itemLabel="Male"/>
+                    <f:selectItem itemValue="female" itemLabel="Female"/>
+                </h:selectOneRadio>
+                <h:panelGroup>
+                    <h:outputText value="#{UpdateStaffInfoBean.genderError}" style="color:red;" rendered="#{not empty UpdateStaffInfoBean.genderError}"/>
+                </h:panelGroup>
+
+                <h:outputLabel value="Phone Number:" for="phone"/>
+                <h:inputText id="phone" maxlength="11" value="#{UpdateStaffInfoBean.phone}"/>
+                <h:panelGroup>
+                    <h:outputText value="#{UpdateStaffInfoBean.phoneNumberError}" style="color:red;" rendered="#{not empty UpdateStaffInfoBean.phoneNumberError}"/>
+                </h:panelGroup>
+
+                <h:outputLabel value="IC Number:" for="ic"/>
+                <h:inputText id="ic" maxlength="12" value="#{UpdateStaffInfoBean.ic}"/>
+                <h:panelGroup>
+                    <h:outputText value="#{UpdateStaffInfoBean.icError}" style="color:red;" rendered="#{not empty UpdateStaffInfoBean.icError}"/>
+                </h:panelGroup>
+
+                <h:outputLabel value="Email Address:" for="email"/>
+                <h:inputText id="email" value="#{UpdateStaffInfoBean.email}"/>
+                <h:panelGroup>
+                    <h:outputText value="#{UpdateStaffInfoBean.emailError}" style="color:red;" rendered="#{not empty UpdateStaffInfoBean.emailError}"/>
+                </h:panelGroup>
+
+                <h:outputLabel value="Living Address:" for="address"/>
+                <h:inputTextarea id="address" rows="4" cols="30" value="#{UpdateStaffInfoBean.address}"/>
+                <h:panelGroup>
+                    <h:outputText value="#{UpdateStaffInfoBean.addressError}" style="color:red;" rendered="#{not empty UpdateStaffInfoBean.addressError}"/>
+                </h:panelGroup>
+            </h:panelGrid>
+            <div style="display: flex; justify-content: center;">
+                <h:commandButton value="Update" action="#{UpdateStaffInfoBean.update}" style="padding: 5px; border-radius: 5%; background-color: white;"/>
+            </div>
+            <h:panelGroup>
+                <h:outputText value="#{UpdateStaffInfoBean.successMessage}" rendered="#{not empty UpdateStaffInfoBean.successMessage}">
+                    <h3>#{UpdateStaffInfoBean.successMessage}</h3>
+                </h:outputText>
+            </h:panelGroup>
+        </div>
+    </h:form>
+</h:body>
+</html>
