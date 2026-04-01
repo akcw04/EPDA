@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Users - EPDA System</title>
+        <h:outputStylesheet library="css" name="style.css"/>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:menubar>
+                <p:menuitem value="Home" url="/index.xhtml"/>
+                <p:menuitem value="Appointments" url="/appointments.xhtml"/>
+                <p:menuitem value="Users" url="/users.xhtml"/>
+                <p:menuitem value="Services" url="/services.xhtml"/>
+                <p:menuitem value="Reports" url="/reports.xhtml"/>
+            </p:menubar>
+        </h:form>
+
+        <div class="container">
+            <h1>User Management</h1>
+
+            <h:form rendered="#{userBean != null}">
+                <!-- Messages -->
+                <p:messages id="messages" showDetail="true"><p:autoUpdate /></p:messages>
+
+                <!-- Tab View for User Types -->
+                <p:tabView>
+                    <!-- CUSTOMERS TAB -->
+                    <p:tab title="Customers">
+                        <p:panel header="Add New Customer" style="margin-bottom: 20px;">
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8">
+                                <p:outputLabel for="custName" value="Name:"/>
+                                <p:inputText id="custName" value="#{userBean.currentCustomer.name}" required="true"/>
+
+                                <p:outputLabel for="custEmail" value="Email:"/>
+                                <p:inputText id="custEmail" value="#{userBean.currentCustomer.email}" required="true">
+                                    <f:validateRegex pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
+                                </p:inputText>
+
+                                <p:outputLabel for="custPhone" value="Phone:"/>
+                                <p:inputText id="custPhone" value="#{userBean.currentCustomer.phone}"/>
+
+                                <p:outputLabel for="custAddress" value="Address:"/>
+                                <p:inputTextarea id="custAddress" value="#{userBean.currentCustomer.address}" rows="3"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Save Customer" 
+                                            action="#{userBean.createCustomer}" 
+                                            update="messages,customersTable"/>
+                        </p:panel>
+
+                        <p:panel header="Customers List">
+                            <p:dataTable id="customersTable" var="cust" value="#{userBean.customers}" paginator="true" rows="10">
+                                <p:column headerText="ID">
+                                    <h:outputText value="#{cust.id}"/>
+                                </p:column>
+                                <p:column headerText="Name">
+                                    <h:outputText value="#{cust.name}"/>
+                                </p:column>
+                                <p:column headerText="Email">
+                                    <h:outputText value="#{cust.email}"/>
+                                </p:column>
+                                <p:column headerText="Phone">
+                                    <h:outputText value="#{cust.phone}"/>
+                                </p:column>
+                                <p:column headerText="Address">
+                                    <h:outputText value="#{cust.address}"/>
+                                </p:column>
+                                <p:column headerText="Actions">
+                                    <h:commandLink value="Edit" action="#{userBean.editCustomer(cust)}"/>
+                                    <h:outputText value=" | "/>
+                                    <h:commandLink value="Delete" action="#{userBean.deleteCustomer(cust.id)}"
+                                                  onclick="if(!confirm('Are you sure?')) return false;"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:tab>
+
+                    <!-- TECHNICIANS TAB -->
+                    <p:tab title="Technicians">
+                        <p:panel header="Add New Technician" style="margin-bottom: 20px;">
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8">
+                                <p:outputLabel for="techName" value="Name:"/>
+                                <p:inputText id="techName" value="#{userBean.currentTechnician.name}" required="true"/>
+
+                                <p:outputLabel for="techEmail" value="Email:"/>
+                                <p:inputText id="techEmail" value="#{userBean.currentTechnician.email}" required="true">
+                                    <f:validateRegex pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
+                                </p:inputText>
+
+                                <p:outputLabel for="techSpecialty" value="Specialty:"/>
+                                <p:inputText id="techSpecialty" value="#{userBean.currentTechnician.specialty}" required="true"/>
+
+                                <p:outputLabel for="techAvailable" value="Available:"/>
+                                <p:selectBooleanCheckbox id="techAvailable" value="#{userBean.currentTechnician.available}"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Save Technician" 
+                                            action="#{userBean.createTechnician}" 
+                                            update="messages,techniciansTable"/>
+                        </p:panel>
+
+                        <p:panel header="Technicians List">
+                            <p:dataTable id="techniciansTable" var="tech" value="#{userBean.technicians}" paginator="true" rows="10">
+                                <p:column headerText="ID">
+                                    <h:outputText value="#{tech.id}"/>
+                                </p:column>
+                                <p:column headerText="Name">
+                                    <h:outputText value="#{tech.name}"/>
+                                </p:column>
+                                <p:column headerText="Email">
+                                    <h:outputText value="#{tech.email}"/>
+                                </p:column>
+                                <p:column headerText="Specialty">
+                                    <h:outputText value="#{tech.specialty}"/>
+                                </p:column>
+                                <p:column headerText="Available">
+                                    <h:graphicImage value="/resources/images/yes.png" rendered="#{tech.available}"/>
+                                    <h:graphicImage value="/resources/images/no.png" rendered="#{!tech.available}"/>
+                                </p:column>
+                                <p:column headerText="Actions">
+                                    <h:commandLink value="Edit" action="#{userBean.editTechnician(tech)}"/>
+                                    <h:outputText value=" | "/>
+                                    <h:commandLink value="Delete" action="#{userBean.deleteTechnician(tech.id)}"
+                                                  onclick="if(!confirm('Are you sure?')) return false;"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:tab>
+
+                    <!-- MANAGERS TAB -->
+                    <p:tab title="Managers">
+                        <p:panel header="Add New Manager" style="margin-bottom: 20px;">
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8">
+                                <p:outputLabel for="mgrName" value="Name:"/>
+                                <p:inputText id="mgrName" value="#{userBean.currentManager.name}" required="true"/>
+
+                                <p:outputLabel for="mgrEmail" value="Email:"/>
+                                <p:inputText id="mgrEmail" value="#{userBean.currentManager.email}" required="true">
+                                    <f:validateRegex pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
+                                </p:inputText>
+                            </p:panelGrid>
+                            <p:commandButton value="Save Manager" 
+                                            action="#{userBean.createManager}" 
+                                            update="messages,managersTable"/>
+                        </p:panel>
+
+                        <p:panel header="Managers List">
+                            <p:dataTable id="managersTable" var="mgr" value="#{userBean.managers}" paginator="true" rows="10">
+                                <p:column headerText="ID">
+                                    <h:outputText value="#{mgr.id}"/>
+                                </p:column>
+                                <p:column headerText="Name">
+                                    <h:outputText value="#{mgr.name}"/>
+                                </p:column>
+                                <p:column headerText="Email">
+                                    <h:outputText value="#{mgr.email}"/>
+                                </p:column>
+                                <p:column headerText="Actions">
+                                    <h:commandLink value="Edit" action="#{userBean.editManager(mgr)}"/>
+                                    <h:outputText value=" | "/>
+                                    <h:commandLink value="Delete" action="#{userBean.deleteManager(mgr.id)}"
+                                                  onclick="if(!confirm('Are you sure?')) return false;"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:tab>
+                </p:tabView>
+            </h:form>
+        </div>
+    </h:body>
+</html>

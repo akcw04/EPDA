@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Appointments - EPDA System</title>
+        <h:outputStylesheet library="css" name="style.css"/>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:menubar>
+                <p:menuitem value="Home" url="/index.xhtml"/>
+                <p:menuitem value="Appointments" url="/appointments.xhtml"/>
+                <p:menuitem value="Users" url="/users.xhtml"/>
+                <p:menuitem value="Services" url="/services.xhtml"/>
+                <p:menuitem value="Reports" url="/reports.xhtml"/>
+            </p:menubar>
+        </h:form>
+
+        <div class="container">
+            <h1>Appointment Management</h1>
+
+            <h:form rendered="#{appointmentBean != null}">
+                <!-- Messages -->
+                <p:messages id="messages" showDetail="true"><p:autoUpdate /></p:messages>
+
+                <!-- Create New Appointment Form -->
+                <p:panel header="Schedule New Appointment" style="margin-bottom: 20px;">
+                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8" style="margin-bottom: 10px">
+                        
+                        <p:outputLabel for="customer" value="Customer:"/>
+                        <p:selectOneMenu id="customer" value="#{appointmentBean.selectedCustomerID}" required="true">
+                            <f:selectItem itemLabel="-- Select Customer --" itemValue="#{null}"/>
+                            <f:selectItems value="#{appointmentBean.customers}" var="cust" 
+                                          itemValue="#{cust.id}" itemLabel="#{cust.name} (#{cust.email})"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="technician" value="Technician:"/>
+                        <p:selectOneMenu id="technician" value="#{appointmentBean.selectedTechnicianID}" required="true">
+                            <f:selectItem itemLabel="-- Select Technician --" itemValue="#{null}"/>
+                            <f:selectItems value="#{appointmentBean.technicians}" var="tech" 
+                                          itemValue="#{tech.id}" itemLabel="#{tech.name} (#{tech.specialty})"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="service" value="Service:"/>
+                        <p:selectOneMenu id="service" value="#{appointmentBean.selectedServiceID}" required="true">
+                            <f:selectItem itemLabel="-- Select Service --" itemValue="#{null}"/>
+                            <f:selectItems value="#{appointmentBean.services}" var="svc" 
+                                          itemValue="#{svc.id}" itemLabel="#{svc.serviceName} (#{svc.type} - $#{svc.basePrice})"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="appointmentDateTime" value="Appointment Date/Time:"/>
+                        <p:calendar id="appointmentDateTime" value="#{appointmentBean.appointmentDateTime}" 
+                                   pattern="MM/dd/yyyy HH:mm" showButtonPanel="true" required="true"/>
+                    </p:panelGrid>
+
+                    <p:commandButton value="Schedule Appointment" 
+                                    action="#{appointmentBean.createAppointment}" 
+                                    update="messages,appointmentTable"/>
+                </p:panel>
+
+                <!-- Appointments Table -->
+                <p:panel header="All Appointments" style="margin-top: 20px;">
+                    <p:dataTable var="apt" value="#{appointmentBean.appointments}" 
+                                paginator="true" rows="10" emptyMessage="No appointments found">
+                        <p:column headerText="ID">
+                            <h:outputText value="#{apt.id}"/>
+                        </p:column>
+                        <p:column headerText="Customer">
+                            <h:outputText value="#{apt.customer.name}" rendered="#{apt.customer != null}"/>
+                        </p:column>
+                        <p:column headerText="Technician">
+                            <h:outputText value="#{apt.technician.name}" rendered="#{apt.technician != null}"/>
+                        </p:column>
+                        <p:column headerText="Service">
+                            <h:outputText value="#{apt.service.serviceName}" rendered="#{apt.service != null}"/>
+                        </p:column>
+                        <p:column headerText="Date/Time">
+                            <h:outputText value="#{apt.appointmentDateTime}">
+                                <f:convertDateTime pattern="MM/dd/yyyy HH:mm"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Status">
+                            <h:outputText value="#{apt.status}"/>
+                        </p:column>
+                        <p:column headerText="Amount">
+                            <h:outputText value="#{apt.paymentAmount}">
+                                <f:convertNumber type="currency"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Rating">
+                            <h:outputText value="#{apt.rating}" rendered="#{apt.rating != null}"/>
+                            <h:outputText value="--" rendered="#{apt.rating == null}"/>
+                        </p:column>
+                        <p:column headerText="Actions">
+                            <h:commandLink value="View" action="#{appointmentBean.viewAppointment(apt.id)}"/>
+                            <h:outputText value=" | "/>
+                            <h:commandLink value="Delete" action="#{appointmentBean.deleteAppointment(apt.id)}"
+                                          onclick="if(!confirm('Are you sure?')) return false;"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+        </div>
+    </h:body>
+</html>

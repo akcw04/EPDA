@@ -3,3 +3,7 @@
 /nbproject/private/
 /Part2-ejb/nbproject/private/
 /Part2-war/nbproject/private/
+/Part2-war/build/
+/Part2-war/dist/
+/Part2-ejb/dist/
+/Part2-ejb/build/

@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>EPDA - Enterprise Programming Dynamic Appointment System</title>
+        <h:outputStylesheet library="css" name="style.css"/>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:menubar>
+                <p:menuitem value="Home" url="/index.xhtml"/>
+                <p:menuitem value="Appointments" url="/appointments.xhtml"/>
+                <p:menuitem value="Users" url="/users.xhtml"/>
+                <p:menuitem value="Services" url="/services.xhtml"/>
+                <p:menuitem value="Reports" url="/reports.xhtml"/>
+            </p:menubar>
+        </h:form>
+
+        <div class="container">
+            <h1>Welcome to EPDA System</h1>
+            <p>Enterprise Programming - Dynamic Appointment System</p>
+            
+            <div class="welcome-section">
+                <h2>System Overview</h2>
+                <p><strong>Architecture:</strong> 3-Tier MVC (JSF/PrimeFaces - EJB - JDBC)</p>
+                <ul>
+                    <li><strong>View Layer:</strong> JSF with PrimeFaces components</li>
+                    <li><strong>Business Logic:</strong> Jakarta EE Stateless EJBs</li>
+                    <li><strong>Data Access:</strong> Raw JDBC with try-with-resources</li>
+                </ul>
+
+                <h2>Key Features</h2>
+                <ul>
+                    <li>Appointment management with technician availability validation</li>
+                    <li>Service types: Normal (1 hour) and Major (3 hours)</li>
+                    <li>Customer management and feedback system</li>
+                    <li>Technician workload tracking</li>
+                    <li>Comprehensive reporting dashboard</li>
+                    <li>SHA-256 password hashing in business tier</li>
+                </ul>
+
+                <h2>Quick Navigation</h2>
+                <table border="1">
+                    <tr>
+                        <th>Module</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><h:link value="Appointments" outcome="appointments"/></td>
+                        <td>Schedule, view, and manage appointments</td>
+                    </tr>
+                    <tr>
+                        <td><h:link value="Users" outcome="users"/></td>
+                        <td>Manage customers, technicians, and managers</td>
+                    </tr>
+                    <tr>
+                        <td><h:link value="Services" outcome="services"/></td>
+                        <td>Manage available services and pricing</td>
+                    </tr>
+                    <tr>
+                        <td><h:link value="Reports" outcome="reports"/></td>
+                        <td>View business analytics and reports</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </h:body>
+</html>
