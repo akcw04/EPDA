@@ -11,18 +11,18 @@
     <h:body>
         <h:form>
             <p:menubar>
-                <p:menuitem value="Home" url="/index.xhtml"/>
-                <p:menuitem value="Appointments" url="/appointments.xhtml"/>
-                <p:menuitem value="Users" url="/users.xhtml"/>
-                <p:menuitem value="Services" url="/services.xhtml"/>
-                <p:menuitem value="Reports" url="/reports.xhtml"/>
+                <p:menuitem value="Home" outcome="index"/>
+                <p:menuitem value="Appointments" outcome="appointments"/>
+                <p:menuitem value="Users" outcome="users"/>
+                <p:menuitem value="Services" outcome="services"/>
+                <p:menuitem value="Reports" outcome="reports"/>
             </p:menubar>
         </h:form>
 
         <div class="container">
             <h1>Appointment Management</h1>
 
-            <h:form rendered="#{appointmentBean != null}">
+            <h:form id="appointmentForm" rendered="#{appointmentBean != null}">
                 <!-- Messages -->
                 <p:messages id="messages" showDetail="true"><p:autoUpdate /></p:messages>
 
@@ -56,14 +56,14 @@
                                    pattern="MM/dd/yyyy HH:mm" showButtonPanel="true" required="true"/>
                     </p:panelGrid>
 
-                    <p:commandButton value="Schedule Appointment" 
-                                    action="#{appointmentBean.createAppointment}" 
-                                    update="messages,appointmentTable"/>
+                    <p:commandButton value="Schedule Appointment"
+                                    action="#{appointmentBean.createAppointment}"
+                                    update="@form"/>
                 </p:panel>
 
                 <!-- Appointments Table -->
                 <p:panel header="All Appointments" style="margin-top: 20px;">
-                    <p:dataTable var="apt" value="#{appointmentBean.appointments}" 
+                    <p:dataTable id="appointmentTable" var="apt" value="#{appointmentBean.appointments}"
                                 paginator="true" rows="10" emptyMessage="No appointments found">
                         <p:column headerText="ID">
                             <h:outputText value="#{apt.id}"/>

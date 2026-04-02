@@ -11,18 +11,18 @@
     <h:body>
         <h:form>
             <p:menubar>
-                <p:menuitem value="Home" url="/index.xhtml"/>
-                <p:menuitem value="Appointments" url="/appointments.xhtml"/>
-                <p:menuitem value="Users" url="/users.xhtml"/>
-                <p:menuitem value="Services" url="/services.xhtml"/>
-                <p:menuitem value="Reports" url="/reports.xhtml"/>
+                <p:menuitem value="Home" outcome="index"/>
+                <p:menuitem value="Appointments" outcome="appointments"/>
+                <p:menuitem value="Users" outcome="users"/>
+                <p:menuitem value="Services" outcome="services"/>
+                <p:menuitem value="Reports" outcome="reports"/>
             </p:menubar>
         </h:form>
 
         <div class="container">
             <h1>Service Management</h1>
 
-            <h:form rendered="#{serviceBean != null}">
+            <h:form id="serviceForm" rendered="#{serviceBean != null}">
                 <!-- Messages -->
                 <p:messages id="messages" showDetail="true"><p:autoUpdate /></p:messages>
 
@@ -43,9 +43,9 @@
                         <p:inputNumber id="basePrice" value="#{serviceBean.currentService.basePrice}" 
                                       required="true" decimalPlaces="2" minValue="0"/>
                     </p:panelGrid>
-                    <p:commandButton value="Save Service" 
-                                    action="#{serviceBean.createService}" 
-                                    update="messages,servicesTable"/>
+                    <p:commandButton value="Save Service"
+                                    action="#{serviceBean.createService}"
+                                    update="@form"/>
                 </p:panel>
 
                 <!-- Filter by Type -->
@@ -54,7 +54,7 @@
                         <f:selectItem itemLabel="All Services" itemValue="All"/>
                         <f:selectItem itemLabel="Normal (1 hour)" itemValue="Normal"/>
                         <f:selectItem itemLabel="Major (3 hours)" itemValue="Major"/>
-                        <p:ajax update="servicesTable"/>
+                        <p:ajax update="@form"/>
                     </p:selectOneRadio>
                 </p:panel>
 

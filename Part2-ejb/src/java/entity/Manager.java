@@ -7,6 +7,8 @@ package entity;
 public class Manager extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
+    private String password;
+
     /**
      * Default constructor
      */
@@ -23,6 +25,27 @@ public class Manager extends BaseEntity {
      */
     public Manager(String id, String name, String email) {
         super(id, name, email);
+    }
+
+    /**
+     * Constructor with all fields including password
+     *
+     * @param id unique manager identifier
+     * @param name manager name
+     * @param email manager email address
+     * @param password manager password (plain text; hashed before persistence)
+     */
+    public Manager(String id, String name, String email, String password) {
+        super(id, name, email);
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

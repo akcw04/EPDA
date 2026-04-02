@@ -11,18 +11,18 @@
     <h:body>
         <h:form>
             <p:menubar>
-                <p:menuitem value="Home" url="/index.xhtml"/>
-                <p:menuitem value="Appointments" url="/appointments.xhtml"/>
-                <p:menuitem value="Users" url="/users.xhtml"/>
-                <p:menuitem value="Services" url="/services.xhtml"/>
-                <p:menuitem value="Reports" url="/reports.xhtml"/>
+                <p:menuitem value="Home" outcome="index"/>
+                <p:menuitem value="Appointments" outcome="appointments"/>
+                <p:menuitem value="Users" outcome="users"/>
+                <p:menuitem value="Services" outcome="services"/>
+                <p:menuitem value="Reports" outcome="reports"/>
             </p:menubar>
         </h:form>
 
         <div class="container">
             <h1>User Management</h1>
 
-            <h:form rendered="#{userBean != null}">
+            <h:form id="userForm" rendered="#{userBean != null}">
                 <!-- Messages -->
                 <p:messages id="messages" showDetail="true"><p:autoUpdate /></p:messages>
 
@@ -46,9 +46,9 @@
                                 <p:outputLabel for="custAddress" value="Address:"/>
                                 <p:inputTextarea id="custAddress" value="#{userBean.currentCustomer.address}" rows="3"/>
                             </p:panelGrid>
-                            <p:commandButton value="Save Customer" 
-                                            action="#{userBean.createCustomer}" 
-                                            update="messages,customersTable"/>
+                            <p:commandButton value="Save Customer"
+                                            action="#{userBean.createCustomer}"
+                                            update="@form"/>
                         </p:panel>
 
                         <p:panel header="Customers List">
@@ -96,9 +96,9 @@
                                 <p:outputLabel for="techAvailable" value="Available:"/>
                                 <p:selectBooleanCheckbox id="techAvailable" value="#{userBean.currentTechnician.available}"/>
                             </p:panelGrid>
-                            <p:commandButton value="Save Technician" 
-                                            action="#{userBean.createTechnician}" 
-                                            update="messages,techniciansTable"/>
+                            <p:commandButton value="Save Technician"
+                                            action="#{userBean.createTechnician}"
+                                            update="@form"/>
                         </p:panel>
 
                         <p:panel header="Technicians List">
@@ -141,9 +141,9 @@
                                     <f:validateRegex pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
                                 </p:inputText>
                             </p:panelGrid>
-                            <p:commandButton value="Save Manager" 
-                                            action="#{userBean.createManager}" 
-                                            update="messages,managersTable"/>
+                            <p:commandButton value="Save Manager"
+                                            action="#{userBean.createManager}"
+                                            update="@form"/>
                         </p:panel>
 
                         <p:panel header="Managers List">

@@ -193,16 +193,20 @@ public class AppointmentFacade {
     private void validateTechnicianAvailability(Appointment appointment) throws SQLException {
         String technicianID = appointment.getTechnician().getId();
         LocalDateTime startTime = appointment.getAppointmentDateTime();
-        
+
         // Calculate end time based on service type
         int durationMinutes = appointment.getService().getDurationMinutes();
         LocalDateTime endTime = startTime.plusMinutes(durationMinutes);
 
+        // Derby-compatible: use {fn TIMESTAMPADD(...)} JDBC escape syntax
         String sql = "SELECT COUNT(*) FROM Appointment a " +
+                "JOIN Service s ON a.service_id = s.service_id " +
                 "WHERE a.technician_id = ? " +
                 "AND a.status IN ('Pending', 'InProgress') " +
                 "AND a.appointment_datetime < ? " +
-                "AND DATEADD(MINUTE, " + durationMinutes + ", a.appointment_datetime) > ?";
+                "AND {fn TIMESTAMPADD(SQL_TSI_MINUTE, " +
+                "CASE WHEN s.type = 'Normal' THEN 60 ELSE 180 END, " +
+                "a.appointment_datetime)} > ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

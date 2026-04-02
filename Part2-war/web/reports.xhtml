@@ -14,24 +14,24 @@
     <h:body>
         <h:form>
             <p:menubar>
-                <p:menuitem value="Home" url="/index.xhtml"/>
-                <p:menuitem value="Appointments" url="/appointments.xhtml"/>
-                <p:menuitem value="Users" url="/users.xhtml"/>
-                <p:menuitem value="Services" url="/services.xhtml"/>
-                <p:menuitem value="Reports" url="/reports.xhtml"/>
+                <p:menuitem value="Home" outcome="index"/>
+                <p:menuitem value="Appointments" outcome="appointments"/>
+                <p:menuitem value="Users" outcome="users"/>
+                <p:menuitem value="Services" outcome="services"/>
+                <p:menuitem value="Reports" outcome="reports"/>
             </p:menubar>
         </h:form>
 
         <div class="container">
             <h1>Business Reports &amp; Analytics</h1>
 
-            <h:form rendered="#{reportBean != null}">
+            <h:form id="reportForm" rendered="#{reportBean != null}">
                 <!-- Messages -->
                 <p:messages id="messages" showDetail="true"><p:autoUpdate /></p:messages>
 
                 <!-- Refresh Button -->
-                <p:commandButton value="Refresh All Reports" action="#{reportBean.refreshAllReports}" 
-                                update="dailyRevenuePanel,workloadPanel,popularityPanel,feedbackPanel,analyticsPanel"
+                <p:commandButton value="Refresh All Reports" action="#{reportBean.refreshAllReports}"
+                                update="@form"
                                 style="margin-bottom: 20px;"/>
 
                 <!-- REPORT 1: Daily Revenue -->

@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Login - EPDA System</title>
+        <h:outputStylesheet library="css" name="style.css"/>
+    </h:head>
+    <h:body>
+        <div class="login-container">
+            <h:form id="loginForm">
+                <p:panel header="EPDA - Login" styleClass="login-panel">
+                    <p:messages id="messages" showDetail="true"/>
+
+                    <p:panelGrid columns="2" layout="grid"
+                                 columnClasses="ui-grid-col-4, ui-grid-col-8"
+                                 style="margin-top:15px;">
+
+                        <p:outputLabel for="email" value="Email:"/>
+                        <p:inputText id="email" value="#{loginBean.email}"
+                                     required="true" requiredMessage="Email is required"
+                                     placeholder="Enter your email"/>
+
+                        <p:outputLabel for="password" value="Password:"/>
+                        <p:password id="password" value="#{loginBean.password}"
+                                    required="true" requiredMessage="Password is required"
+                                    placeholder="Enter your password"/>
+                    </p:panelGrid>
+
+                    <p:commandButton value="Login" action="#{loginBean.login}"
+                                     update="messages" style="margin-top:15px; width:100%;"/>
+                </p:panel>
+            </h:form>
+
+            <div class="login-info">
+                <p><strong>Test Accounts:</strong></p>
+                <p>Manager: admin@example.com / admin123</p>
+                <p>Technician: john@example.com / password123</p>
+            </div>
+        </div>
+    </h:body>
+</html>

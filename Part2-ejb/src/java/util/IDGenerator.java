@@ -24,18 +24,20 @@ public class IDGenerator {
      * @throws SQLException if database query fails
      */
     public static String generateNextID(Connection connection, String tableName, String prefix) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM " + tableName;
-        
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            int count = 0;
-            if (rs.next()) {
-                count = rs.getInt(1);
+        // Derive the ID column name from the table name (e.g., "Manager" -> "manager_id")
+        String idColumn = tableName.toLowerCase() + "_id";
+        String sql = "SELECT MAX(" + idColumn + ") FROM " + tableName;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            int nextNumber = 1;
+            if (rs.next() && rs.getString(1) != null) {
+                // Parse numeric suffix from max ID: "M-005" -> 5
+                String maxId = rs.getString(1);
+                String[] parts = maxId.split("-");
+                nextNumber = Integer.parseInt(parts[1]) + 1;
             }
-            rs.close();
-            
             // Format: prefix-XXX (3-digit zero-padded)
-            int nextNumber = count + 1;
             return String.format("%s-%03d", prefix, nextNumber);
         } catch (SQLException e) {
             System.err.println("Failed to generate ID: " + e.getMessage());

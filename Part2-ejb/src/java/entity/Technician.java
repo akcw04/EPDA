@@ -9,6 +9,7 @@ public class Technician extends BaseEntity {
 
     private String specialty;
     private boolean available;
+    private String password;
 
     /**
      * Default constructor
@@ -33,6 +34,23 @@ public class Technician extends BaseEntity {
         this.available = available;
     }
 
+    /**
+     * Constructor with all fields including password
+     *
+     * @param id unique technician identifier
+     * @param name technician name
+     * @param email technician email address
+     * @param specialty technician specialty skill
+     * @param available availability status
+     * @param password technician password (plain text; hashed before persistence)
+     */
+    public Technician(String id, String name, String email, String specialty, boolean available, String password) {
+        super(id, name, email);
+        this.specialty = specialty;
+        this.available = available;
+        this.password = password;
+    }
+
     // ========== Getters & Setters ==========
 
     public String getSpecialty() {
@@ -49,6 +67,14 @@ public class Technician extends BaseEntity {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

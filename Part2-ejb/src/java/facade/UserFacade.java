@@ -20,20 +20,21 @@ public class UserFacade {
 
     /**
      * Create a new technician.
-     * Generates ID in Java-side before database write.
+     * Generates ID in Java-side, hashes password via SecurityUtil before database write.
      *
-     * @param technician the technician to create
-     * @return the technician with generated ID
-     * @throws SQLException if database error occurs
+     * @param technician the technician to create (password must be set in plain text)
+     * @return true if created successfully, false otherwise
      */
-    public Technician createTechnician(Technician technician) throws SQLException {
+    public boolean createTechnician(Technician technician) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             String technicianID = IDGenerator.generateTechnicianID(conn);
             technician.setId(technicianID);
 
+            String hashedPassword = SecurityUtil.hashPassword(technician.getPassword());
+
             String sql = "INSERT INTO Technician " +
-                    "(technician_id, name, email, specialty, available) " +
-                    "VALUES (?, ?, ?, ?, ?)";
+                    "(technician_id, name, email, specialty, available, password) " +
+                    "VALUES (?, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, technician.getId());
@@ -41,17 +42,14 @@ public class UserFacade {
                 ps.setString(3, technician.getEmail());
                 ps.setString(4, technician.getSpecialty());
                 ps.setBoolean(5, technician.isAvailable());
+                ps.setString(6, hashedPassword);
 
-                int rows = ps.executeUpdate();
-                if (rows == 0) {
-                    throw new SQLException("Failed to insert technician");
-                }
+                return ps.executeUpdate() > 0;
             }
-            return technician;
         } catch (SQLException e) {
             System.err.println("Error creating technician: " + e.getMessage());
             e.printStackTrace();
-            throw e;
+            return false;
         }
     }
 
@@ -178,13 +176,12 @@ public class UserFacade {
 
     /**
      * Create a new customer.
-     * Generates ID in Java-side before database write.
+     * Generates ID in Java-side before database write. No password hashing for customers.
      *
      * @param customer the customer to create
-     * @return the customer with generated ID
-     * @throws SQLException if database error occurs
+     * @return true if created successfully, false otherwise
      */
-    public Customer createCustomer(Customer customer) throws SQLException {
+    public boolean createCustomer(Customer customer) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             String customerID = IDGenerator.generateCustomerID(conn);
             customer.setId(customerID);
@@ -200,16 +197,12 @@ public class UserFacade {
                 ps.setString(4, customer.getPhone());
                 ps.setString(5, customer.getAddress());
 
-                int rows = ps.executeUpdate();
-                if (rows == 0) {
-                    throw new SQLException("Failed to insert customer");
-                }
+                return ps.executeUpdate() > 0;
             }
-            return customer;
         } catch (SQLException e) {
             System.err.println("Error creating customer: " + e.getMessage());
             e.printStackTrace();
-            throw e;
+            return false;
         }
     }
 
@@ -332,38 +325,102 @@ public class UserFacade {
         }
     }
 
+    // ========== AUTHENTICATION ==========
+
+    /**
+     * Authenticate a user by email and plain-text password.
+     * Hashes the password and checks against all three user tables.
+     *
+     * @param email the user's email
+     * @param plainPassword the plain-text password
+     * @return an Object[] { entity, role } where role is "Manager"/"Technician", or null if not found
+     */
+    public Object[] authenticate(String email, String plainPassword) {
+        String hashedPassword = SecurityUtil.hashPassword(plainPassword);
+
+        // Try Manager first
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT * FROM Manager WHERE email = ? AND password = ?";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, email);
+                ps.setString(2, hashedPassword);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    Manager m = new Manager(
+                            rs.getString("manager_id"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("password")
+                    );
+                    rs.close();
+                    return new Object[]{m, "Manager"};
+                }
+                rs.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error during manager authentication: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // Try Technician
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT * FROM Technician WHERE email = ? AND password = ?";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, email);
+                ps.setString(2, hashedPassword);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    Technician t = new Technician(
+                            rs.getString("technician_id"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("specialty"),
+                            rs.getBoolean("available"),
+                            rs.getString("password")
+                    );
+                    rs.close();
+                    return new Object[]{t, "Technician"};
+                }
+                rs.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error during technician authentication: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null; // Authentication failed
+    }
+
     // ========== MANAGER OPERATIONS ==========
 
     /**
      * Create a new manager.
-     * Generates ID in Java-side before database write.
+     * Generates ID in Java-side, hashes password via SecurityUtil before database write.
      *
-     * @param manager the manager to create
-     * @return the manager with generated ID
-     * @throws SQLException if database error occurs
+     * @param manager the manager to create (password must be set in plain text)
+     * @return true if created successfully, false otherwise
      */
-    public Manager createManager(Manager manager) throws SQLException {
+    public boolean createManager(Manager manager) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             String managerID = IDGenerator.generateManagerID(conn);
             manager.setId(managerID);
 
-            String sql = "INSERT INTO Manager (manager_id, name, email) VALUES (?, ?, ?)";
+            String hashedPassword = SecurityUtil.hashPassword(manager.getPassword());
+
+            String sql = "INSERT INTO Manager (manager_id, name, email, password) VALUES (?, ?, ?, ?)";
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, manager.getId());
                 ps.setString(2, manager.getName());
                 ps.setString(3, manager.getEmail());
+                ps.setString(4, hashedPassword);
 
-                int rows = ps.executeUpdate();
-                if (rows == 0) {
-                    throw new SQLException("Failed to insert manager");
-                }
+                return ps.executeUpdate() > 0;
             }
-            return manager;
         } catch (SQLException e) {
             System.err.println("Error creating manager: " + e.getMessage());
             e.printStackTrace();
-            throw e;
+            return false;
         }
     }
 

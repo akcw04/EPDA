@@ -11,11 +11,8 @@ import java.sql.SQLException;
  */
 public class DatabaseConnection {
 
-    // Database connection details
-    // NOTE: These should be configured in GlassFish as JNDI resources in production
-    private static final String DB_URL = "jdbc:derby://localhost:1527/EPDA";
-    private static final String DB_USER = "APP";
-    private static final String DB_PASSWORD = "APP";
+    // Database connection URL with embedded credentials for Apache Derby
+    private static final String DB_URL = "jdbc:derby://localhost:1527/EPDA;user=app;password=app";
     private static final String DB_DRIVER = "org.apache.derby.jdbc.ClientDriver";
 
     static {
@@ -35,7 +32,7 @@ public class DatabaseConnection {
      */
     public static Connection getConnection() throws SQLException {
         try {
-            return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            return DriverManager.getConnection(DB_URL);
         } catch (SQLException e) {
             System.err.println("Failed to establish database connection: " + e.getMessage());
             e.printStackTrace();

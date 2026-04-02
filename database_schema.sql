@@ -1,33 +1,27 @@
 -- Database Schema for EPDA (Enterprise Programming - Dynamic Appointment System)
 -- Target Database: Apache Derby
--- Run this script to create all required tables
+-- Run this FULL script to drop and recreate all tables from scratch.
 
--- ========== Drop existing tables (optional, for testing) ==========
--- DROP TABLE Appointment;
--- DROP TABLE Service;
--- DROP TABLE Technician;
--- DROP TABLE Customer;
--- DROP TABLE Manager;
+-- create database EPDA under JAVA before running sql
 
--- ========== Create Manager Table ==========
 CREATE TABLE Manager (
     manager_id VARCHAR(30) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ========== Create Technician Table ==========
 CREATE TABLE Technician (
     technician_id VARCHAR(30) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     specialty VARCHAR(100) NOT NULL,
     available BOOLEAN DEFAULT TRUE,
+    password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ========== Create Customer Table ==========
 CREATE TABLE Customer (
     customer_id VARCHAR(30) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -37,29 +31,24 @@ CREATE TABLE Customer (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ========== Create Service Table ==========
--- Type: 'Normal' (1 hour) or 'Major' (3 hours)
 CREATE TABLE Service (
     service_id VARCHAR(30) PRIMARY KEY,
     service_name VARCHAR(100) NOT NULL,
-    type VARCHAR(20) NOT NULL,  -- 'Normal' or 'Major'
+    type VARCHAR(20) NOT NULL,
     base_price DECIMAL(10,2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ========== Create Appointment Table ==========
--- Status: 'Pending', 'InProgress', 'Completed', 'Cancelled'
--- Uses COMPOSITION: contains objects, not just IDs
 CREATE TABLE Appointment (
     appointment_id VARCHAR(30) PRIMARY KEY,
     customer_id VARCHAR(30) NOT NULL,
     technician_id VARCHAR(30) NOT NULL,
     service_id VARCHAR(30) NOT NULL,
     appointment_datetime TIMESTAMP NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'Pending',  -- Pending, InProgress, Completed, Cancelled
+    status VARCHAR(20) NOT NULL DEFAULT 'Pending',
     payment_amount DECIMAL(10,2),
     comments VARCHAR(500),
-    rating INTEGER,  -- 1-5 or null if not rated
+    rating INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
@@ -67,7 +56,7 @@ CREATE TABLE Appointment (
     FOREIGN KEY (service_id) REFERENCES Service(service_id)
 );
 
--- ========== Create Indexes for Performance ==========
+-- ========== STEP 3: Create Indexes ==========
 CREATE INDEX idx_appointment_customer ON Appointment(customer_id);
 CREATE INDEX idx_appointment_technician ON Appointment(technician_id);
 CREATE INDEX idx_appointment_service ON Appointment(service_id);
@@ -76,30 +65,31 @@ CREATE INDEX idx_appointment_status ON Appointment(status);
 CREATE INDEX idx_technician_available ON Technician(available);
 CREATE INDEX idx_service_type ON Service(type);
 
--- ========== Sample Data (Optional - for testing) ==========
--- Insert sample technicians
-INSERT INTO Technician (technician_id, name, email, specialty, available) 
-VALUES ('T-001', 'John Smith', 'john@example.com', 'Plumbing', TRUE);
+-- ========== STEP 4: Insert Sample Data ==========
 
-INSERT INTO Technician (technician_id, name, email, specialty, available) 
-VALUES ('T-002', 'Jane Doe', 'jane@example.com', 'Electrical', TRUE);
+-- Manager (password = 'admin123' hashed with SHA-256)
+INSERT INTO Manager (manager_id, name, email, password)
+VALUES ('M-001', 'Manager Admin', 'admin@example.com', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9');
 
--- Insert sample customers
-INSERT INTO Customer (customer_id, name, email, phone, address) 
+-- Technicians (password = 'password123' hashed with SHA-256)
+INSERT INTO Technician (technician_id, name, email, specialty, available, password)
+VALUES ('T-001', 'John Smith', 'john@example.com', 'Plumbing', TRUE, 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f');
+
+INSERT INTO Technician (technician_id, name, email, specialty, available, password)
+VALUES ('T-002', 'Jane Doe', 'jane@example.com', 'Electrical', TRUE, 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f');
+
+-- Customers
+INSERT INTO Customer (customer_id, name, email, phone, address)
 VALUES ('C-001', 'Alice Johnson', 'alice@example.com', '555-1234', '123 Main St');
 
-INSERT INTO Customer (customer_id, name, email, phone, address) 
+INSERT INTO Customer (customer_id, name, email, phone, address)
 VALUES ('C-002', 'Bob Wilson', 'bob@example.com', '555-5678', '456 Oak Ave');
 
--- Insert sample services
-INSERT INTO Service (service_id, service_name, type, base_price) 
+-- Services
+INSERT INTO Service (service_id, service_name, type, base_price)
 VALUES ('S-001', 'Pipe Repair', 'Normal', 75.00);
 
-INSERT INTO Service (service_id, service_name, type, base_price) 
+INSERT INTO Service (service_id, service_name, type, base_price)
 VALUES ('S-002', 'Complete System Upgrade', 'Major', 250.00);
-
--- Insert sample manager
-INSERT INTO Manager (manager_id, name, email) 
-VALUES ('M-001', 'Manager Admin', 'admin@example.com');
 
 -- ========== End of Schema ==========
