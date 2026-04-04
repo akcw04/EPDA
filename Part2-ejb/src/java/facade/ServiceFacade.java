@@ -29,15 +29,16 @@ public class ServiceFacade {
             String serviceID = IDGenerator.generateServiceID(conn);
             service.setId(serviceID);
 
-            String sql = "INSERT INTO Service " +
-                    "(service_id, service_name, type, base_price) " +
-                    "VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO SERVICE " +
+                    "(service_id, service_name, type, duration_minutes, base_price) " +
+                    "VALUES (?, ?, ?, ?, ?)";
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, service.getId());
                 ps.setString(2, service.getServiceName());
                 ps.setString(3, service.getType());
-                ps.setDouble(4, service.getBasePrice());
+                ps.setInt(4, service.getDurationMinutes());
+                ps.setDouble(5, service.getBasePrice());
 
                 int rows = ps.executeUpdate();
                 if (rows == 0) {
@@ -60,7 +61,7 @@ public class ServiceFacade {
      * @throws SQLException if database error occurs
      */
     public Service getServiceByID(String serviceID) throws SQLException {
-        String sql = "SELECT * FROM Service WHERE service_id = ?";
+        String sql = "SELECT * FROM SERVICE WHERE service_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -94,7 +95,7 @@ public class ServiceFacade {
      */
     public List<Service> getAllServices() throws SQLException {
         List<Service> services = new ArrayList<>();
-        String sql = "SELECT * FROM Service ORDER BY service_name";
+        String sql = "SELECT * FROM SERVICE ORDER BY service_name";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -126,7 +127,7 @@ public class ServiceFacade {
      */
     public List<Service> getServicesByType(String type) throws SQLException {
         List<Service> services = new ArrayList<>();
-        String sql = "SELECT * FROM Service WHERE type = ? ORDER BY service_name";
+        String sql = "SELECT * FROM SERVICE WHERE type = ? ORDER BY service_name";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -157,15 +158,16 @@ public class ServiceFacade {
      * @throws SQLException if database error occurs
      */
     public void updateService(Service service) throws SQLException {
-        String sql = "UPDATE Service SET service_name = ?, type = ?, base_price = ? " +
+        String sql = "UPDATE SERVICE SET service_name = ?, type = ?, duration_minutes = ?, base_price = ? " +
                 "WHERE service_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, service.getServiceName());
             ps.setString(2, service.getType());
-            ps.setDouble(3, service.getBasePrice());
-            ps.setString(4, service.getId());
+            ps.setInt(3, service.getDurationMinutes());
+            ps.setDouble(4, service.getBasePrice());
+            ps.setString(5, service.getId());
 
             int rows = ps.executeUpdate();
             if (rows == 0) {
@@ -185,7 +187,7 @@ public class ServiceFacade {
      * @throws SQLException if database error occurs
      */
     public void deleteService(String serviceID) throws SQLException {
-        String sql = "DELETE FROM Service WHERE service_id = ?";
+        String sql = "DELETE FROM SERVICE WHERE service_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

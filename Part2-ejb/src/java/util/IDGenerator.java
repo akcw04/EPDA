@@ -6,98 +6,63 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * ID Generator utility for manual ID generation.
- * Requirement: IDs must be generated in Java before prepareStatement.
- * Format examples: T-001, T-002, C-001, S-001, A-001, M-001
- * (T=Technician, C=Customer, S=Service, A=Appointment, M=Manager)
+ * ID Generator utility for manual ID generation before database insert.
+ * Format: PREFIX-NNN (3-digit zero-padded)
  */
 public class IDGenerator {
 
     /**
-     * Generate next ID for a given entity type.
-     * Queries current count and formats ID accordingly.
-     *
-     * @param connection database connection
-     * @param tableName the table to query (e.g., "Technician", "Customer")
-     * @param prefix ID prefix (e.g., "T", "C", "S")
-     * @return formatted ID string
-     * @throws SQLException if database query fails
+     * Generate next ID for a given table.
      */
-    public static String generateNextID(Connection connection, String tableName, String prefix) throws SQLException {
-        // Derive the ID column name from the table name (e.g., "Manager" -> "manager_id")
-        String idColumn = tableName.toLowerCase() + "_id";
-        String sql = "SELECT MAX(" + idColumn + ") FROM " + tableName;
+    public static String generateNextID(Connection connection, String tableName,
+                                         String idColumnName, String prefix) throws SQLException {
+        String sql = "SELECT MAX(" + idColumnName + ") FROM " + tableName;
 
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             int nextNumber = 1;
             if (rs.next() && rs.getString(1) != null) {
-                // Parse numeric suffix from max ID: "M-005" -> 5
                 String maxId = rs.getString(1);
                 String[] parts = maxId.split("-");
-                nextNumber = Integer.parseInt(parts[1]) + 1;
+                nextNumber = Integer.parseInt(parts[parts.length - 1]) + 1;
             }
-            // Format: prefix-XXX (3-digit zero-padded)
             return String.format("%s-%03d", prefix, nextNumber);
-        } catch (SQLException e) {
-            System.err.println("Failed to generate ID: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
         }
     }
 
-    /**
-     * Generate ID for Technician
-     *
-     * @param connection database connection
-     * @return new technician ID
-     * @throws SQLException if database query fails
-     */
-    public static String generateTechnicianID(Connection connection) throws SQLException {
-        return generateNextID(connection, "Technician", "T");
+    public static String generateTechnicianID(Connection conn) throws SQLException {
+        return generateNextID(conn, "TECHNICIAN", "technician_id", "T");
     }
 
-    /**
-     * Generate ID for Customer
-     *
-     * @param connection database connection
-     * @return new customer ID
-     * @throws SQLException if database query fails
-     */
-    public static String generateCustomerID(Connection connection) throws SQLException {
-        return generateNextID(connection, "Customer", "C");
+    public static String generateCustomerID(Connection conn) throws SQLException {
+        return generateNextID(conn, "CUSTOMER", "customer_id", "C");
     }
 
-    /**
-     * Generate ID for Service
-     *
-     * @param connection database connection
-     * @return new service ID
-     * @throws SQLException if database query fails
-     */
-    public static String generateServiceID(Connection connection) throws SQLException {
-        return generateNextID(connection, "Service", "S");
+    public static String generateServiceID(Connection conn) throws SQLException {
+        return generateNextID(conn, "SERVICE", "service_id", "S");
     }
 
-    /**
-     * Generate ID for Appointment
-     *
-     * @param connection database connection
-     * @return new appointment ID
-     * @throws SQLException if database query fails
-     */
-    public static String generateAppointmentID(Connection connection) throws SQLException {
-        return generateNextID(connection, "Appointment", "A");
+    public static String generateAppointmentID(Connection conn) throws SQLException {
+        return generateNextID(conn, "APPOINTMENT", "appointment_id", "A");
     }
 
-    /**
-     * Generate ID for Manager
-     *
-     * @param connection database connection
-     * @return new manager ID
-     * @throws SQLException if database query fails
-     */
-    public static String generateManagerID(Connection connection) throws SQLException {
-        return generateNextID(connection, "Manager", "M");
+    public static String generateManagerID(Connection conn) throws SQLException {
+        return generateNextID(conn, "MANAGER", "manager_id", "M");
+    }
+
+    public static String generateCounterStaffID(Connection conn) throws SQLException {
+        return generateNextID(conn, "COUNTER_STAFF", "counter_staff_id", "CS");
+    }
+
+    public static String generateFeedbackID(Connection conn) throws SQLException {
+        return generateNextID(conn, "FEEDBACK", "feedback_id", "FB");
+    }
+
+    public static String generatePaymentID(Connection conn) throws SQLException {
+        return generateNextID(conn, "PAYMENT", "payment_id", "PY");
+    }
+
+    public static String generateCommentID(Connection conn) throws SQLException {
+        return generateNextID(conn, "APPOINTMENT_COMMENT", "comment_id", "CM");
     }
 }

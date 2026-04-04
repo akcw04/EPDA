@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Users/akcw0/Desktop/Enterprise Programming/EPDA -name *.xml -type f)",
+      "Bash(find '/c/Users/akcw0/Desktop/Enterprise Programming/EPDA/Part2-ejb/src/java/entity' -name *.java -type f)",
+      "Bash(grep -n \"@Column.*unique.*email\" \"/c/Users/akcw0/Desktop/Enterprise Programming/EPDA/Part2-ejb/src/java/entity\"/*.java)",
+      "Bash(pandoc \"C:\\\\Users\\\\akcw0\\\\Desktop\\\\Enterprise Programming\\\\Assignmnet - assumptions - 20260210.docx\" -t plain)",
+      "Bash(cd /tmp)",
+      "Bash(python3:*)"
+    ]
+  }
+}

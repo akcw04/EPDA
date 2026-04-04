@@ -1,16 +1,30 @@
 package entity;
 
+import jakarta.persistence.*;
+
 /**
- * Service entity. Represents a service offered.
+ * Service entity. Represents a service offered by the automotive center.
  * Services can be Normal (1 hour) or Major (3 hours).
  */
+@Entity
+@Table(name = "SERVICE")
 public class Service implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @Column(name = "service_id", length = 30)
     private String id;
+
+    @Column(name = "service_name", length = 100, nullable = false)
     private String serviceName;
+
+    @Column(name = "type", length = 20, nullable = false)
     private String type;  // "Normal" or "Major"
+
+    @Column(name = "duration_minutes")
     private int durationMinutes;  // 60 for Normal, 180 for Major
+
+    @Column(name = "base_price", nullable = false)
     private double basePrice;
 
     // Service type constants

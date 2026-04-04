@@ -1,59 +1,45 @@
 package entity;
 
+import jakarta.persistence.*;
+
 /**
- * Manager entity. Inherits from BaseEntity.
- * Represents a manager with no additional attributes beyond id, name, email.
+ * Manager entity. Inherits shared fields from BaseEntity.
+ * JPA generates MANAGER table with all columns from BaseEntity + manager_id PK.
  */
+@Entity
+@Table(name = "MANAGER")
 public class Manager extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    private String password;
+    @Id
+    @Column(name = "manager_id", length = 30)
+    private String id;
 
-    /**
-     * Default constructor
-     */
     public Manager() {
         super();
     }
 
-    /**
-     * Constructor with id, name, and email
-     *
-     * @param id unique manager identifier
-     * @param name manager name
-     * @param email manager email address
-     */
     public Manager(String id, String name, String email) {
-        super(id, name, email);
+        super(name, email, null);
+        this.id = id;
     }
 
-    /**
-     * Constructor with all fields including password
-     *
-     * @param id unique manager identifier
-     * @param name manager name
-     * @param email manager email address
-     * @param password manager password (plain text; hashed before persistence)
-     */
     public Manager(String id, String name, String email, String password) {
-        super(id, name, email);
-        this.password = password;
+        super(name, email, password);
+        this.id = id;
     }
 
-    public String getPassword() {
-        return password;
+    public Manager(String id, String name, String email, String password,
+                   String gender, String phone, String ic, String address) {
+        super(name, email, password, gender, phone, ic, address);
+        this.id = id;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     @Override
     public String toString() {
-        return "Manager{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+        return "Manager{id='" + id + "', name='" + name + "', email='" + email + "'}";
     }
 }

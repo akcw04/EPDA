@@ -2,24 +2,44 @@ package entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import jakarta.persistence.*;
 
 /**
- * Appointment entity. Implements Serializable for session storage.
- * Uses composition: contains Customer, Technician, and Service objects.
+ * Appointment entity. Uses JPA for table generation, JDBC for data access.
  * Status: Pending, InProgress, Completed, Cancelled
  */
+@Entity
+@Table(name = "APPOINTMENT")
 public class Appointment implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @Column(name = "appointment_id", length = 30)
     private String id;
-    private Customer customer;
-    private Technician technician;
-    private Service service;
+
+    @Column(name = "customer_id", length = 30, nullable = false)
+    private String customerId;
+
+    @Column(name = "technician_id", length = 30, nullable = false)
+    private String technicianId;
+
+    @Column(name = "service_id", length = 30, nullable = false)
+    private String serviceId;
+
+    @Column(name = "appointment_datetime", nullable = false)
     private LocalDateTime appointmentDateTime;
-    private String status;  // Pending, InProgress, Completed, Cancelled
+
+    @Column(name = "status", length = 20, nullable = false)
+    private String status;
+
+    @Column(name = "payment_amount")
     private double paymentAmount;
+
+    @Column(name = "comments", length = 500)
     private String comments;
-    private Integer rating;  // 1-5 or null if not rated
+
+    @Column(name = "rating")
+    private Integer rating;
 
     // Status constants
     public static final String STATUS_PENDING = "Pending";
@@ -27,118 +47,83 @@ public class Appointment implements Serializable {
     public static final String STATUS_COMPLETED = "Completed";
     public static final String STATUS_CANCELLED = "Cancelled";
 
-    /**
-     * Default constructor
-     */
+    // Transient fields for in-memory use (populated by facade)
+    @Transient
+    private Customer customer;
+    @Transient
+    private Technician technician;
+    @Transient
+    private Service service;
+
     public Appointment() {
         this.status = STATUS_PENDING;
     }
 
-    /**
-     * Constructor with essential fields
-     *
-     * @param id appointment identifier
-     * @param customer Customer object
-     * @param technician Technician object
-     * @param service Service object
-     * @param appointmentDateTime scheduled appointment date/time
-     */
-    public Appointment(String id, Customer customer, Technician technician, 
-                      Service service, LocalDateTime appointmentDateTime) {
+    public Appointment(String id, Customer customer, Technician technician,
+                       Service service, LocalDateTime appointmentDateTime) {
         this.id = id;
         this.customer = customer;
         this.technician = technician;
         this.service = service;
+        this.customerId = customer.getId();
+        this.technicianId = technician.getId();
+        this.serviceId = service.getId();
         this.appointmentDateTime = appointmentDateTime;
         this.status = STATUS_PENDING;
         this.paymentAmount = service.getBasePrice();
     }
 
-    // ========== Getters & Setters ==========
+    // Getters & Setters
 
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getCustomerId() { return customerId; }
+    public void setCustomerId(String customerId) { this.customerId = customerId; }
 
-    public Customer getCustomer() {
-        return customer;
-    }
+    public String getTechnicianId() { return technicianId; }
+    public void setTechnicianId(String technicianId) { this.technicianId = technicianId; }
 
+    public String getServiceId() { return serviceId; }
+    public void setServiceId(String serviceId) { this.serviceId = serviceId; }
+
+    public Customer getCustomer() { return customer; }
     public void setCustomer(Customer customer) {
         this.customer = customer;
+        if (customer != null) this.customerId = customer.getId();
     }
 
-    public Technician getTechnician() {
-        return technician;
-    }
-
+    public Technician getTechnician() { return technician; }
     public void setTechnician(Technician technician) {
         this.technician = technician;
+        if (technician != null) this.technicianId = technician.getId();
     }
 
-    public Service getService() {
-        return service;
-    }
-
+    public Service getService() { return service; }
     public void setService(Service service) {
         this.service = service;
+        if (service != null) this.serviceId = service.getId();
     }
 
-    public LocalDateTime getAppointmentDateTime() {
-        return appointmentDateTime;
-    }
-
+    public LocalDateTime getAppointmentDateTime() { return appointmentDateTime; }
     public void setAppointmentDateTime(LocalDateTime appointmentDateTime) {
         this.appointmentDateTime = appointmentDateTime;
     }
 
-    public String getStatus() {
-        return status;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public double getPaymentAmount() { return paymentAmount; }
+    public void setPaymentAmount(double paymentAmount) { this.paymentAmount = paymentAmount; }
 
-    public double getPaymentAmount() {
-        return paymentAmount;
-    }
+    public String getComments() { return comments; }
+    public void setComments(String comments) { this.comments = comments; }
 
-    public void setPaymentAmount(double paymentAmount) {
-        this.paymentAmount = paymentAmount;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public Integer getRating() {
-        return rating;
-    }
-
-    public void setRating(Integer rating) {
-        this.rating = rating;
-    }
+    public Integer getRating() { return rating; }
+    public void setRating(Integer rating) { this.rating = rating; }
 
     @Override
     public String toString() {
-        return "Appointment{" +
-                "id='" + id + '\'' +
-                ", customer=" + (customer != null ? customer.getId() : "null") +
-                ", technician=" + (technician != null ? technician.getId() : "null") +
-                ", service=" + (service != null ? service.getId() : "null") +
-                ", appointmentDateTime=" + appointmentDateTime +
-                ", status='" + status + '\'' +
-                ", paymentAmount=" + paymentAmount +
-                ", rating=" + rating +
-                '}';
+        return "Appointment{id='" + id + "', status='" + status + "', dateTime=" + appointmentDateTime + "}";
     }
 }

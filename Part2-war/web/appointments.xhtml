@@ -29,30 +29,30 @@
                 <!-- Create New Appointment Form -->
                 <p:panel header="Schedule New Appointment" style="margin-bottom: 20px;">
                     <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8" style="margin-bottom: 10px">
-                        
+
                         <p:outputLabel for="customer" value="Customer:"/>
                         <p:selectOneMenu id="customer" value="#{appointmentBean.selectedCustomerID}" required="true">
                             <f:selectItem itemLabel="-- Select Customer --" itemValue="#{null}"/>
-                            <f:selectItems value="#{appointmentBean.customers}" var="cust" 
+                            <f:selectItems value="#{appointmentBean.customers}" var="cust"
                                           itemValue="#{cust.id}" itemLabel="#{cust.name} (#{cust.email})"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel for="technician" value="Technician:"/>
                         <p:selectOneMenu id="technician" value="#{appointmentBean.selectedTechnicianID}" required="true">
                             <f:selectItem itemLabel="-- Select Technician --" itemValue="#{null}"/>
-                            <f:selectItems value="#{appointmentBean.technicians}" var="tech" 
+                            <f:selectItems value="#{appointmentBean.technicians}" var="tech"
                                           itemValue="#{tech.id}" itemLabel="#{tech.name} (#{tech.specialty})"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel for="service" value="Service:"/>
                         <p:selectOneMenu id="service" value="#{appointmentBean.selectedServiceID}" required="true">
                             <f:selectItem itemLabel="-- Select Service --" itemValue="#{null}"/>
-                            <f:selectItems value="#{appointmentBean.services}" var="svc" 
+                            <f:selectItems value="#{appointmentBean.services}" var="svc"
                                           itemValue="#{svc.id}" itemLabel="#{svc.serviceName} (#{svc.type} - $#{svc.basePrice})"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel for="appointmentDateTime" value="Appointment Date/Time:"/>
-                        <p:calendar id="appointmentDateTime" value="#{appointmentBean.appointmentDateTime}" 
+                        <p:calendar id="appointmentDateTime" value="#{appointmentBean.appointmentDateTime}"
                                    pattern="MM/dd/yyyy HH:mm" showButtonPanel="true" required="true"/>
                     </p:panelGrid>
 

@@ -2,6 +2,8 @@ package bean;
 
 import entity.Manager;
 import entity.Technician;
+import entity.Customer;
+import entity.CounterStaff;
 import facade.UserFacade;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
@@ -13,6 +15,7 @@ import java.io.Serializable;
 /**
  * LoginBean - JSF Managed Bean for authentication and session management.
  * SessionScoped: maintains logged-in user across all pages.
+ * Supports 4 roles: Manager, CounterStaff, Technician, Customer
  * Calls UserFacade.authenticate() which hashes the password and checks all user tables.
  */
 @Named("loginBean")
@@ -29,13 +32,14 @@ public class LoginBean implements Serializable {
 
     // Session state
     private boolean loggedIn = false;
-    private String userRole;      // "Manager" or "Technician"
+    private String userRole;      // "Manager", "CounterStaff", "Technician", or "Customer"
     private String userName;
     private String userId;
-    private Object currentUser;   // Manager or Technician object
+    private Object currentUser;   // Manager, CounterStaff, Technician, or Customer object
 
     /**
      * Perform login. Delegates hashing + DB lookup to UserFacade.authenticate().
+     * Returns appropriate dashboard for each role.
      * @return navigation outcome
      */
     public String login() {
@@ -55,10 +59,26 @@ public class LoginBean implements Serializable {
                 Manager m = (Manager) currentUser;
                 userName = m.getName();
                 userId = m.getId();
+                password = null;
+                return "/manager/dashboard.xhtml?faces-redirect=true";
+            } else if ("CounterStaff".equals(userRole)) {
+                CounterStaff cs = (CounterStaff) currentUser;
+                userName = cs.getName();
+                userId = cs.getId();
+                password = null;
+                return "/counterstaff/dashboard.xhtml?faces-redirect=true";
             } else if ("Technician".equals(userRole)) {
                 Technician t = (Technician) currentUser;
                 userName = t.getName();
                 userId = t.getId();
+                password = null;
+                return "/technician/dashboard.xhtml?faces-redirect=true";
+            } else if ("Customer".equals(userRole)) {
+                Customer c = (Customer) currentUser;
+                userName = c.getName();
+                userId = c.getId();
+                password = null;
+                return "/customer/dashboard.xhtml?faces-redirect=true";
             }
 
             // Clear sensitive form data

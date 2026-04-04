@@ -1,90 +1,66 @@
 package entity;
 
+import jakarta.persistence.*;
+
 /**
- * Technician entity. Inherits from BaseEntity.
- * Represents a technician with specialty skill set.
+ * Technician entity. Inherits shared fields from BaseEntity.
+ * Extra fields: specialty, available.
  */
+@Entity
+@Table(name = "TECHNICIAN")
 public class Technician extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    private String specialty;
-    private boolean available;
-    private String password;
+    @Id
+    @Column(name = "technician_id", length = 30)
+    private String id;
 
-    /**
-     * Default constructor
-     */
+    @Column(name = "specialty", length = 100)
+    private String specialty;
+
+    @Column(name = "available", nullable = false)
+    private boolean available;
+
     public Technician() {
         super();
         this.available = true;
     }
 
-    /**
-     * Constructor with all fields
-     *
-     * @param id unique technician identifier
-     * @param name technician name
-     * @param email technician email address
-     * @param specialty technician specialty skill
-     * @param available availability status
-     */
     public Technician(String id, String name, String email, String specialty, boolean available) {
-        super(id, name, email);
+        super(name, email, null);
+        this.id = id;
         this.specialty = specialty;
         this.available = available;
     }
 
-    /**
-     * Constructor with all fields including password
-     *
-     * @param id unique technician identifier
-     * @param name technician name
-     * @param email technician email address
-     * @param specialty technician specialty skill
-     * @param available availability status
-     * @param password technician password (plain text; hashed before persistence)
-     */
-    public Technician(String id, String name, String email, String specialty, boolean available, String password) {
-        super(id, name, email);
+    public Technician(String id, String name, String email, String specialty,
+                      boolean available, String password) {
+        super(name, email, password);
+        this.id = id;
         this.specialty = specialty;
         this.available = available;
-        this.password = password;
     }
 
-    // ========== Getters & Setters ==========
-
-    public String getSpecialty() {
-        return specialty;
-    }
-
-    public void setSpecialty(String specialty) {
+    public Technician(String id, String name, String email, String password,
+                      String gender, String phone, String ic, String address,
+                      String specialty, boolean available) {
+        super(name, email, password, gender, phone, ic, address);
+        this.id = id;
         this.specialty = specialty;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
         this.available = available;
     }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getSpecialty() { return specialty; }
+    public void setSpecialty(String specialty) { this.specialty = specialty; }
+
+    public boolean isAvailable() { return available; }
+    public void setAvailable(boolean available) { this.available = available; }
 
     @Override
     public String toString() {
-        return "Technician{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", specialty='" + specialty + '\'' +
-                ", available=" + available +
-                '}';
+        return "Technician{id='" + id + "', name='" + name + "', specialty='" + specialty + "'}";
     }
 }

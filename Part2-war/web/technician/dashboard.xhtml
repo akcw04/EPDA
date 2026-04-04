@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Technician Dashboard - APU ASC</title>
+        <h:outputStylesheet library="css" name="style.css"/>
+    </h:head>
+    <h:body>
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{technicianBean.init()}"/>
+        </f:metadata>
+
+        <div style="background:linear-gradient(135deg,#4facfe,#00f2fe);color:#fff;padding:20px 30px;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h2 style="margin:0;">Technician Dashboard</h2>
+                <p style="margin:5px 0 0;">Welcome, #{loginBean.userName}</p>
+            </div>
+            <h:form>
+                <p:commandButton value="Logout" action="#{loginBean.logout()}" style="background:#fff;color:#4facfe;border:none;padding:8px 20px;border-radius:5px;"/>
+            </h:form>
+        </div>
+
+        <div style="display:flex;gap:15px;padding:20px 30px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:140px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);text-align:center;">
+                <h3 style="margin:0;color:#4facfe;">#{technicianBean.todayAppointments}</h3><p style="margin:5px 0 0;color:#666;">Today's Appts</p>
+            </div>
+            <div style="flex:1;min-width:140px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);text-align:center;">
+                <h3 style="margin:0;color:#e67e22;">#{technicianBean.pendingAppointments}</h3><p style="margin:5px 0 0;color:#666;">Pending Tasks</p>
+            </div>
+            <div style="flex:1;min-width:140px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);text-align:center;">
+                <h3 style="margin:0;color:#27ae60;">#{technicianBean.completedThisMonth}</h3><p style="margin:5px 0 0;color:#666;">Completed (Month)</p>
+            </div>
+            <div style="flex:1;min-width:140px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);text-align:center;">
+                <h3 style="margin:0;color:#f39c12;">#{technicianBean.averageRating}</h3><p style="margin:5px 0 0;color:#666;">Avg Rating</p>
+            </div>
+        </div>
+
+        <div style="padding:0 30px 30px;">
+            <h:form id="mainForm">
+                <p:messages id="msgs" showDetail="true" closable="true" style="margin-bottom:15px;"/>
+                <p:tabView>
+                    <!-- My Profile -->
+                    <p:tab title="My Profile">
+                        <h3>Edit My Profile</h3>
+                        <p:panelGrid columns="2" style="width:100%;" rendered="#{technicianBean.profileData != null}">
+                            <p:outputLabel value="Name:" />
+                            <p:inputText value="#{technicianBean.profileData.name}" style="width:100%;"/>
+                            <p:outputLabel value="Email:" />
+                            <p:inputText value="#{technicianBean.profileData.email}" style="width:100%;"/>
+                            <p:outputLabel value="Gender:" />
+                            <p:selectOneMenu value="#{technicianBean.profileData.gender}" style="width:100%;">
+                                <f:selectItem itemLabel="Male" itemValue="M"/>
+                                <f:selectItem itemLabel="Female" itemValue="F"/>
+                                <f:selectItem itemLabel="Other" itemValue="Other"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Phone:" />
+                            <p:inputText value="#{technicianBean.profileData.phone}" style="width:100%;"/>
+                            <p:outputLabel value="IC:" />
+                            <p:inputText value="#{technicianBean.profileData.ic}" style="width:100%;"/>
+                            <p:outputLabel value="Address:" />
+                            <p:inputTextarea value="#{technicianBean.profileData.address}" rows="2" style="width:100%;"/>
+                            <p:outputLabel value="Specialty:" />
+                            <p:inputText value="#{technicianBean.profileData.specialty}" style="width:100%;"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Update Profile" action="#{technicianBean.updateProfile()}" update="mainForm" style="margin-top:10px;"/>
+                    </p:tab>
+
+                    <!-- My Appointments -->
+                    <p:tab title="My Appointments">
+                        <h3>Pending Appointments</h3>
+                        <p:dataTable value="#{technicianBean.pendingAppointmentList}" var="a" emptyMessage="No pending appointments.">
+                            <p:column headerText="ID"><h:outputText value="#{a.id}"/></p:column>
+                            <p:column headerText="Customer"><h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/></p:column>
+                            <p:column headerText="Service"><h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/></p:column>
+                            <p:column headerText="Date/Time"><h:outputText value="#{a.appointmentDateTime}"/></p:column>
+                            <p:column headerText="Amount (RM)"><h:outputText value="#{a.paymentAmount}"/></p:column>
+                            <p:column headerText="Action">
+                                <p:commandButton value="Start" action="#{technicianBean.startAppointment(a.id)}" update="mainForm" style="background:#27ae60;color:#fff;border:none;"/>
+                            </p:column>
+                        </p:dataTable>
+
+                        <h3 style="margin-top:20px;">In Progress</h3>
+                        <p:dataTable value="#{technicianBean.inProgressAppointmentList}" var="a" emptyMessage="No appointments in progress.">
+                            <p:column headerText="ID"><h:outputText value="#{a.id}"/></p:column>
+                            <p:column headerText="Customer"><h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/></p:column>
+                            <p:column headerText="Service"><h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/></p:column>
+                            <p:column headerText="Date/Time"><h:outputText value="#{a.appointmentDateTime}"/></p:column>
+                            <p:column headerText="Action">
+                                <p:commandButton value="Mark Complete" action="#{technicianBean.completeAppointment(a.id)}" update="mainForm" style="background:#2980b9;color:#fff;border:none;"/>
+                            </p:column>
+                        </p:dataTable>
+
+                        <h3 style="margin-top:20px;">Completed</h3>
+                        <p:dataTable value="#{technicianBean.completedAppointmentList}" var="a" paginator="true" rows="10" emptyMessage="No completed appointments.">
+                            <p:column headerText="ID"><h:outputText value="#{a.id}"/></p:column>
+                            <p:column headerText="Customer"><h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/></p:column>
+                            <p:column headerText="Service"><h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/></p:column>
+                            <p:column headerText="Date/Time"><h:outputText value="#{a.appointmentDateTime}"/></p:column>
+                            <p:column headerText="Amount (RM)"><h:outputText value="#{a.paymentAmount}"/></p:column>
+                        </p:dataTable>
+                    </p:tab>
+
+                    <!-- Write Feedback -->
+                    <p:tab title="Write Feedback">
+                        <h3>Provide Feedback</h3>
+                        <p:panelGrid columns="2" style="width:100%;">
+                            <p:outputLabel value="Appointment:" />
+                            <p:selectOneMenu value="#{technicianBean.feedbackAppointmentId}" style="width:100%;">
+                                <f:selectItem itemLabel="-- Select Completed Appointment --" itemValue="" />
+                                <f:selectItems value="#{technicianBean.completedAppointmentList}" var="a"
+                                               itemLabel="#{a.id} - #{a.service != null ? a.service.serviceName : ''}" itemValue="#{a.id}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Feedback:" />
+                            <p:inputTextarea value="#{technicianBean.feedbackText}" rows="4" style="width:100%;" placeholder="Write your feedback here..."/>
+                        </p:panelGrid>
+                        <p:commandButton value="Submit Feedback" action="#{technicianBean.submitFeedback()}" update="mainForm" style="margin-top:10px;"/>
+
+                        <h3 style="margin-top:20px;">My Submitted Feedback</h3>
+                        <p:dataTable value="#{technicianBean.feedbackList}" var="fb" paginator="true" rows="10" emptyMessage="No feedback submitted yet.">
+                            <p:column headerText="ID"><h:outputText value="#{fb.id}"/></p:column>
+                            <p:column headerText="Appointment"><h:outputText value="#{fb.appointmentId}"/></p:column>
+                            <p:column headerText="Feedback"><h:outputText value="#{fb.feedbackText}"/></p:column>
+                            <p:column headerText="Date"><h:outputText value="#{fb.createdAt}"/></p:column>
+                        </p:dataTable>
+                    </p:tab>
+
+                    <!-- Customer Comments -->
+                    <p:tab title="Customer Comments">
+                        <h3>Comments on My Appointments</h3>
+                        <p:dataTable value="#{technicianBean.commentsList}" var="cm" paginator="true" rows="10" emptyMessage="No customer comments yet.">
+                            <p:column headerText="ID"><h:outputText value="#{cm.id}"/></p:column>
+                            <p:column headerText="Appointment"><h:outputText value="#{cm.appointmentId}"/></p:column>
+                            <p:column headerText="Customer"><h:outputText value="#{cm.customerId}"/></p:column>
+                            <p:column headerText="Comment"><h:outputText value="#{cm.commentText}"/></p:column>
+                            <p:column headerText="Rating"><h:outputText value="#{cm.rating}"/></p:column>
+                            <p:column headerText="Date"><h:outputText value="#{cm.createdAt}"/></p:column>
+                        </p:dataTable>
+                    </p:tab>
+
+                    <!-- Performance -->
+                    <p:tab title="Performance">
+                        <h3>Performance Metrics</h3>
+                        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+                            <div style="flex:1;min-width:200px;background:#e8f5e9;padding:20px;border-radius:8px;text-align:center;">
+                                <h4 style="margin:0;">Total Appointments</h4>
+                                <p style="font-size:28px;font-weight:bold;margin:10px 0 0;">#{technicianBean.totalAppointments}</p>
+                            </div>
+                            <div style="flex:1;min-width:200px;background:#e3f2fd;padding:20px;border-radius:8px;text-align:center;">
+                                <h4 style="margin:0;">Completed This Month</h4>
+                                <p style="font-size:28px;font-weight:bold;margin:10px 0 0;">#{technicianBean.completedThisMonth}</p>
+                            </div>
+                            <div style="flex:1;min-width:200px;background:#fff3e0;padding:20px;border-radius:8px;text-align:center;">
+                                <h4 style="margin:0;">Average Rating</h4>
+                                <p style="font-size:28px;font-weight:bold;margin:10px 0 0;">#{technicianBean.averageRating}</p>
+                            </div>
+                            <div style="flex:1;min-width:200px;background:#fce4ec;padding:20px;border-radius:8px;text-align:center;">
+                                <h4 style="margin:0;">Total Revenue (RM)</h4>
+                                <p style="font-size:28px;font-weight:bold;margin:10px 0 0;">#{technicianBean.totalRevenue}</p>
+                            </div>
+                        </div>
+                    </p:tab>
+                </p:tabView>
+            </h:form>
+        </div>
+    </h:body>
+</html>
