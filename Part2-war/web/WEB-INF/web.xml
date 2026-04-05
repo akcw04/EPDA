@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
-    
-    <display-name>EPDA-war</display-name>
+
+    <display-name>APU-ASC</display-name>
 
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
@@ -12,19 +12,9 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <servlet>
-        <servlet-name>RegistrationServlet</servlet-name>
-        <servlet-class>servlet.RegistrationServlet</servlet-class>
-    </servlet>
-
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RegistrationServlet</servlet-name>
-        <url-pattern>/register</url-pattern>
     </servlet-mapping>
 
     <session-config>

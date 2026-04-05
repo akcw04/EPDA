@@ -38,6 +38,9 @@ public class CustomerBean implements Serializable {
     @Inject
     private LoginBean loginBean;
 
+    // Sidebar navigation
+    private String currentSection = "overview";
+
     // Dashboard statistics
     private int totalAppointments, completedAppointmentCount, pendingAppointments;
     private double totalSpent;
@@ -181,6 +184,12 @@ public class CustomerBean implements Serializable {
         }
     }
 
+    // ========== SIDEBAR NAVIGATION ==========
+
+    public void navigateTo(String section) {
+        this.currentSection = section;
+    }
+
     // ========== HELPERS ==========
 
     private void addError(String msg) {
@@ -216,4 +225,7 @@ public class CustomerBean implements Serializable {
     public void setCommentText(String commentText) { this.commentText = commentText; }
     public Integer getCommentRating() { return commentRating; }
     public void setCommentRating(Integer commentRating) { this.commentRating = commentRating; }
+
+    public String getCurrentSection() { return currentSection; }
+    public void setCurrentSection(String currentSection) { this.currentSection = currentSection; }
 }

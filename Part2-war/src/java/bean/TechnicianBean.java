@@ -34,6 +34,9 @@ public class TechnicianBean implements Serializable {
     @Inject
     private LoginBean loginBean;
 
+    // Sidebar navigation
+    private String currentSection = "overview";
+
     // Dashboard statistics
     private int todayAppointments, pendingAppointments, completedThisMonth;
     private double averageRating;
@@ -206,6 +209,12 @@ public class TechnicianBean implements Serializable {
         }
     }
 
+    // ========== SIDEBAR NAVIGATION ==========
+
+    public void navigateTo(String section) {
+        this.currentSection = section;
+    }
+
     // ========== HELPERS ==========
 
     private void addError(String msg) {
@@ -240,4 +249,7 @@ public class TechnicianBean implements Serializable {
     public void setFeedbackAppointmentId(String feedbackAppointmentId) { this.feedbackAppointmentId = feedbackAppointmentId; }
     public String getFeedbackText() { return feedbackText; }
     public void setFeedbackText(String feedbackText) { this.feedbackText = feedbackText; }
+
+    public String getCurrentSection() { return currentSection; }
+    public void setCurrentSection(String currentSection) { this.currentSection = currentSection; }
 }

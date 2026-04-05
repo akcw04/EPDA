@@ -59,31 +59,42 @@ public class LoginBean implements Serializable {
                 Manager m = (Manager) currentUser;
                 userName = m.getName();
                 userId = m.getId();
-                password = null;
-                return "/manager/dashboard.xhtml?faces-redirect=true";
             } else if ("CounterStaff".equals(userRole)) {
                 CounterStaff cs = (CounterStaff) currentUser;
                 userName = cs.getName();
                 userId = cs.getId();
-                password = null;
-                return "/counterstaff/dashboard.xhtml?faces-redirect=true";
             } else if ("Technician".equals(userRole)) {
                 Technician t = (Technician) currentUser;
                 userName = t.getName();
                 userId = t.getId();
-                password = null;
-                return "/technician/dashboard.xhtml?faces-redirect=true";
             } else if ("Customer".equals(userRole)) {
                 Customer c = (Customer) currentUser;
                 userName = c.getName();
                 userId = c.getId();
-                password = null;
-                return "/customer/dashboard.xhtml?faces-redirect=true";
             }
+
+            // Store session attributes for AuthFilter RBAC
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("loggedIn", true);
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userRole", userRole);
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userName", userName);
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userId", userId);
 
             // Clear sensitive form data
             password = null;
-            return "/index.xhtml?faces-redirect=true";
+
+            // Redirect to the appropriate dashboard based on role
+            switch (userRole) {
+                case "Manager":
+                    return "/manager/dashboard.xhtml?faces-redirect=true";
+                case "CounterStaff":
+                    return "/counterstaff/dashboard.xhtml?faces-redirect=true";
+                case "Technician":
+                    return "/technician/dashboard.xhtml?faces-redirect=true";
+                case "Customer":
+                    return "/customer/dashboard.xhtml?faces-redirect=true";
+                default:
+                    return "/login.xhtml?faces-redirect=true";
+            }
         }
 
         addError("Invalid email or password.");

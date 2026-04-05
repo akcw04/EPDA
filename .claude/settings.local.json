@@ -6,7 +6,9 @@
       "Bash(grep -n \"@Column.*unique.*email\" \"/c/Users/akcw0/Desktop/Enterprise Programming/EPDA/Part2-ejb/src/java/entity\"/*.java)",
       "Bash(pandoc \"C:\\\\Users\\\\akcw0\\\\Desktop\\\\Enterprise Programming\\\\Assignmnet - assumptions - 20260210.docx\" -t plain)",
       "Bash(cd /tmp)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(dir /s /b \"C:\\\\Users\\\\akcw0\\\\Desktop\\\\Enterprise Programming\\\\EPDA\\\\Part2-war\\\\web\")",
+      "Bash(dir /s /b \"C:\\\\Users\\\\akcw0\\\\Desktop\\\\Enterprise Programming\\\\EPDA\\\\Part2-war\\\\src\\\\java\")"
     ]
   }
 }

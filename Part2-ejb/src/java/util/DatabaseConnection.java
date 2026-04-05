@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public class DatabaseConnection {
 
     // Database connection URL with embedded credentials for Apache Derby
-    private static final String DB_URL = "jdbc:derby://localhost:1527/EPDA;user=app;password=app";
+    private static final String DB_URL = "jdbc:derby://localhost:1527/sample;user=app;password=app";
     private static final String DB_DRIVER = "org.apache.derby.jdbc.ClientDriver";
 
     static {

@@ -1,295 +1,919 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="jakarta.faces.passthrough">
+    
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{managerBean.init()}" />
+    </f:metadata>
+
     <h:head>
-        <title>Manager Dashboard - APU ASC</title>
-        <h:outputStylesheet library="css" name="style.css"/>
+        <title>Manager Dashboard - APU Automotive Service Centre</title>
+        <h:outputStylesheet library="css" name="style.css" />
     </h:head>
+
     <h:body>
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{managerBean.init()}"/>
-        </f:metadata>
+        <div class="dashboard">
 
-        <div style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px 30px;display:flex;justify-content:space-between;align-items:center;">
-            <div>
-                <h2 style="margin:0;">Manager Dashboard</h2>
-                <p style="margin:5px 0 0;">Welcome, #{loginBean.userName}</p>
+            <!-- ==================== SIDEBAR ==================== -->
+            <div class="sidebar">
+                <div class="sidebar-brand">
+                    <h2>APU-ASC</h2>
+                    <span>Manager Portal</span>
+                </div>
+
+                <h:form id="sidebarForm">
+                    <nav class="sidebar-nav">
+
+                        <!-- Main -->
+                        <div class="nav-section">Main</div>
+                        <p:commandButton value="Overview"
+                                         icon="pi pi-home"
+                                         styleClass="nav-link #{managerBean.currentSection == 'overview' ? 'active' : ''}"
+                                         action="#{managerBean.navigateTo('overview')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+
+                        <!-- Staff Management -->
+                        <div class="nav-section">Staff Management</div>
+                        <p:commandButton value="Register Staff"
+                                         icon="pi pi-user-plus"
+                                         styleClass="nav-link #{managerBean.currentSection == 'register-staff' ? 'active' : ''}"
+                                         action="#{managerBean.navigateTo('register-staff')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="Technicians"
+                                         icon="pi pi-wrench"
+                                         styleClass="nav-link #{managerBean.currentSection == 'technicians' ? 'active' : ''}"
+                                         action="#{managerBean.navigateTo('technicians')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="Counter Staff"
+                                         icon="pi pi-users"
+                                         styleClass="nav-link #{managerBean.currentSection == 'counter-staff' ? 'active' : ''}"
+                                         action="#{managerBean.navigateTo('counter-staff')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="Managers"
+                                         icon="pi pi-shield"
+                                         styleClass="nav-link #{managerBean.currentSection == 'managers' ? 'active' : ''}"
+                                         action="#{managerBean.navigateTo('managers')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="Customers"
+                                         icon="pi pi-user"
+                                         styleClass="nav-link #{managerBean.currentSection == 'customers' ? 'active' : ''}"
+                                         action="#{managerBean.navigateTo('customers')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+
+                        <!-- Operations -->
+                        <div class="nav-section">Operations</div>
+                        <p:commandButton value="Services &amp; Pricing"
+                                         icon="pi pi-tag"
+                                         styleClass="nav-link #{managerBean.currentSection == 'services' ? 'active' : ''}"
+                                         action="#{managerBean.navigateTo('services')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="Appointments"
+                                         icon="pi pi-calendar"
+                                         styleClass="nav-link #{managerBean.currentSection == 'appointments' ? 'active' : ''}"
+                                         action="#{managerBean.navigateTo('appointments')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="Feedback &amp; Comments"
+                                         icon="pi pi-comments"
+                                         styleClass="nav-link #{managerBean.currentSection == 'feedback' ? 'active' : ''}"
+                                         action="#{managerBean.navigateTo('feedback')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+
+                        <!-- Analytics -->
+                        <div class="nav-section">Analytics</div>
+                        <p:commandButton value="Reports"
+                                         icon="pi pi-chart-bar"
+                                         styleClass="nav-link #{managerBean.currentSection == 'reports' ? 'active' : ''}"
+                                         action="#{managerBean.navigateTo('reports')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                    </nav>
+                </h:form>
+
+                <div class="sidebar-footer">
+                    <span>#{loginBean.userName}</span>
+                    <span>Manager</span>
+                    <h:form>
+                        <p:commandButton value="Logout"
+                                         icon="pi pi-sign-out"
+                                         styleClass="logout-btn"
+                                         action="#{loginBean.logout()}" />
+                    </h:form>
+                </div>
             </div>
-            <h:form>
-                <p:commandButton value="Logout" action="#{loginBean.logout()}" style="background:#fff;color:#764ba2;border:none;padding:8px 20px;border-radius:5px;"/>
-            </h:form>
+
+            <!-- ==================== MAIN CONTENT ==================== -->
+            <div class="main-content">
+                <div class="top-bar">
+                    <h1>
+                        <h:outputText value="Overview" rendered="#{managerBean.currentSection == 'overview'}" />
+                        <h:outputText value="Register Staff" rendered="#{managerBean.currentSection == 'register-staff'}" />
+                        <h:outputText value="Technicians" rendered="#{managerBean.currentSection == 'technicians'}" />
+                        <h:outputText value="Counter Staff" rendered="#{managerBean.currentSection == 'counter-staff'}" />
+                        <h:outputText value="Managers" rendered="#{managerBean.currentSection == 'managers'}" />
+                        <h:outputText value="Customers" rendered="#{managerBean.currentSection == 'customers'}" />
+                        <h:outputText value="Services &amp; Pricing" rendered="#{managerBean.currentSection == 'services'}" />
+                        <h:outputText value="Appointments" rendered="#{managerBean.currentSection == 'appointments'}" />
+                        <h:outputText value="Feedback &amp; Comments" rendered="#{managerBean.currentSection == 'feedback'}" />
+                        <h:outputText value="Reports" rendered="#{managerBean.currentSection == 'reports'}" />
+                    </h1>
+                </div>
+
+                <div class="content-area">
+                    <h:panelGroup id="contentArea">
+                        <p:growl id="growl" showDetail="true" life="4000" />
+                        <h:form id="mainForm">
+
+                            <!-- ==================== OVERVIEW SECTION ==================== -->
+                            <h:panelGroup rendered="#{managerBean.currentSection == 'overview'}">
+                                <div class="stats-row">
+                                    <div class="stat-card">
+                                        <h3>Total Services</h3>
+                                        <p>#{managerBean.totalServices}</p>
+                                    </div>
+                                    <div class="stat-card accent-green">
+                                        <h3>Technicians</h3>
+                                        <p>#{managerBean.totalTechnicians}</p>
+                                    </div>
+                                    <div class="stat-card accent-orange">
+                                        <h3>Counter Staff</h3>
+                                        <p>#{managerBean.totalCounterStaff}</p>
+                                    </div>
+                                    <div class="stat-card accent-purple">
+                                        <h3>Customers</h3>
+                                        <p>#{managerBean.totalCustomers}</p>
+                                    </div>
+                                    <div class="stat-card accent-red">
+                                        <h3>Pending Appointments</h3>
+                                        <p>#{managerBean.pendingAppointments}</p>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+
+                            <!-- ==================== REGISTER STAFF SECTION ==================== -->
+                            <h:panelGroup rendered="#{managerBean.currentSection == 'register-staff'}">
+                                <div class="panel">
+                                    <h3>Register New Staff</h3>
+                                    <div class="form-grid">
+                                        <div>
+                                            <label>User Type</label>
+                                            <h:selectOneMenu value="#{managerBean.regUserType}" styleClass="form-control">
+                                                <f:selectItem itemValue="Technician" itemLabel="Technician" />
+                                                <f:selectItem itemValue="CounterStaff" itemLabel="Counter Staff" />
+                                                <f:selectItem itemValue="Manager" itemLabel="Manager" />
+                                            </h:selectOneMenu>
+                                        </div>
+                                        <div>
+                                            <label>Name</label>
+                                            <h:inputText value="#{managerBean.regName}" styleClass="form-control" />
+                                        </div>
+                                        <div>
+                                            <label>Email</label>
+                                            <h:inputText value="#{managerBean.regEmail}" styleClass="form-control" />
+                                        </div>
+                                        <div>
+                                            <label>Password</label>
+                                            <p:password value="#{managerBean.regPassword}" styleClass="form-control" />
+                                        </div>
+                                        <div>
+                                            <label>Gender</label>
+                                            <h:selectOneMenu value="#{managerBean.regGender}" styleClass="form-control">
+                                                <f:selectItem itemValue="" itemLabel="-- Select --" />
+                                                <f:selectItem itemValue="M" itemLabel="Male" />
+                                                <f:selectItem itemValue="F" itemLabel="Female" />
+                                                <f:selectItem itemValue="Other" itemLabel="Other" />
+                                            </h:selectOneMenu>
+                                        </div>
+                                        <div>
+                                            <label>Phone</label>
+                                            <h:inputText value="#{managerBean.regPhone}" styleClass="form-control" />
+                                        </div>
+                                        <div>
+                                            <label>IC Number</label>
+                                            <h:inputText value="#{managerBean.regIc}" styleClass="form-control" />
+                                        </div>
+                                        <div>
+                                            <label>Specialty</label>
+                                            <h:inputText value="#{managerBean.regSpecialty}" styleClass="form-control" />
+                                        </div>
+                                        <div>
+                                            <label>Address</label>
+                                            <h:inputTextarea value="#{managerBean.regAddress}" styleClass="form-control" rows="3" />
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <p:commandButton value="Register Staff"
+                                                         icon="pi pi-user-plus"
+                                                         styleClass="btn-primary"
+                                                         action="#{managerBean.registerStaff()}"
+                                                         update=":mainForm :growl" />
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+
+                            <!-- ==================== TECHNICIANS SECTION ==================== -->
+                            <h:panelGroup rendered="#{managerBean.currentSection == 'technicians'}">
+                                <div class="search-bar">
+                                    <h:inputText value="#{managerBean.searchKeyword}" styleClass="form-control" placeholder="Search technicians..." />
+                                    <p:commandButton value="Search"
+                                                     icon="pi pi-search"
+                                                     styleClass="btn-primary"
+                                                     action="#{managerBean.searchStaff()}"
+                                                     update=":mainForm" />
+                                    <p:commandButton value="Clear"
+                                                     icon="pi pi-times"
+                                                     styleClass="btn-secondary"
+                                                     action="#{managerBean.clearSearch()}"
+                                                     update=":mainForm" />
+                                </div>
+
+                                <div class="panel">
+                                    <p:dataTable value="#{managerBean.technicians}" var="t"
+                                                 emptyMessage="No technicians found.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{t.id}" />
+                                        </p:column>
+                                        <p:column headerText="Name">
+                                            <h:outputText value="#{t.name}" />
+                                        </p:column>
+                                        <p:column headerText="Email">
+                                            <h:outputText value="#{t.email}" />
+                                        </p:column>
+                                        <p:column headerText="Phone">
+                                            <h:outputText value="#{t.phone}" />
+                                        </p:column>
+                                        <p:column headerText="Gender">
+                                            <h:outputText value="#{t.gender}" />
+                                        </p:column>
+                                        <p:column headerText="IC">
+                                            <h:outputText value="#{t.ic}" />
+                                        </p:column>
+                                        <p:column headerText="Specialty">
+                                            <h:outputText value="#{t.specialty}" />
+                                        </p:column>
+                                        <p:column headerText="Available">
+                                            <h:outputText value="Yes" rendered="#{t.available}" styleClass="badge-yes" />
+                                            <h:outputText value="No" rendered="#{!t.available}" styleClass="badge-no" />
+                                        </p:column>
+                                        <p:column headerText="Actions">
+                                            <p:commandButton value="Edit"
+                                                             icon="pi pi-pencil"
+                                                             styleClass="btn-edit"
+                                                             action="#{managerBean.loadEditTechnician(t.id)}"
+                                                             update=":mainForm" />
+                                            <p:commandButton value="Delete"
+                                                             icon="pi pi-trash"
+                                                             styleClass="btn-danger"
+                                                             action="#{managerBean.deleteTechnician(t.id)}"
+                                                             update=":mainForm :growl">
+                                                <p:confirm header="Confirm" message="Delete this technician?" icon="pi pi-exclamation-triangle" />
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+
+                                <!-- Edit Technician Panel -->
+                                <h:panelGroup rendered="#{managerBean.editingTechnician != null}">
+                                    <div class="edit-panel">
+                                        <h3>Edit Technician</h3>
+                                        <div class="form-grid">
+                                            <div>
+                                                <label>Name</label>
+                                                <h:inputText value="#{managerBean.editingTechnician.name}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Email</label>
+                                                <h:inputText value="#{managerBean.editingTechnician.email}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Phone</label>
+                                                <h:inputText value="#{managerBean.editingTechnician.phone}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Gender</label>
+                                                <h:selectOneMenu value="#{managerBean.editingTechnician.gender}" styleClass="form-control">
+                                                    <f:selectItem itemValue="M" itemLabel="Male" />
+                                                    <f:selectItem itemValue="F" itemLabel="Female" />
+                                                    <f:selectItem itemValue="Other" itemLabel="Other" />
+                                                </h:selectOneMenu>
+                                            </div>
+                                            <div>
+                                                <label>IC</label>
+                                                <h:inputText value="#{managerBean.editingTechnician.ic}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Specialty</label>
+                                                <h:inputText value="#{managerBean.editingTechnician.specialty}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Available</label>
+                                                <h:selectOneMenu value="#{managerBean.editingTechnician.available}" styleClass="form-control">
+                                                    <f:selectItem itemValue="true" itemLabel="Yes" />
+                                                    <f:selectItem itemValue="false" itemLabel="No" />
+                                                </h:selectOneMenu>
+                                            </div>
+                                            <div>
+                                                <label>Address</label>
+                                                <h:inputTextarea value="#{managerBean.editingTechnician.address}" styleClass="form-control" rows="3" />
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <p:commandButton value="Save Changes"
+                                                             icon="pi pi-check"
+                                                             styleClass="btn-success"
+                                                             action="#{managerBean.saveEditTechnician()}"
+                                                             update=":mainForm :growl" />
+                                            <p:commandButton value="Cancel"
+                                                             icon="pi pi-times"
+                                                             styleClass="btn-secondary"
+                                                             action="#{managerBean.setEditingTechnician(null)}"
+                                                             update=":mainForm"
+                                                             process="@this" />
+                                        </div>
+                                    </div>
+                                </h:panelGroup>
+                            </h:panelGroup>
+
+                            <!-- ==================== COUNTER STAFF SECTION ==================== -->
+                            <h:panelGroup rendered="#{managerBean.currentSection == 'counter-staff'}">
+                                <div class="search-bar">
+                                    <h:inputText value="#{managerBean.searchKeyword}" styleClass="form-control" pt:placeholder="Search counter staff..." />
+                                    <p:commandButton value="Search"
+                                                     icon="pi pi-search"
+                                                     styleClass="btn-primary"
+                                                     action="#{managerBean.searchStaff()}"
+                                                     update=":mainForm" />
+                                    <p:commandButton value="Clear"
+                                                     icon="pi pi-times"
+                                                     styleClass="btn-secondary"
+                                                     action="#{managerBean.clearSearch()}"
+                                                     update=":mainForm" />
+                                </div>
+
+                                <div class="panel">
+                                    <p:dataTable value="#{managerBean.counterStaffList}" var="cs"
+                                                 emptyMessage="No counter staff found.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{cs.id}" />
+                                        </p:column>
+                                        <p:column headerText="Name">
+                                            <h:outputText value="#{cs.name}" />
+                                        </p:column>
+                                        <p:column headerText="Email">
+                                            <h:outputText value="#{cs.email}" />
+                                        </p:column>
+                                        <p:column headerText="Phone">
+                                            <h:outputText value="#{cs.phone}" />
+                                        </p:column>
+                                        <p:column headerText="Gender">
+                                            <h:outputText value="#{cs.gender}" />
+                                        </p:column>
+                                        <p:column headerText="IC">
+                                            <h:outputText value="#{cs.ic}" />
+                                        </p:column>
+                                        <p:column headerText="Address">
+                                            <h:outputText value="#{cs.address}" />
+                                        </p:column>
+                                        <p:column headerText="Actions">
+                                            <p:commandButton value="Edit"
+                                                             icon="pi pi-pencil"
+                                                             styleClass="btn-edit"
+                                                             action="#{managerBean.loadEditCounterStaff(cs.id)}"
+                                                             update=":mainForm" />
+                                            <p:commandButton value="Delete"
+                                                             icon="pi pi-trash"
+                                                             styleClass="btn-danger"
+                                                             action="#{managerBean.deleteCounterStaff(cs.id)}"
+                                                             update=":mainForm :growl">
+                                                <p:confirm header="Confirm" message="Delete this counter staff?" icon="pi pi-exclamation-triangle" />
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+
+                                <!-- Edit Counter Staff Panel -->
+                                <h:panelGroup rendered="#{managerBean.editingCounterStaff != null}">
+                                    <div class="edit-panel">
+                                        <h3>Edit Counter Staff</h3>
+                                        <div class="form-grid">
+                                            <div>
+                                                <label>Name</label>
+                                                <h:inputText value="#{managerBean.editingCounterStaff.name}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Email</label>
+                                                <h:inputText value="#{managerBean.editingCounterStaff.email}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Phone</label>
+                                                <h:inputText value="#{managerBean.editingCounterStaff.phone}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Gender</label>
+                                                <h:selectOneMenu value="#{managerBean.editingCounterStaff.gender}" styleClass="form-control">
+                                                    <f:selectItem itemValue="M" itemLabel="Male" />
+                                                    <f:selectItem itemValue="F" itemLabel="Female" />
+                                                    <f:selectItem itemValue="Other" itemLabel="Other" />
+                                                </h:selectOneMenu>
+                                            </div>
+                                            <div>
+                                                <label>IC</label>
+                                                <h:inputText value="#{managerBean.editingCounterStaff.ic}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Address</label>
+                                                <h:inputTextarea value="#{managerBean.editingCounterStaff.address}" styleClass="form-control" rows="3" />
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <p:commandButton value="Save Changes"
+                                                             icon="pi pi-check"
+                                                             styleClass="btn-success"
+                                                             action="#{managerBean.saveEditCounterStaff()}"
+                                                             update=":mainForm :growl" />
+                                            <p:commandButton value="Cancel"
+                                                             icon="pi pi-times"
+                                                             styleClass="btn-secondary"
+                                                             action="#{managerBean.setEditingCounterStaff(null)}"
+                                                             update=":mainForm"
+                                                             process="@this" />
+                                        </div>
+                                    </div>
+                                </h:panelGroup>
+                            </h:panelGroup>
+
+                            <!-- ==================== MANAGERS SECTION ==================== -->
+                            <h:panelGroup rendered="#{managerBean.currentSection == 'managers'}">
+                                <div class="search-bar">
+                                    <h:inputText value="#{managerBean.searchKeyword}" styleClass="form-control" placeholder="Search managers..." />
+                                    <p:commandButton value="Search"
+                                                     icon="pi pi-search"
+                                                     styleClass="btn-primary"
+                                                     action="#{managerBean.searchStaff()}"
+                                                     update=":mainForm" />
+                                    <p:commandButton value="Clear"
+                                                     icon="pi pi-times"
+                                                     styleClass="btn-secondary"
+                                                     action="#{managerBean.clearSearch()}"
+                                                     update=":mainForm" />
+                                </div>
+
+                                <div class="panel">
+                                    <p:dataTable value="#{managerBean.managers}" var="m"
+                                                 emptyMessage="No managers found.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{m.id}" />
+                                        </p:column>
+                                        <p:column headerText="Name">
+                                            <h:outputText value="#{m.name}" />
+                                        </p:column>
+                                        <p:column headerText="Email">
+                                            <h:outputText value="#{m.email}" />
+                                        </p:column>
+                                        <p:column headerText="Phone">
+                                            <h:outputText value="#{m.phone}" />
+                                        </p:column>
+                                        <p:column headerText="Actions">
+                                            <p:commandButton value="Edit"
+                                                             icon="pi pi-pencil"
+                                                             styleClass="btn-edit"
+                                                             action="#{managerBean.loadEditManager(m.id)}"
+                                                             update=":mainForm" />
+                                            <p:commandButton value="Delete"
+                                                             icon="pi pi-trash"
+                                                             styleClass="btn-danger"
+                                                             action="#{managerBean.deleteManager(m.id)}"
+                                                             update=":mainForm :growl">
+                                                <p:confirm header="Confirm" message="Delete this manager?" icon="pi pi-exclamation-triangle" />
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+
+                                <!-- Edit Manager Panel -->
+                                <h:panelGroup rendered="#{managerBean.editingManager != null}">
+                                    <div class="edit-panel">
+                                        <h3>Edit Manager</h3>
+                                        <div class="form-grid">
+                                            <div>
+                                                <label>Name</label>
+                                                <h:inputText value="#{managerBean.editingManager.name}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Email</label>
+                                                <h:inputText value="#{managerBean.editingManager.email}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Phone</label>
+                                                <h:inputText value="#{managerBean.editingManager.phone}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Gender</label>
+                                                <h:selectOneMenu value="#{managerBean.editingManager.gender}" styleClass="form-control">
+                                                    <f:selectItem itemValue="M" itemLabel="Male" />
+                                                    <f:selectItem itemValue="F" itemLabel="Female" />
+                                                    <f:selectItem itemValue="Other" itemLabel="Other" />
+                                                </h:selectOneMenu>
+                                            </div>
+                                            <div>
+                                                <label>IC</label>
+                                                <h:inputText value="#{managerBean.editingManager.ic}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Address</label>
+                                                <h:inputTextarea value="#{managerBean.editingManager.address}" styleClass="form-control" rows="3" />
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <p:commandButton value="Save Changes"
+                                                             icon="pi pi-check"
+                                                             styleClass="btn-success"
+                                                             action="#{managerBean.saveEditManager()}"
+                                                             update=":mainForm :growl" />
+                                            <p:commandButton value="Cancel"
+                                                             icon="pi pi-times"
+                                                             styleClass="btn-secondary"
+                                                             action="#{managerBean.setEditingManager(null)}"
+                                                             update=":mainForm"
+                                                             process="@this" />
+                                        </div>
+                                    </div>
+                                </h:panelGroup>
+                            </h:panelGroup>
+
+                            <!-- ==================== CUSTOMERS SECTION ==================== -->
+                            <h:panelGroup rendered="#{managerBean.currentSection == 'customers'}">
+                                <div class="search-bar">
+                                    <h:inputText value="#{managerBean.searchKeyword}" styleClass="form-control" placeholder="Search customers..." />
+                                    <p:commandButton value="Search"
+                                                     icon="pi pi-search"
+                                                     styleClass="btn-primary"
+                                                     action="#{managerBean.searchStaff()}"
+                                                     update=":mainForm" />
+                                    <p:commandButton value="Clear"
+                                                     icon="pi pi-times"
+                                                     styleClass="btn-secondary"
+                                                     action="#{managerBean.clearSearch()}"
+                                                     update=":mainForm" />
+                                </div>
+
+                                <div class="panel">
+                                    <p:dataTable value="#{managerBean.customers}" var="c"
+                                                 emptyMessage="No customers found.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{c.id}" />
+                                        </p:column>
+                                        <p:column headerText="Name">
+                                            <h:outputText value="#{c.name}" />
+                                        </p:column>
+                                        <p:column headerText="Email">
+                                            <h:outputText value="#{c.email}" />
+                                        </p:column>
+                                        <p:column headerText="Phone">
+                                            <h:outputText value="#{c.phone}" />
+                                        </p:column>
+                                        <p:column headerText="Gender">
+                                            <h:outputText value="#{c.gender}" />
+                                        </p:column>
+                                        <p:column headerText="Actions">
+                                            <p:commandButton value="Edit"
+                                                             icon="pi pi-pencil"
+                                                             styleClass="btn-edit"
+                                                             action="#{managerBean.loadEditCustomer(c.id)}"
+                                                             update=":mainForm" />
+                                            <p:commandButton value="Delete"
+                                                             icon="pi pi-trash"
+                                                             styleClass="btn-danger"
+                                                             action="#{managerBean.deleteCustomer(c.id)}"
+                                                             update=":mainForm :growl">
+                                                <p:confirm header="Confirm" message="Delete this customer?" icon="pi pi-exclamation-triangle" />
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+
+                                <!-- Edit Customer Panel -->
+                                <h:panelGroup rendered="#{managerBean.editingCustomer != null}">
+                                    <div class="edit-panel">
+                                        <h3>Edit Customer</h3>
+                                        <div class="form-grid">
+                                            <div>
+                                                <label>Name</label>
+                                                <h:inputText value="#{managerBean.editingCustomer.name}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Email</label>
+                                                <h:inputText value="#{managerBean.editingCustomer.email}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Phone</label>
+                                                <h:inputText value="#{managerBean.editingCustomer.phone}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Gender</label>
+                                                <h:selectOneMenu value="#{managerBean.editingCustomer.gender}" styleClass="form-control">
+                                                    <f:selectItem itemValue="M" itemLabel="Male" />
+                                                    <f:selectItem itemValue="F" itemLabel="Female" />
+                                                    <f:selectItem itemValue="Other" itemLabel="Other" />
+                                                </h:selectOneMenu>
+                                            </div>
+                                            <div>
+                                                <label>IC</label>
+                                                <h:inputText value="#{managerBean.editingCustomer.ic}" styleClass="form-control" />
+                                            </div>
+                                            <div>
+                                                <label>Address</label>
+                                                <h:inputTextarea value="#{managerBean.editingCustomer.address}" styleClass="form-control" rows="3" />
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <p:commandButton value="Save Changes"
+                                                             icon="pi pi-check"
+                                                             styleClass="btn-success"
+                                                             action="#{managerBean.saveEditCustomer()}"
+                                                             update=":mainForm :growl" />
+                                            <p:commandButton value="Cancel"
+                                                             icon="pi pi-times"
+                                                             styleClass="btn-secondary"
+                                                             action="#{managerBean.setEditingCustomer(null)}"
+                                                             update=":mainForm"
+                                                             process="@this" />
+                                        </div>
+                                    </div>
+                                </h:panelGroup>
+                            </h:panelGroup>
+
+                            <!-- ==================== SERVICES & PRICING SECTION ==================== -->
+                            <h:panelGroup rendered="#{managerBean.currentSection == 'services'}">
+                                <div class="panel">
+                                    <h3>Add New Service</h3>
+                                    <div class="form-grid">
+                                        <div>
+                                            <label>Service Name</label>
+                                            <h:inputText value="#{managerBean.newServiceName}" styleClass="form-control" />
+                                        </div>
+                                        <div>
+                                            <label>Service Type</label>
+                                            <h:selectOneMenu value="#{managerBean.newServiceType}" styleClass="form-control">
+                                                <f:selectItem itemValue="" itemLabel="-- Select Type --" />
+                                                <f:selectItem itemValue="Normal" itemLabel="Normal" />
+                                                <f:selectItem itemValue="Major" itemLabel="Major" />
+                                            </h:selectOneMenu>
+                                        </div>
+                                        <div>
+                                            <label>Price (RM)</label>
+                                            <h:inputText value="#{managerBean.newServicePrice}" styleClass="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <p:commandButton value="Add Service"
+                                                         icon="pi pi-plus"
+                                                         styleClass="btn-primary"
+                                                         action="#{managerBean.createService()}"
+                                                         update=":mainForm :growl" />
+                                    </div>
+                                </div>
+
+                                <div class="panel">
+                                    <h3>All Services</h3>
+                                    <p:dataTable value="#{managerBean.services}" var="s"
+                                                 emptyMessage="No services found.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{s.id}" />
+                                        </p:column>
+                                        <p:column headerText="Service Name">
+                                            <h:outputText value="#{s.serviceName}" />
+                                        </p:column>
+                                        <p:column headerText="Type">
+                                            <h:outputText value="#{s.type}" />
+                                        </p:column>
+                                        <p:column headerText="Duration">
+                                            <h:outputText value="#{s.durationMinutes} min" />
+                                        </p:column>
+                                        <p:column headerText="Price (RM)">
+                                            <h:outputText value="#{s.basePrice}" />
+                                        </p:column>
+                                        <p:column headerText="Actions">
+                                            <p:commandButton value="Delete"
+                                                             icon="pi pi-trash"
+                                                             styleClass="btn-danger"
+                                                             action="#{managerBean.deleteService(s.id)}"
+                                                             update=":mainForm :growl">
+                                                <p:confirm header="Confirm" message="Delete this service?" icon="pi pi-exclamation-triangle" />
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </h:panelGroup>
+
+                            <!-- ==================== APPOINTMENTS SECTION ==================== -->
+                            <h:panelGroup rendered="#{managerBean.currentSection == 'appointments'}">
+                                <div class="panel">
+                                    <p:dataTable value="#{managerBean.appointments}" var="a"
+                                                 rows="10" paginator="true"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                                 emptyMessage="No appointments found.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{a.id}" />
+                                        </p:column>
+                                        <p:column headerText="Customer">
+                                            <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}" />
+                                        </p:column>
+                                        <p:column headerText="Technician">
+                                            <h:outputText value="#{a.technician != null ? a.technician.name : a.technicianId}" />
+                                        </p:column>
+                                        <p:column headerText="Service">
+                                            <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}" />
+                                        </p:column>
+                                        <p:column headerText="Date/Time">
+                                            <h:outputText value="#{a.appointmentDateTime}" />
+                                        </p:column>
+                                        <p:column headerText="Status">
+                                            <h:outputText value="#{a.status}"
+                                                          styleClass="#{a.status == 'Pending' ? 'badge-pending' : a.status == 'Completed' ? 'badge-completed' : a.status == 'InProgress' ? 'badge-progress' : a.status == 'Cancelled' ? 'badge-cancelled' : ''}" />
+                                        </p:column>
+                                        <p:column headerText="Amount (RM)">
+                                            <h:outputText value="#{a.paymentAmount}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </h:panelGroup>
+
+                            <!-- ==================== FEEDBACK & COMMENTS SECTION ==================== -->
+                            <h:panelGroup rendered="#{managerBean.currentSection == 'feedback'}">
+                                <div class="panel">
+                                    <h3>All Technician Feedback</h3>
+                                    <p:dataTable value="#{managerBean.allFeedback}" var="fb"
+                                                 emptyMessage="No feedback found.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{fb.id}" />
+                                        </p:column>
+                                        <p:column headerText="Appointment ID">
+                                            <h:outputText value="#{fb.appointmentId}" />
+                                        </p:column>
+                                        <p:column headerText="Technician ID">
+                                            <h:outputText value="#{fb.technicianId}" />
+                                        </p:column>
+                                        <p:column headerText="Feedback">
+                                            <h:outputText value="#{fb.feedbackText}" />
+                                        </p:column>
+                                        <p:column headerText="Created At">
+                                            <h:outputText value="#{fb.createdAt}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+
+                                <div class="panel">
+                                    <h3>All Customer Comments</h3>
+                                    <p:dataTable value="#{managerBean.allComments}" var="cm"
+                                                 emptyMessage="No comments found.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{cm.id}" />
+                                        </p:column>
+                                        <p:column headerText="Appointment ID">
+                                            <h:outputText value="#{cm.appointmentId}" />
+                                        </p:column>
+                                        <p:column headerText="Customer ID">
+                                            <h:outputText value="#{cm.customerId}" />
+                                        </p:column>
+                                        <p:column headerText="Comment">
+                                            <h:outputText value="#{cm.commentText}" />
+                                        </p:column>
+                                        <p:column headerText="Rating">
+                                            <h:outputText value="#{cm.rating}" />
+                                        </p:column>
+                                        <p:column headerText="Created At">
+                                            <h:outputText value="#{cm.createdAt}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </h:panelGroup>
+
+                            <!-- ==================== REPORTS SECTION ==================== -->
+                            <h:panelGroup rendered="#{managerBean.currentSection == 'reports'}">
+                                <div class="form-actions">
+                                    <p:commandButton value="Load Reports"
+                                                     icon="pi pi-refresh"
+                                                     styleClass="btn-primary"
+                                                     action="#{managerBean.loadReports()}"
+                                                     update=":mainForm :growl" />
+                                </div>
+
+                                <!-- Daily Revenue Card -->
+                                <div class="report-card">
+                                    <h3>Daily Revenue</h3>
+                                    <div class="report-value">RM #{managerBean.dailyRevenue}</div>
+                                </div>
+
+                                <!-- Key Stats Grid -->
+                                <div class="report-grid">
+                                    <div class="report-metric">
+                                        <h4>Total Services</h4>
+                                        <p>#{managerBean.totalServices}</p>
+                                    </div>
+                                    <div class="report-metric">
+                                        <h4>Total Technicians</h4>
+                                        <p>#{managerBean.totalTechnicians}</p>
+                                    </div>
+                                    <div class="report-metric">
+                                        <h4>Total Customers</h4>
+                                        <p>#{managerBean.totalCustomers}</p>
+                                    </div>
+                                    <div class="report-metric">
+                                        <h4>Pending Appointments</h4>
+                                        <p>#{managerBean.pendingAppointments}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Technician Workload Chart + Table -->
+                                <h:panelGroup rendered="#{managerBean.technicianWorkload != null and not empty managerBean.technicianWorkload}">
+                                    <div class="panel">
+                                        <h3>Technician Workload</h3>
+                                            <p:barChart model="#{managerBean.workloadChartModel}" rendered="#{managerBean.workloadChartModel != null}"/>                                        <p:dataTable value="#{managerBean.technicianWorkload.entrySet().toArray()}" var="entry"
+                                                     emptyMessage="No workload data.">
+                                            <p:column headerText="Technician">
+                                                <h:outputText value="#{entry.key}" />
+                                            </p:column>
+                                            <p:column headerText="Active Tasks">
+                                                <h:outputText value="#{entry.value}" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </h:panelGroup>
+
+                                <!-- Service Popularity Chart + Table -->
+                                <h:panelGroup rendered="#{managerBean.servicePopularity != null and not empty managerBean.servicePopularity}">
+                                    <div class="panel">
+                                        <h3>Service Popularity</h3>
+                                        <p:pieChart model="#{managerBean.popularityChartModel}" rendered="#{managerBean.popularityChartModel != null}"/>
+                                        <p:dataTable value="#{managerBean.servicePopularity.entrySet().toArray()}" var="entry"
+                                                     emptyMessage="No popularity data.">
+                                            <p:column headerText="Service">
+                                                <h:outputText value="#{entry.key}" />
+                                            </p:column>
+                                            <p:column headerText="Bookings">
+                                                <h:outputText value="#{entry.value}" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </h:panelGroup>
+
+                                <!-- Status Analytics Chart + Panel -->
+                                <h:panelGroup rendered="#{managerBean.statusAnalytics != null}">
+                                    <div class="panel">
+                                        <h3>Appointment Status Distribution</h3>
+                                        <p:pieChart model="#{managerBean.statusChartModel}" rendered="#{managerBean.statusChartModel != null}"/>
+                                    </div>
+                                    <div class="panel">
+                                        <h3>Status Analytics</h3>
+                                        <div class="report-grid">
+                                            <div class="report-metric">
+                                                <h4>Pending</h4>
+                                                <p>#{managerBean.statusAnalytics['pending']}</p>
+                                            </div>
+                                            <div class="report-metric">
+                                                <h4>In Progress</h4>
+                                                <p>#{managerBean.statusAnalytics['inProgress']}</p>
+                                            </div>
+                                            <div class="report-metric">
+                                                <h4>Completed</h4>
+                                                <p>#{managerBean.statusAnalytics['completed']}</p>
+                                            </div>
+                                            <div class="report-metric">
+                                                <h4>Cancelled</h4>
+                                                <p>#{managerBean.statusAnalytics['cancelled']}</p>
+                                            </div>
+                                            <div class="report-metric">
+                                                <h4>Total</h4>
+                                                <p>#{managerBean.statusAnalytics['total']}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </h:panelGroup>
+                            </h:panelGroup>
+
+                        </h:form>
+                    </h:panelGroup>
+                </div>
+            </div>
+
         </div>
 
-        <div style="display:flex;gap:15px;padding:20px 30px;flex-wrap:wrap;">
-            <div style="flex:1;min-width:140px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);text-align:center;">
-                <h3 style="margin:0;color:#667eea;">#{managerBean.totalServices}</h3><p style="margin:5px 0 0;color:#666;">Services</p>
-            </div>
-            <div style="flex:1;min-width:140px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);text-align:center;">
-                <h3 style="margin:0;color:#667eea;">#{managerBean.totalTechnicians}</h3><p style="margin:5px 0 0;color:#666;">Technicians</p>
-            </div>
-            <div style="flex:1;min-width:140px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);text-align:center;">
-                <h3 style="margin:0;color:#667eea;">#{managerBean.totalCounterStaff}</h3><p style="margin:5px 0 0;color:#666;">Counter Staff</p>
-            </div>
-            <div style="flex:1;min-width:140px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);text-align:center;">
-                <h3 style="margin:0;color:#667eea;">#{managerBean.totalCustomers}</h3><p style="margin:5px 0 0;color:#666;">Customers</p>
-            </div>
-            <div style="flex:1;min-width:140px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);text-align:center;">
-                <h3 style="margin:0;color:#e74c3c;">#{managerBean.pendingAppointments}</h3><p style="margin:5px 0 0;color:#666;">Pending Appts</p>
-            </div>
-        </div>
-
-        <div style="padding:0 30px 30px;">
-            <h:form id="mainForm">
-                <p:messages id="msgs" showDetail="true" closable="true" style="margin-bottom:15px;"/>
-                <p:tabView>
-                    <p:tab title="Register Staff">
-                        <h3>Register New Staff</h3>
-                        <p:panelGrid columns="2" style="margin-top:10px;width:100%;">
-                            <p:outputLabel value="User Type:" />
-                            <p:selectOneMenu value="#{managerBean.regUserType}" style="width:100%;">
-                                <f:selectItem itemLabel="Technician" itemValue="Technician"/>
-                                <f:selectItem itemLabel="Counter Staff" itemValue="CounterStaff"/>
-                                <f:selectItem itemLabel="Manager" itemValue="Manager"/>
-                            </p:selectOneMenu>
-                            <p:outputLabel value="Name:" />
-                            <p:inputText value="#{managerBean.regName}" required="true" requiredMessage="Name is required" style="width:100%;"/>
-                            <p:outputLabel value="Email:" />
-                            <p:inputText value="#{managerBean.regEmail}" required="true" requiredMessage="Email is required" style="width:100%;"/>
-                            <p:outputLabel value="Password:" />
-                            <p:password value="#{managerBean.regPassword}" required="true" requiredMessage="Password is required" style="width:100%;"/>
-                            <p:outputLabel value="Gender:" />
-                            <p:selectOneMenu value="#{managerBean.regGender}" style="width:100%;">
-                                <f:selectItem itemLabel="-- Select --" itemValue="" />
-                                <f:selectItem itemLabel="Male" itemValue="M"/>
-                                <f:selectItem itemLabel="Female" itemValue="F"/>
-                                <f:selectItem itemLabel="Other" itemValue="Other"/>
-                            </p:selectOneMenu>
-                            <p:outputLabel value="Phone:" />
-                            <p:inputText value="#{managerBean.regPhone}" style="width:100%;"/>
-                            <p:outputLabel value="IC:" />
-                            <p:inputText value="#{managerBean.regIc}" style="width:100%;"/>
-                            <p:outputLabel value="Address:" />
-                            <p:inputTextarea value="#{managerBean.regAddress}" rows="2" style="width:100%;"/>
-                            <p:outputLabel value="Specialty (Technician only):" />
-                            <p:inputText value="#{managerBean.regSpecialty}" style="width:100%;"/>
-                        </p:panelGrid>
-                        <p:commandButton value="Register Staff" action="#{managerBean.registerStaff()}" update="mainForm" style="margin-top:10px;"/>
-                    </p:tab>
-
-                    <p:tab title="Technicians">
-                        <div style="margin-bottom:10px;display:flex;gap:10px;">
-                            <p:inputText value="#{managerBean.searchKeyword}" placeholder="Search by name/email/specialty..." style="flex:1;"/>
-                            <p:commandButton value="Search" action="#{managerBean.searchStaff()}" update="mainForm"/>
-                            <p:commandButton value="Clear" action="#{managerBean.clearSearch()}" update="mainForm"/>
-                        </div>
-                        <p:dataTable value="#{managerBean.technicians}" var="t" paginator="true" rows="10" emptyMessage="No technicians found.">
-                            <p:column headerText="ID"><h:outputText value="#{t.id}"/></p:column>
-                            <p:column headerText="Name"><h:outputText value="#{t.name}"/></p:column>
-                            <p:column headerText="Email"><h:outputText value="#{t.email}"/></p:column>
-                            <p:column headerText="Phone"><h:outputText value="#{t.phone}"/></p:column>
-                            <p:column headerText="Gender"><h:outputText value="#{t.gender}"/></p:column>
-                            <p:column headerText="IC"><h:outputText value="#{t.ic}"/></p:column>
-                            <p:column headerText="Specialty"><h:outputText value="#{t.specialty}"/></p:column>
-                            <p:column headerText="Available"><h:outputText value="#{t.available ? 'Yes' : 'No'}"/></p:column>
-                            <p:column headerText="Actions">
-                                <p:commandButton value="Edit" action="#{managerBean.loadEditTechnician(t.id)}" update="mainForm" style="margin-right:5px;"/>
-                                <p:commandButton value="Delete" action="#{managerBean.deleteTechnician(t.id)}" update="mainForm" style="background:#e74c3c;color:#fff;border:none;"/>
-                            </p:column>
-                        </p:dataTable>
-                        <p:panel header="Edit Technician" rendered="#{managerBean.editingTechnician != null}" style="margin-top:15px;background:#f0f4ff;border:1px solid #667eea;">
-                            <p:panelGrid columns="2" style="width:100%;">
-                                <p:outputLabel value="Name:" /><p:inputText value="#{managerBean.editingTechnician.name}" style="width:100%;"/>
-                                <p:outputLabel value="Email:" /><p:inputText value="#{managerBean.editingTechnician.email}" style="width:100%;"/>
-                                <p:outputLabel value="Phone:" /><p:inputText value="#{managerBean.editingTechnician.phone}" style="width:100%;"/>
-                                <p:outputLabel value="IC:" /><p:inputText value="#{managerBean.editingTechnician.ic}" style="width:100%;"/>
-                                <p:outputLabel value="Address:" /><p:inputTextarea value="#{managerBean.editingTechnician.address}" rows="2" style="width:100%;"/>
-                                <p:outputLabel value="Specialty:" /><p:inputText value="#{managerBean.editingTechnician.specialty}" style="width:100%;"/>
-                                <p:outputLabel value="Available:" />
-                                <p:selectOneMenu value="#{managerBean.editingTechnician.available}" style="width:100%;">
-                                    <f:selectItem itemLabel="Yes" itemValue="true"/>
-                                    <f:selectItem itemLabel="No" itemValue="false"/>
-                                </p:selectOneMenu>
-                            </p:panelGrid>
-                            <p:commandButton value="Save Changes" action="#{managerBean.saveEditTechnician()}" update="mainForm" style="margin-top:10px;background:#27ae60;color:#fff;border:none;"/>
-                        </p:panel>
-                    </p:tab>
-
-                    <p:tab title="Counter Staff">
-                        <div style="margin-bottom:10px;display:flex;gap:10px;">
-                            <p:inputText value="#{managerBean.searchKeyword}" placeholder="Search by name/email..." style="flex:1;"/>
-                            <p:commandButton value="Search" action="#{managerBean.searchStaff()}" update="mainForm"/>
-                            <p:commandButton value="Clear" action="#{managerBean.clearSearch()}" update="mainForm"/>
-                        </div>
-                        <p:dataTable value="#{managerBean.counterStaffList}" var="cs" paginator="true" rows="10" emptyMessage="No counter staff found.">
-                            <p:column headerText="ID"><h:outputText value="#{cs.id}"/></p:column>
-                            <p:column headerText="Name"><h:outputText value="#{cs.name}"/></p:column>
-                            <p:column headerText="Email"><h:outputText value="#{cs.email}"/></p:column>
-                            <p:column headerText="Phone"><h:outputText value="#{cs.phone}"/></p:column>
-                            <p:column headerText="Gender"><h:outputText value="#{cs.gender}"/></p:column>
-                            <p:column headerText="IC"><h:outputText value="#{cs.ic}"/></p:column>
-                            <p:column headerText="Address"><h:outputText value="#{cs.address}"/></p:column>
-                            <p:column headerText="Actions">
-                                <p:commandButton value="Edit" action="#{managerBean.loadEditCounterStaff(cs.id)}" update="mainForm" style="margin-right:5px;"/>
-                                <p:commandButton value="Delete" action="#{managerBean.deleteCounterStaff(cs.id)}" update="mainForm" style="background:#e74c3c;color:#fff;border:none;"/>
-                            </p:column>
-                        </p:dataTable>
-                        <p:panel header="Edit Counter Staff" rendered="#{managerBean.editingCounterStaff != null}" style="margin-top:15px;background:#f0f4ff;border:1px solid #667eea;">
-                            <p:panelGrid columns="2" style="width:100%;">
-                                <p:outputLabel value="Name:" /><p:inputText value="#{managerBean.editingCounterStaff.name}" style="width:100%;"/>
-                                <p:outputLabel value="Email:" /><p:inputText value="#{managerBean.editingCounterStaff.email}" style="width:100%;"/>
-                                <p:outputLabel value="Phone:" /><p:inputText value="#{managerBean.editingCounterStaff.phone}" style="width:100%;"/>
-                                <p:outputLabel value="IC:" /><p:inputText value="#{managerBean.editingCounterStaff.ic}" style="width:100%;"/>
-                                <p:outputLabel value="Address:" /><p:inputTextarea value="#{managerBean.editingCounterStaff.address}" rows="2" style="width:100%;"/>
-                            </p:panelGrid>
-                            <p:commandButton value="Save Changes" action="#{managerBean.saveEditCounterStaff()}" update="mainForm" style="margin-top:10px;background:#27ae60;color:#fff;border:none;"/>
-                        </p:panel>
-                    </p:tab>
-
-                    <p:tab title="Managers">
-                        <div style="margin-bottom:10px;display:flex;gap:10px;">
-                            <p:inputText value="#{managerBean.searchKeyword}" placeholder="Search by name/email..." style="flex:1;"/>
-                            <p:commandButton value="Search" action="#{managerBean.searchStaff()}" update="mainForm"/>
-                            <p:commandButton value="Clear" action="#{managerBean.clearSearch()}" update="mainForm"/>
-                        </div>
-                        <p:dataTable value="#{managerBean.managers}" var="m" paginator="true" rows="10" emptyMessage="No managers found.">
-                            <p:column headerText="ID"><h:outputText value="#{m.id}"/></p:column>
-                            <p:column headerText="Name"><h:outputText value="#{m.name}"/></p:column>
-                            <p:column headerText="Email"><h:outputText value="#{m.email}"/></p:column>
-                            <p:column headerText="Phone"><h:outputText value="#{m.phone}"/></p:column>
-                            <p:column headerText="Actions">
-                                <p:commandButton value="Edit" action="#{managerBean.loadEditManager(m.id)}" update="mainForm" style="margin-right:5px;"/>
-                                <p:commandButton value="Delete" action="#{managerBean.deleteManager(m.id)}" update="mainForm" style="background:#e74c3c;color:#fff;border:none;"/>
-                            </p:column>
-                        </p:dataTable>
-                        <p:panel header="Edit Manager" rendered="#{managerBean.editingManager != null}" style="margin-top:15px;background:#f0f4ff;border:1px solid #667eea;">
-                            <p:panelGrid columns="2" style="width:100%;">
-                                <p:outputLabel value="Name:" /><p:inputText value="#{managerBean.editingManager.name}" style="width:100%;"/>
-                                <p:outputLabel value="Email:" /><p:inputText value="#{managerBean.editingManager.email}" style="width:100%;"/>
-                                <p:outputLabel value="Phone:" /><p:inputText value="#{managerBean.editingManager.phone}" style="width:100%;"/>
-                                <p:outputLabel value="IC:" /><p:inputText value="#{managerBean.editingManager.ic}" style="width:100%;"/>
-                                <p:outputLabel value="Address:" /><p:inputTextarea value="#{managerBean.editingManager.address}" rows="2" style="width:100%;"/>
-                            </p:panelGrid>
-                            <p:commandButton value="Save Changes" action="#{managerBean.saveEditManager()}" update="mainForm" style="margin-top:10px;background:#27ae60;color:#fff;border:none;"/>
-                        </p:panel>
-                    </p:tab>
-
-                    <p:tab title="Customers">
-                        <div style="margin-bottom:10px;display:flex;gap:10px;">
-                            <p:inputText value="#{managerBean.searchKeyword}" placeholder="Search by name/email..." style="flex:1;"/>
-                            <p:commandButton value="Search" action="#{managerBean.searchStaff()}" update="mainForm"/>
-                            <p:commandButton value="Clear" action="#{managerBean.clearSearch()}" update="mainForm"/>
-                        </div>
-                        <p:dataTable value="#{managerBean.customers}" var="c" paginator="true" rows="10" emptyMessage="No customers found.">
-                            <p:column headerText="ID"><h:outputText value="#{c.id}"/></p:column>
-                            <p:column headerText="Name"><h:outputText value="#{c.name}"/></p:column>
-                            <p:column headerText="Email"><h:outputText value="#{c.email}"/></p:column>
-                            <p:column headerText="Phone"><h:outputText value="#{c.phone}"/></p:column>
-                            <p:column headerText="Gender"><h:outputText value="#{c.gender}"/></p:column>
-                            <p:column headerText="Actions">
-                                <p:commandButton value="Edit" action="#{managerBean.loadEditCustomer(c.id)}" update="mainForm" style="margin-right:5px;"/>
-                                <p:commandButton value="Delete" action="#{managerBean.deleteCustomer(c.id)}" update="mainForm" style="background:#e74c3c;color:#fff;border:none;"/>
-                            </p:column>
-                        </p:dataTable>
-                        <p:panel header="Edit Customer" rendered="#{managerBean.editingCustomer != null}" style="margin-top:15px;background:#f0f4ff;border:1px solid #667eea;">
-                            <p:panelGrid columns="2" style="width:100%;">
-                                <p:outputLabel value="Name:" /><p:inputText value="#{managerBean.editingCustomer.name}" style="width:100%;"/>
-                                <p:outputLabel value="Email:" /><p:inputText value="#{managerBean.editingCustomer.email}" style="width:100%;"/>
-                                <p:outputLabel value="Phone:" /><p:inputText value="#{managerBean.editingCustomer.phone}" style="width:100%;"/>
-                                <p:outputLabel value="IC:" /><p:inputText value="#{managerBean.editingCustomer.ic}" style="width:100%;"/>
-                                <p:outputLabel value="Address:" /><p:inputTextarea value="#{managerBean.editingCustomer.address}" rows="2" style="width:100%;"/>
-                            </p:panelGrid>
-                            <p:commandButton value="Save Changes" action="#{managerBean.saveEditCustomer()}" update="mainForm" style="margin-top:10px;background:#27ae60;color:#fff;border:none;"/>
-                        </p:panel>
-                    </p:tab>
-
-                    <p:tab title="Services">
-                        <h3>Add New Service / Set Prices</h3>
-                        <p:panelGrid columns="2" style="margin-bottom:15px;width:100%;">
-                            <p:outputLabel value="Service Name:" />
-                            <p:inputText value="#{managerBean.newServiceName}" style="width:100%;"/>
-                            <p:outputLabel value="Type:" />
-                            <p:selectOneMenu value="#{managerBean.newServiceType}" style="width:100%;">
-                                <f:selectItem itemLabel="Normal (1 Hour)" itemValue="Normal"/>
-                                <f:selectItem itemLabel="Major (3 Hours)" itemValue="Major"/>
-                            </p:selectOneMenu>
-                            <p:outputLabel value="Price (RM):" />
-                            <p:inputText value="#{managerBean.newServicePrice}" style="width:100%;"/>
-                        </p:panelGrid>
-                        <p:commandButton value="Add Service" action="#{managerBean.createService()}" update="mainForm" style="margin-bottom:15px;"/>
-                        <p:dataTable value="#{managerBean.services}" var="s" paginator="true" rows="10" emptyMessage="No services.">
-                            <p:column headerText="ID"><h:outputText value="#{s.id}"/></p:column>
-                            <p:column headerText="Name"><h:outputText value="#{s.serviceName}"/></p:column>
-                            <p:column headerText="Type"><h:outputText value="#{s.type}"/></p:column>
-                            <p:column headerText="Duration"><h:outputText value="#{s.durationMinutes} min"/></p:column>
-                            <p:column headerText="Price (RM)"><h:outputText value="#{s.basePrice}"/></p:column>
-                            <p:column headerText="Actions">
-                                <p:commandButton value="Delete" action="#{managerBean.deleteService(s.id)}" update="mainForm" style="background:#e74c3c;color:#fff;border:none;"/>
-                            </p:column>
-                        </p:dataTable>
-                    </p:tab>
-
-                    <p:tab title="Feedback &amp; Comments">
-                        <h3>All Technician Feedback</h3>
-                        <p:dataTable value="#{managerBean.allFeedback}" var="fb" paginator="true" rows="10" emptyMessage="No feedback yet.">
-                            <p:column headerText="ID"><h:outputText value="#{fb.id}"/></p:column>
-                            <p:column headerText="Appointment"><h:outputText value="#{fb.appointmentId}"/></p:column>
-                            <p:column headerText="Technician"><h:outputText value="#{fb.technicianId}"/></p:column>
-                            <p:column headerText="Feedback"><h:outputText value="#{fb.feedbackText}"/></p:column>
-                            <p:column headerText="Date"><h:outputText value="#{fb.createdAt}"/></p:column>
-                        </p:dataTable>
-                        <h3 style="margin-top:20px;">All Customer Comments</h3>
-                        <p:dataTable value="#{managerBean.allComments}" var="cm" paginator="true" rows="10" emptyMessage="No comments yet.">
-                            <p:column headerText="ID"><h:outputText value="#{cm.id}"/></p:column>
-                            <p:column headerText="Appointment"><h:outputText value="#{cm.appointmentId}"/></p:column>
-                            <p:column headerText="Customer"><h:outputText value="#{cm.customerId}"/></p:column>
-                            <p:column headerText="Comment"><h:outputText value="#{cm.commentText}"/></p:column>
-                            <p:column headerText="Rating"><h:outputText value="#{cm.rating}"/></p:column>
-                            <p:column headerText="Date"><h:outputText value="#{cm.createdAt}"/></p:column>
-                        </p:dataTable>
-                    </p:tab>
-
-                    <p:tab title="Reports">
-                        <p:commandButton value="Generate Reports" action="#{managerBean.loadReports()}" update="mainForm" style="margin-bottom:15px;"/>
-                        <div style="background:#e8f5e9;padding:20px;border-radius:8px;margin-bottom:15px;">
-                            <h4 style="margin:0;">Daily Revenue</h4>
-                            <p style="font-size:24px;font-weight:bold;margin:10px 0 0;">RM #{managerBean.dailyRevenue}</p>
-                        </div>
-                        <h4>Technician Workload</h4>
-                        <p:dataTable value="#{managerBean.technicianWorkload}" var="entry" emptyMessage="No data - click Generate Reports." rendered="#{managerBean.technicianWorkload != null and not empty managerBean.technicianWorkload}">
-                            <p:column headerText="Technician"><h:outputText value="#{entry.key}"/></p:column>
-                            <p:column headerText="Active Tasks"><h:outputText value="#{entry.value}"/></p:column>
-                        </p:dataTable>
-                        <h4 style="margin-top:15px;">Service Popularity</h4>
-                        <p:dataTable value="#{managerBean.servicePopularity}" var="entry" emptyMessage="No data." rendered="#{managerBean.servicePopularity != null and not empty managerBean.servicePopularity}">
-                            <p:column headerText="Service"><h:outputText value="#{entry.key}"/></p:column>
-                            <p:column headerText="Bookings"><h:outputText value="#{entry.value}"/></p:column>
-                        </p:dataTable>
-                        <h4 style="margin-top:15px;">Status Analytics</h4>
-                        <p:panelGrid columns="2" rendered="#{managerBean.statusAnalytics != null}" style="margin-top:5px;">
-                            <h:outputText value="Pending:" /><h:outputText value="#{managerBean.statusAnalytics['pending']}"/>
-                            <h:outputText value="In Progress:" /><h:outputText value="#{managerBean.statusAnalytics['inProgress']}"/>
-                            <h:outputText value="Completed:" /><h:outputText value="#{managerBean.statusAnalytics['completed']}"/>
-                            <h:outputText value="Cancelled:" /><h:outputText value="#{managerBean.statusAnalytics['cancelled']}"/>
-                            <h:outputText value="Total:" /><h:outputText value="#{managerBean.statusAnalytics['total']}"/>
-                        </p:panelGrid>
-                    </p:tab>
-
-                    <p:tab title="Appointments">
-                        <p:dataTable value="#{managerBean.appointments}" var="a" paginator="true" rows="10" emptyMessage="No appointments.">
-                            <p:column headerText="ID"><h:outputText value="#{a.id}"/></p:column>
-                            <p:column headerText="Customer"><h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/></p:column>
-                            <p:column headerText="Technician"><h:outputText value="#{a.technician != null ? a.technician.name : a.technicianId}"/></p:column>
-                            <p:column headerText="Service"><h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/></p:column>
-                            <p:column headerText="Date/Time"><h:outputText value="#{a.appointmentDateTime}"/></p:column>
-                            <p:column headerText="Status"><h:outputText value="#{a.status}"/></p:column>
-                            <p:column headerText="Amount (RM)"><h:outputText value="#{a.paymentAmount}"/></p:column>
-                        </p:dataTable>
-                    </p:tab>
-                </p:tabView>
-            </h:form>
-        </div>
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <p:commandButton value="Yes" type="button" styleClass="btn-danger ui-confirmdialog-yes" icon="pi pi-check" />
+            <p:commandButton value="No" type="button" styleClass="btn-secondary ui-confirmdialog-no" icon="pi pi-times" />
+        </p:confirmDialog>
     </h:body>
 </html>

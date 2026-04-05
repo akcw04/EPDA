@@ -9,34 +9,39 @@
         <h:outputStylesheet library="css" name="style.css"/>
     </h:head>
     <h:body>
-        <div class="login-container">
-            <h:form id="loginForm">
-                <p:panel header="APU Automotive Service Centre - Login" styleClass="login-panel">
-                    <p:messages id="messages" showDetail="true" closable="true"/>
+        <div class="login-page">
+            <div class="login-card">
+                <h:form id="loginForm">
+                    <h2>APU Automotive Service Centre</h2>
+                    <p class="subtitle">Enterprise Service Management System</p>
 
-                    <p:panelGrid columns="2" layout="grid"
-                                 columnClasses="ui-grid-col-4, ui-grid-col-8"
-                                 style="margin-top:15px;">
+                    <p:messages id="msgs" showDetail="true" closable="true"/>
 
-                        <p:outputLabel for="email" value="Email:"/>
+                    <div class="field">
+                        <label for="loginForm:email">Email</label>
                         <p:inputText id="email" value="#{loginBean.email}"
                                      required="true" requiredMessage="Email is required"
                                      placeholder="Enter your email"/>
+                    </div>
 
-                        <p:outputLabel for="password" value="Password:"/>
+                    <div class="field">
+                        <label for="loginForm:password">Password</label>
                         <p:password id="password" value="#{loginBean.password}"
                                     required="true" requiredMessage="Password is required"
                                     placeholder="Enter your password"/>
-                    </p:panelGrid>
+                    </div>
 
-                    <p:commandButton value="Login" action="#{loginBean.login}"
-                                     update="messages" style="margin-top:15px; width:100%;"/>
-                </p:panel>
-            </h:form>
+                    <p:commandButton value="Sign In" action="#{loginBean.login}"
+                                     update="loginForm" styleClass="login-btn"/>
+                </h:form>
 
-            <div class="login-info">
-                <p><strong>Pre-registered Manager Account:</strong></p>
-                <p>Email: admin@asc.com | Password: admin123</p>
+                <div class="login-footer">
+                    <p><strong>Test Credentials</strong></p>
+                    <p>Manager: admin@asc.com / admin123</p>
+                    <p>Counter Staff: staff@asc.com / staff123</p>
+                    <p>Technician: ali@asc.com / tech123</p>
+                    <p>Customer: david@cust.com / cust123</p>
+                </div>
             </div>
         </div>
     </h:body>

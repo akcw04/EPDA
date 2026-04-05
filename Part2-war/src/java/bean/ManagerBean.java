@@ -12,6 +12,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.primefaces.model.charts.bar.BarChartModel;
+import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.pie.PieChartModel;
+import org.primefaces.model.charts.pie.PieChartDataSet;
+import org.primefaces.model.charts.optionconfig.title.Title;
+import org.primefaces.model.charts.axes.cartesian.CartesianScales;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
+import org.primefaces.model.charts.bar.BarChartOptions;
+import org.primefaces.model.charts.pie.PieChartOptions;
 
 /**
  * Manager Dashboard Bean.
@@ -35,6 +45,9 @@ public class ManagerBean implements Serializable {
     private AppointmentCommentFacade commentFacade;
     @Inject
     private LoginBean loginBean;
+
+    // Sidebar navigation
+    private String currentSection = "overview";
 
     // Dashboard statistics
     private int totalServices;
@@ -78,6 +91,11 @@ public class ManagerBean implements Serializable {
     private Map<String, Integer> servicePopularity;
     private List<Map<String, Object>> customerFeedback;
     private Map<String, Object> statusAnalytics;
+
+    // Chart models
+    private BarChartModel workloadChartModel;
+    private PieChartModel statusChartModel;
+    private BarChartModel popularityChartModel;
 
     public void init() {
         loadDashboardData();
@@ -322,9 +340,119 @@ public class ManagerBean implements Serializable {
             servicePopularity = appointmentFacade.getServicePopularity();
             customerFeedback = appointmentFacade.getCustomerFeedback();
             statusAnalytics = appointmentFacade.getStatusAnalytics();
+            buildWorkloadChart();
+            buildStatusChart();
+            buildPopularityChart();
         } catch (Exception e) {
             addError("Error loading reports: " + e.getMessage());
         }
+    }
+
+    // ========== CHART BUILDERS ==========
+
+    private void buildWorkloadChart() {
+        workloadChartModel = new BarChartModel();
+        ChartData data = new ChartData();
+        BarChartDataSet dataSet = new BarChartDataSet();
+        dataSet.setLabel("Active Tasks");
+        dataSet.setBackgroundColor("rgba(67, 97, 238, 0.7)");
+        dataSet.setBorderColor("rgb(67, 97, 238)");
+        dataSet.setBorderWidth(1);
+
+        List<Number> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+
+        if (technicianWorkload != null) {
+            for (Map.Entry<String, Integer> entry : technicianWorkload.entrySet()) {
+                labels.add(entry.getKey());
+                values.add(entry.getValue());
+            }
+        }
+
+        dataSet.setData(values);
+        data.addChartDataSet(dataSet);
+        data.setLabels(labels);
+        workloadChartModel.setData(data);
+
+        BarChartOptions options = new BarChartOptions();
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Technician Workload");
+        options.setTitle(title);
+        workloadChartModel.setOptions(options);
+    }
+
+    private void buildStatusChart() {
+        statusChartModel = new PieChartModel();
+        ChartData data = new ChartData();
+        PieChartDataSet dataSet = new PieChartDataSet();
+
+        List<Number> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        List<String> colors = new ArrayList<>();
+
+        if (statusAnalytics != null) {
+            Object pending = statusAnalytics.get("pending");
+            Object inProgress = statusAnalytics.get("inProgress");
+            Object completed = statusAnalytics.get("completed");
+            Object cancelled = statusAnalytics.get("cancelled");
+
+            if (pending != null) { labels.add("Pending"); values.add((Number) pending); colors.add("rgb(245, 158, 11)"); }
+            if (inProgress != null) { labels.add("In Progress"); values.add((Number) inProgress); colors.add("rgb(59, 130, 246)"); }
+            if (completed != null) { labels.add("Completed"); values.add((Number) completed); colors.add("rgb(16, 185, 129)"); }
+            if (cancelled != null) { labels.add("Cancelled"); values.add((Number) cancelled); colors.add("rgb(239, 68, 68)"); }
+        }
+
+        dataSet.setData(values);
+        dataSet.setBackgroundColor(colors);
+        data.addChartDataSet(dataSet);
+        data.setLabels(labels);
+        statusChartModel.setData(data);
+
+        PieChartOptions options = new PieChartOptions();
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Appointment Status Distribution");
+        options.setTitle(title);
+        statusChartModel.setOptions(options);
+    }
+
+    private void buildPopularityChart() {
+        popularityChartModel = new BarChartModel();
+        ChartData data = new ChartData();
+        BarChartDataSet dataSet = new BarChartDataSet();
+        dataSet.setLabel("Bookings");
+        dataSet.setBackgroundColor("rgba(16, 185, 129, 0.7)");
+        dataSet.setBorderColor("rgb(16, 185, 129)");
+        dataSet.setBorderWidth(1);
+
+        List<Number> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+
+        if (servicePopularity != null) {
+            for (Map.Entry<String, Integer> entry : servicePopularity.entrySet()) {
+                labels.add(entry.getKey());
+                values.add(entry.getValue());
+            }
+        }
+
+        dataSet.setData(values);
+        data.addChartDataSet(dataSet);
+        data.setLabels(labels);
+        popularityChartModel.setData(data);
+
+        BarChartOptions options = new BarChartOptions();
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Service Popularity");
+        options.setTitle(title);
+        popularityChartModel.setOptions(options);
+    }
+
+    // ========== SIDEBAR NAVIGATION ==========
+
+    public void navigateTo(String section) {
+        this.currentSection = section;
     }
 
     // ========== HELPERS ==========
@@ -391,6 +519,10 @@ public class ManagerBean implements Serializable {
     public List<Map<String, Object>> getCustomerFeedback() { return customerFeedback; }
     public Map<String, Object> getStatusAnalytics() { return statusAnalytics; }
 
+    public BarChartModel getWorkloadChartModel() { return workloadChartModel; }
+    public PieChartModel getStatusChartModel() { return statusChartModel; }
+    public BarChartModel getPopularityChartModel() { return popularityChartModel; }
+
     public Technician getEditingTechnician() { return editingTechnician; }
     public void setEditingTechnician(Technician editingTechnician) { this.editingTechnician = editingTechnician; }
 
@@ -402,4 +534,7 @@ public class ManagerBean implements Serializable {
 
     public Customer getEditingCustomer() { return editingCustomer; }
     public void setEditingCustomer(Customer editingCustomer) { this.editingCustomer = editingCustomer; }
+
+    public String getCurrentSection() { return currentSection; }
+    public void setCurrentSection(String currentSection) { this.currentSection = currentSection; }
 }

@@ -35,6 +35,9 @@ public class CounterStaffBean implements Serializable {
     @Inject
     private LoginBean loginBean;
 
+    // Sidebar navigation
+    private String currentSection = "overview";
+
     // Dashboard statistics
     private int totalCustomers, totalServices, todayAppointments, pendingBookings;
 
@@ -280,6 +283,12 @@ public class CounterStaffBean implements Serializable {
         }
     }
 
+    // ========== SIDEBAR NAVIGATION ==========
+
+    public void navigateTo(String section) {
+        this.currentSection = section;
+    }
+
     // ========== HELPERS ==========
 
     private void addError(String msg) {
@@ -357,4 +366,7 @@ public class CounterStaffBean implements Serializable {
 
     public Customer getEditingCustomer() { return editingCustomer; }
     public void setEditingCustomer(Customer editingCustomer) { this.editingCustomer = editingCustomer; }
+
+    public String getCurrentSection() { return currentSection; }
+    public void setCurrentSection(String currentSection) { this.currentSection = currentSection; }
 }
