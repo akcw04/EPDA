@@ -12,7 +12,7 @@
 
     <h:head>
         <title>Manager Dashboard - APU Automotive Service Centre</title>
-        <h:outputStylesheet library="css" name="style.css" />
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/style.css?v=1.1" />
     </h:head>
 
     <h:body>
@@ -226,7 +226,7 @@
                             <!-- ==================== TECHNICIANS SECTION ==================== -->
                             <h:panelGroup rendered="#{managerBean.currentSection == 'technicians'}">
                                 <div class="search-bar">
-                                    <h:inputText value="#{managerBean.searchKeyword}" styleClass="form-control" placeholder="Search technicians..." />
+                                    <h:inputText value="#{managerBean.searchKeyword}" styleClass="form-control"/>
                                     <p:commandButton value="Search"
                                                      icon="pi pi-search"
                                                      styleClass="btn-primary"
@@ -457,7 +457,7 @@
                             <!-- ==================== MANAGERS SECTION ==================== -->
                             <h:panelGroup rendered="#{managerBean.currentSection == 'managers'}">
                                 <div class="search-bar">
-                                    <h:inputText value="#{managerBean.searchKeyword}" styleClass="form-control" placeholder="Search managers..." />
+                                    <h:inputText value="#{managerBean.searchKeyword}" styleClass="form-control"/>
                                     <p:commandButton value="Search"
                                                      icon="pi pi-search"
                                                      styleClass="btn-primary"
@@ -556,7 +556,7 @@
                             <!-- ==================== CUSTOMERS SECTION ==================== -->
                             <h:panelGroup rendered="#{managerBean.currentSection == 'customers'}">
                                 <div class="search-bar">
-                                    <h:inputText value="#{managerBean.searchKeyword}" styleClass="form-control" placeholder="Search customers..." />
+                                    <h:inputText value="#{managerBean.searchKeyword}" styleClass="form-control"/>
                                     <p:commandButton value="Search"
                                                      icon="pi pi-search"
                                                      styleClass="btn-primary"

@@ -16,6 +16,17 @@
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
+    
+    <context-param>
+    <param-name>primefaces.THEME</param-name>
+    <param-value>saga</param-value> </context-param>
+    
+    <security-constraint>
+    <web-resource-collection>
+        <web-resource-name>Public Resources</web-resource-name>
+        <url-pattern>/jakarta.faces.resource/*</url-pattern>
+    </web-resource-collection>
+    </security-constraint>
 
     <session-config>
         <session-timeout>30</session-timeout>
