@@ -1,416 +1,496 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core"
       xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{counterStaffBean.init()}" />
+    </f:metadata>
+
     <h:head>
         <title>Counter Staff Dashboard - APU ASC</title>
-        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/style.css?v=1.1" />
+        <h:outputStylesheet name="css/style.css" />
     </h:head>
+
     <h:body>
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{counterStaffBean.init()}"/>
-        </f:metadata>
+        <div class="dashboard">
 
-        <h:form id="mainForm">
-            <div class="dashboard">
-                <!-- ==================== SIDEBAR ==================== -->
-                <aside class="sidebar">
-                    <div class="sidebar-brand">
-                        <h3>APU-ASC</h3>
-                        <p>Counter Staff Portal</p>
-                    </div>
+            <!-- ==================== SIDEBAR ==================== -->
+            <div class="sidebar">
+                <div class="sidebar-brand">
+                    <h2>APU-ASC</h2>
+                    <span>Counter Staff Portal</span>
+                </div>
 
+                <h:form id="sidebarForm">
                     <nav class="sidebar-nav">
+
                         <!-- Main -->
                         <div class="nav-section">Main</div>
-                        <p:commandLink styleClass="nav-link #{counterStaffBean.currentSection == 'overview' ? 'active' : ''}"
-                                       action="#{counterStaffBean.navigateTo('overview')}" update="mainForm" process="@this">
-                            <i class="pi pi-home"/><span>Overview</span>
-                        </p:commandLink>
-                        <p:commandLink styleClass="nav-link #{counterStaffBean.currentSection == 'profile' ? 'active' : ''}"
-                                       action="#{counterStaffBean.navigateTo('profile')}" update="mainForm" process="@this">
-                            <i class="pi pi-id-card"/><span>My Profile</span>
-                        </p:commandLink>
+                        <p:commandButton value="Overview"
+                                         icon="pi pi-home"
+                                         styleClass="nav-link #{counterStaffBean.currentSection == 'overview' ? 'active' : ''}"
+                                         action="#{counterStaffBean.navigateTo('overview')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="My Profile"
+                                         icon="pi pi-id-card"
+                                         styleClass="nav-link #{counterStaffBean.currentSection == 'profile' ? 'active' : ''}"
+                                         action="#{counterStaffBean.navigateTo('profile')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
 
                         <!-- Customer Management -->
                         <div class="nav-section">Customer Management</div>
-                        <p:commandLink styleClass="nav-link #{counterStaffBean.currentSection == 'register-customer' ? 'active' : ''}"
-                                       action="#{counterStaffBean.navigateTo('register-customer')}" update="mainForm" process="@this">
-                            <i class="pi pi-user-plus"/><span>Register Customer</span>
-                        </p:commandLink>
-                        <p:commandLink styleClass="nav-link #{counterStaffBean.currentSection == 'customers' ? 'active' : ''}"
-                                       action="#{counterStaffBean.navigateTo('customers')}" update="mainForm" process="@this">
-                            <i class="pi pi-users"/><span>Customers</span>
-                        </p:commandLink>
+                        <p:commandButton value="Register Customer"
+                                         icon="pi pi-user-plus"
+                                         styleClass="nav-link #{counterStaffBean.currentSection == 'register-customer' ? 'active' : ''}"
+                                         action="#{counterStaffBean.navigateTo('register-customer')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="Customers"
+                                         icon="pi pi-users"
+                                         styleClass="nav-link #{counterStaffBean.currentSection == 'customers' ? 'active' : ''}"
+                                         action="#{counterStaffBean.navigateTo('customers')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
 
                         <!-- Operations -->
                         <div class="nav-section">Operations</div>
-                        <p:commandLink styleClass="nav-link #{counterStaffBean.currentSection == 'book-appointment' ? 'active' : ''}"
-                                       action="#{counterStaffBean.navigateTo('book-appointment')}" update="mainForm" process="@this">
-                            <i class="pi pi-calendar-plus"/><span>Book Appointment</span>
-                        </p:commandLink>
-                        <p:commandLink styleClass="nav-link #{counterStaffBean.currentSection == 'payment' ? 'active' : ''}"
-                                       action="#{counterStaffBean.navigateTo('payment')}" update="mainForm" process="@this">
-                            <i class="pi pi-wallet"/><span>Payment &amp; Receipt</span>
-                        </p:commandLink>
-                        <p:commandLink styleClass="nav-link #{counterStaffBean.currentSection == 'appointments' ? 'active' : ''}"
-                                       action="#{counterStaffBean.navigateTo('appointments')}" update="mainForm" process="@this">
-                            <i class="pi pi-calendar"/><span>Appointments</span>
-                        </p:commandLink>
+                        <p:commandButton value="Book Appointment"
+                                         icon="pi pi-calendar-plus"
+                                         styleClass="nav-link #{counterStaffBean.currentSection == 'book-appointment' ? 'active' : ''}"
+                                         action="#{counterStaffBean.navigateTo('book-appointment')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="Payment &amp; Receipt"
+                                         icon="pi pi-wallet"
+                                         styleClass="nav-link #{counterStaffBean.currentSection == 'payment' ? 'active' : ''}"
+                                         action="#{counterStaffBean.navigateTo('payment')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="Appointments"
+                                         icon="pi pi-calendar"
+                                         styleClass="nav-link #{counterStaffBean.currentSection == 'appointments' ? 'active' : ''}"
+                                         action="#{counterStaffBean.navigateTo('appointments')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
                     </nav>
+                </h:form>
 
-                    <div class="sidebar-footer">
-                        <div class="user-info">
-                            <strong>#{loginBean.userName}</strong>
-                            Counter Staff
-                        </div>
-                        <p:commandButton value="Logout" action="#{loginBean.logout()}" styleClass="logout-btn"/>
-                    </div>
-                </aside>
+                <div class="sidebar-footer">
+                    <span>#{loginBean.userName}</span>
+                    <span>Counter Staff</span>
+                    <h:form>
+                        <p:commandButton value="Logout"
+                                         icon="pi pi-sign-out"
+                                         styleClass="logout-btn"
+                                         action="#{loginBean.logout()}" />
+                    </h:form>
+                </div>
+            </div>
 
-                <!-- ==================== MAIN CONTENT ==================== -->
-                <main class="main-content">
-                    <div class="top-bar">
-                        <h2>
-                            <h:outputText value="Overview" rendered="#{counterStaffBean.currentSection == 'overview'}"/>
-                            <h:outputText value="My Profile" rendered="#{counterStaffBean.currentSection == 'profile'}"/>
-                            <h:outputText value="Register Customer" rendered="#{counterStaffBean.currentSection == 'register-customer'}"/>
-                            <h:outputText value="Customers" rendered="#{counterStaffBean.currentSection == 'customers'}"/>
-                            <h:outputText value="Book Appointment" rendered="#{counterStaffBean.currentSection == 'book-appointment'}"/>
-                            <h:outputText value="Payment &amp; Receipt" rendered="#{counterStaffBean.currentSection == 'payment'}"/>
-                            <h:outputText value="Appointments" rendered="#{counterStaffBean.currentSection == 'appointments'}"/>
-                        </h2>
-                        <span class="breadcrumb">Counter Staff Portal /
-                            <h:outputText value="Overview" rendered="#{counterStaffBean.currentSection == 'overview'}"/>
-                            <h:outputText value="My Profile" rendered="#{counterStaffBean.currentSection == 'profile'}"/>
-                            <h:outputText value="Register Customer" rendered="#{counterStaffBean.currentSection == 'register-customer'}"/>
-                            <h:outputText value="Customers" rendered="#{counterStaffBean.currentSection == 'customers'}"/>
-                            <h:outputText value="Book Appointment" rendered="#{counterStaffBean.currentSection == 'book-appointment'}"/>
-                            <h:outputText value="Payment &amp; Receipt" rendered="#{counterStaffBean.currentSection == 'payment'}"/>
-                            <h:outputText value="Appointments" rendered="#{counterStaffBean.currentSection == 'appointments'}"/>
-                        </span>
-                    </div>
+            <!-- ==================== MAIN CONTENT ==================== -->
+            <div class="main-content">
+                <div class="top-bar">
+                    <h1>
+                        <h:outputText value="Overview" rendered="#{counterStaffBean.currentSection == 'overview'}" />
+                        <h:outputText value="My Profile" rendered="#{counterStaffBean.currentSection == 'profile'}" />
+                        <h:outputText value="Register Customer" rendered="#{counterStaffBean.currentSection == 'register-customer'}" />
+                        <h:outputText value="Customers" rendered="#{counterStaffBean.currentSection == 'customers'}" />
+                        <h:outputText value="Book Appointment" rendered="#{counterStaffBean.currentSection == 'book-appointment'}" />
+                        <h:outputText value="Payment &amp; Receipt" rendered="#{counterStaffBean.currentSection == 'payment'}" />
+                        <h:outputText value="Appointments" rendered="#{counterStaffBean.currentSection == 'appointments'}" />
+                    </h1>
+                </div>
 
-                    <div class="content-area">
-                        <p:messages id="msgs" showDetail="true" closable="true"/>
+                <div class="content-area">
+                    <h:panelGroup id="contentArea">
+                        <p:growl id="growl" showDetail="true" life="4000" />
+                        <h:form id="mainForm">
 
-                        <!-- ========== OVERVIEW SECTION ========== -->
-                        <p:outputPanel rendered="#{counterStaffBean.currentSection == 'overview'}">
-                            <div class="stats-row">
-                                <div class="stat-card">
-                                    <p class="stat-value">#{counterStaffBean.totalCustomers}</p>
-                                    <p class="stat-label">Total Customers</p>
-                                </div>
-                                <div class="stat-card accent-green">
-                                    <p class="stat-value">#{counterStaffBean.totalServices}</p>
-                                    <p class="stat-label">Total Services</p>
-                                </div>
-                                <div class="stat-card accent-orange">
-                                    <p class="stat-value">#{counterStaffBean.todayAppointments}</p>
-                                    <p class="stat-label">Today's Appointments</p>
-                                </div>
-                                <div class="stat-card accent-red">
-                                    <p class="stat-value">#{counterStaffBean.pendingBookings}</p>
-                                    <p class="stat-label">Pending Bookings</p>
-                                </div>
-                            </div>
-
-                            <div class="panel">
-                                <h3>Quick Actions</h3>
-                                <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                                    <p:commandButton value="Register Customer" icon="pi pi-user-plus" styleClass="btn-primary"
-                                                     action="#{counterStaffBean.navigateTo('register-customer')}" update="mainForm" process="@this"/>
-                                    <p:commandButton value="Book Appointment" icon="pi pi-calendar-plus" styleClass="btn-success"
-                                                     action="#{counterStaffBean.navigateTo('book-appointment')}" update="mainForm" process="@this"/>
-                                    <p:commandButton value="Collect Payment" icon="pi pi-wallet" styleClass="btn-primary"
-                                                     action="#{counterStaffBean.navigateTo('payment')}" update="mainForm" process="@this"/>
-                                </div>
-                            </div>
-                        </p:outputPanel>
-
-                        <!-- ========== MY PROFILE SECTION ========== -->
-                        <p:outputPanel rendered="#{counterStaffBean.currentSection == 'profile'}">
-                            <div class="panel">
-                                <h3>Edit My Profile</h3>
-                                <div class="form-grid" rendered="#{counterStaffBean.profileData != null}">
-                                    <label>Name</label>
-                                    <p:inputText value="#{counterStaffBean.profileData.name}"/>
-
-                                    <label>Email</label>
-                                    <p:inputText value="#{counterStaffBean.profileData.email}"/>
-
-                                    <label>Gender</label>
-                                    <p:selectOneMenu value="#{counterStaffBean.profileData.gender}">
-                                        <f:selectItem itemLabel="-- Select --" itemValue=""/>
-                                        <f:selectItem itemLabel="Male" itemValue="M"/>
-                                        <f:selectItem itemLabel="Female" itemValue="F"/>
-                                        <f:selectItem itemLabel="Other" itemValue="Other"/>
-                                    </p:selectOneMenu>
-
-                                    <label>Phone</label>
-                                    <p:inputText value="#{counterStaffBean.profileData.phone}"/>
-
-                                    <label>IC</label>
-                                    <p:inputText value="#{counterStaffBean.profileData.ic}"/>
-
-                                    <label>Address</label>
-                                    <p:inputTextarea value="#{counterStaffBean.profileData.address}" rows="3"/>
-                                </div>
-                                <div class="form-actions">
-                                    <p:commandButton value="Update Profile" action="#{counterStaffBean.updateProfile()}"
-                                                     update="mainForm" styleClass="btn-primary"/>
-                                </div>
-                            </div>
-                        </p:outputPanel>
-
-                        <!-- ========== REGISTER CUSTOMER SECTION ========== -->
-                        <p:outputPanel rendered="#{counterStaffBean.currentSection == 'register-customer'}">
-                            <div class="panel">
-                                <h3>Register New Customer</h3>
-                                <div class="form-grid">
-                                    <label>Name</label>
-                                    <p:inputText value="#{counterStaffBean.custName}" required="true" requiredMessage="Name is required"/>
-
-                                    <label>Email</label>
-                                    <p:inputText value="#{counterStaffBean.custEmail}" required="true" requiredMessage="Email is required"/>
-
-                                    <label>Password</label>
-                                    <p:password value="#{counterStaffBean.custPassword}" required="true" requiredMessage="Password is required"/>
-
-                                    <label>Gender</label>
-                                    <p:selectOneMenu value="#{counterStaffBean.custGender}">
-                                        <f:selectItem itemLabel="-- Select --" itemValue=""/>
-                                        <f:selectItem itemLabel="Male" itemValue="M"/>
-                                        <f:selectItem itemLabel="Female" itemValue="F"/>
-                                        <f:selectItem itemLabel="Other" itemValue="Other"/>
-                                    </p:selectOneMenu>
-
-                                    <label>Phone</label>
-                                    <p:inputText value="#{counterStaffBean.custPhone}"/>
-
-                                    <label>IC</label>
-                                    <p:inputText value="#{counterStaffBean.custIc}"/>
-
-                                    <label>Address</label>
-                                    <p:inputTextarea value="#{counterStaffBean.custAddress}" rows="3"/>
-                                </div>
-                                <div class="form-actions">
-                                    <p:commandButton value="Register Customer" action="#{counterStaffBean.registerCustomer()}"
-                                                     update="mainForm" styleClass="btn-success"/>
-                                </div>
-                            </div>
-                        </p:outputPanel>
-
-                        <!-- ========== CUSTOMERS SECTION ========== -->
-                        <p:outputPanel rendered="#{counterStaffBean.currentSection == 'customers'}">
-                            <div class="panel">
-                                <h3>Customer Management</h3>
-                                <div class="search-bar">
-                                    <p:inputText value="#{counterStaffBean.searchKeyword}" placeholder="Search by name, email, IC..."/>
-                                    <p:commandButton value="Search" action="#{counterStaffBean.searchCustomers()}"
-                                                     update="mainForm" styleClass="btn-primary"/>
-                                    <p:commandButton value="Clear" action="#{counterStaffBean.clearSearch()}"
-                                                     update="mainForm" styleClass="btn-secondary"/>
+                            <!-- ==================== OVERVIEW SECTION ==================== -->
+                            <h:panelGroup rendered="#{counterStaffBean.currentSection == 'overview'}">
+                                <div class="stats-row">
+                                    <div class="stat-card">
+                                        <h3>Total Customers</h3>
+                                        <p>#{counterStaffBean.totalCustomers}</p>
+                                    </div>
+                                    <div class="stat-card accent-green">
+                                        <h3>Total Services</h3>
+                                        <p>#{counterStaffBean.totalServices}</p>
+                                    </div>
+                                    <div class="stat-card accent-orange">
+                                        <h3>Today's Appointments</h3>
+                                        <p>#{counterStaffBean.todayAppointments}</p>
+                                    </div>
+                                    <div class="stat-card accent-red">
+                                        <h3>Pending Bookings</h3>
+                                        <p>#{counterStaffBean.pendingBookings}</p>
+                                    </div>
                                 </div>
 
-                                <p:dataTable value="#{counterStaffBean.customers}" var="c" paginator="true" rows="10"
-                                             emptyMessage="No customers found.">
-                                    <p:column headerText="ID">
-                                        <h:outputText value="#{c.id}"/>
-                                    </p:column>
-                                    <p:column headerText="Name">
-                                        <h:outputText value="#{c.name}"/>
-                                    </p:column>
-                                    <p:column headerText="Email">
-                                        <h:outputText value="#{c.email}"/>
-                                    </p:column>
-                                    <p:column headerText="Phone">
-                                        <h:outputText value="#{c.phone}"/>
-                                    </p:column>
-                                    <p:column headerText="Gender">
-                                        <h:outputText value="#{c.gender}"/>
-                                    </p:column>
-                                    <p:column headerText="IC">
-                                        <h:outputText value="#{c.ic}"/>
-                                    </p:column>
-                                    <p:column headerText="Actions">
-                                        <p:commandButton value="Edit" action="#{counterStaffBean.loadEditCustomer(c.id)}"
-                                                         update="mainForm" styleClass="btn-edit"/>
-                                        <p:commandButton value="Delete" action="#{counterStaffBean.deleteCustomer(c.id)}"
-                                                         update="mainForm" styleClass="btn-danger"/>
-                                    </p:column>
-                                </p:dataTable>
-                            </div>
+                                <div class="panel">
+                                    <h3>Quick Actions</h3>
+                                    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                                        <p:commandButton value="Register Customer" icon="pi pi-user-plus" styleClass="btn-primary"
+                                                         action="#{counterStaffBean.navigateTo('register-customer')}" update=":contentArea :sidebarForm" process="@this"/>
+                                        <p:commandButton value="Book Appointment" icon="pi pi-calendar-plus" styleClass="btn-success"
+                                                         action="#{counterStaffBean.navigateTo('book-appointment')}" update=":contentArea :sidebarForm" process="@this"/>
+                                        <p:commandButton value="Collect Payment" icon="pi pi-wallet" styleClass="btn-primary"
+                                                         action="#{counterStaffBean.navigateTo('payment')}" update=":contentArea :sidebarForm" process="@this"/>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
 
-                            <!-- Edit Customer Panel -->
-                            <p:outputPanel rendered="#{counterStaffBean.editingCustomer != null}">
-                                <div class="edit-panel">
-                                    <h4>Edit Customer</h4>
+                            <!-- ==================== MY PROFILE SECTION ==================== -->
+                            <h:panelGroup rendered="#{counterStaffBean.currentSection == 'profile'}">
+                                <div class="panel">
+                                    <h3>Edit My Profile</h3>
+                                    <h:panelGroup rendered="#{counterStaffBean.profileData != null}" layout="block">
+                                        <div class="form-grid">
+                                            <div>
+                                                <label>Name</label>
+                                                <p:inputText value="#{counterStaffBean.profileData.name}" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>Email</label>
+                                                <p:inputText value="#{counterStaffBean.profileData.email}" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>Gender</label>
+                                                <p:selectOneMenu value="#{counterStaffBean.profileData.gender}" styleClass="form-control">
+                                                    <f:selectItem itemLabel="-- Select --" itemValue=""/>
+                                                    <f:selectItem itemLabel="Male" itemValue="M"/>
+                                                    <f:selectItem itemLabel="Female" itemValue="F"/>
+                                                    <f:selectItem itemLabel="Other" itemValue="Other"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div>
+                                                <label>Phone</label>
+                                                <p:inputText value="#{counterStaffBean.profileData.phone}" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>IC</label>
+                                                <p:inputText value="#{counterStaffBean.profileData.ic}" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>Address</label>
+                                                <p:inputTextarea value="#{counterStaffBean.profileData.address}" rows="3" styleClass="form-control"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <p:commandButton value="Update Profile"
+                                                             icon="pi pi-check"
+                                                             action="#{counterStaffBean.updateProfile()}"
+                                                             update=":mainForm :growl" styleClass="btn-primary"/>
+                                        </div>
+                                    </h:panelGroup>
+                                </div>
+                            </h:panelGroup>
+
+                            <!-- ==================== REGISTER CUSTOMER SECTION ==================== -->
+                            <h:panelGroup rendered="#{counterStaffBean.currentSection == 'register-customer'}">
+                                <div class="panel">
+                                    <h3>Register New Customer</h3>
                                     <div class="form-grid">
-                                        <label>Name</label>
-                                        <p:inputText value="#{counterStaffBean.editingCustomer.name}"/>
-
-                                        <label>Email</label>
-                                        <p:inputText value="#{counterStaffBean.editingCustomer.email}"/>
-
-                                        <label>Phone</label>
-                                        <p:inputText value="#{counterStaffBean.editingCustomer.phone}"/>
-
-                                        <label>Gender</label>
-                                        <p:selectOneMenu value="#{counterStaffBean.editingCustomer.gender}">
-                                            <f:selectItem itemLabel="Male" itemValue="M"/>
-                                            <f:selectItem itemLabel="Female" itemValue="F"/>
-                                            <f:selectItem itemLabel="Other" itemValue="Other"/>
-                                        </p:selectOneMenu>
-
-                                        <label>IC</label>
-                                        <p:inputText value="#{counterStaffBean.editingCustomer.ic}"/>
-
-                                        <label>Address</label>
-                                        <p:inputTextarea value="#{counterStaffBean.editingCustomer.address}" rows="3"/>
+                                        <div>
+                                            <label>Name</label>
+                                            <p:inputText value="#{counterStaffBean.custName}" required="true" requiredMessage="Name is required" styleClass="form-control"/>
+                                        </div>
+                                        <div>
+                                            <label>Email</label>
+                                            <p:inputText value="#{counterStaffBean.custEmail}" required="true" requiredMessage="Email is required" styleClass="form-control"/>
+                                        </div>
+                                        <div>
+                                            <label>Password</label>
+                                            <p:password value="#{counterStaffBean.custPassword}" required="true" requiredMessage="Password is required" styleClass="form-control"/>
+                                        </div>
+                                        <div>
+                                            <label>Gender</label>
+                                            <p:selectOneMenu value="#{counterStaffBean.custGender}" styleClass="form-control">
+                                                <f:selectItem itemLabel="-- Select --" itemValue=""/>
+                                                <f:selectItem itemLabel="Male" itemValue="M"/>
+                                                <f:selectItem itemLabel="Female" itemValue="F"/>
+                                                <f:selectItem itemLabel="Other" itemValue="Other"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                        <div>
+                                            <label>Phone</label>
+                                            <p:inputText value="#{counterStaffBean.custPhone}" styleClass="form-control"/>
+                                        </div>
+                                        <div>
+                                            <label>IC</label>
+                                            <p:inputText value="#{counterStaffBean.custIc}" styleClass="form-control"/>
+                                        </div>
+                                        <div>
+                                            <label>Address</label>
+                                            <p:inputTextarea value="#{counterStaffBean.custAddress}" rows="3" styleClass="form-control"/>
+                                        </div>
                                     </div>
                                     <div class="form-actions">
-                                        <p:commandButton value="Save Changes" action="#{counterStaffBean.saveEditCustomer()}"
-                                                         update="mainForm" styleClass="btn-success"/>
+                                        <p:commandButton value="Register Customer"
+                                                         icon="pi pi-user-plus"
+                                                         action="#{counterStaffBean.registerCustomer()}"
+                                                         update=":mainForm :growl" styleClass="btn-success"/>
                                     </div>
                                 </div>
-                            </p:outputPanel>
-                        </p:outputPanel>
+                            </h:panelGroup>
 
-                        <!-- ========== BOOK APPOINTMENT SECTION ========== -->
-                        <p:outputPanel rendered="#{counterStaffBean.currentSection == 'book-appointment'}">
-                            <div class="panel">
-                                <h3>Book Service Appointment</h3>
-                                <div class="form-grid">
-                                    <label>Customer</label>
-                                    <p:selectOneMenu value="#{counterStaffBean.selectedCustomerId}">
-                                        <f:selectItem itemLabel="-- Select Customer --" itemValue=""/>
-                                        <f:selectItems value="#{counterStaffBean.customers}" var="c"
-                                                       itemLabel="#{c.name} (#{c.id})" itemValue="#{c.id}"/>
-                                    </p:selectOneMenu>
-
-                                    <label>Service</label>
-                                    <p:selectOneMenu value="#{counterStaffBean.selectedServiceId}">
-                                        <f:selectItem itemLabel="-- Select Service --" itemValue=""/>
-                                        <f:selectItems value="#{counterStaffBean.services}" var="s"
-                                                       itemLabel="#{s.serviceName} - #{s.type} (RM#{s.basePrice})" itemValue="#{s.id}"/>
-                                    </p:selectOneMenu>
-
-                                    <label>Technician</label>
-                                    <p:selectOneMenu value="#{counterStaffBean.selectedTechnicianId}">
-                                        <f:selectItem itemLabel="-- Select Technician --" itemValue=""/>
-                                        <f:selectItems value="#{counterStaffBean.technicians}" var="t"
-                                                       itemLabel="#{t.name} - #{t.specialty}" itemValue="#{t.id}"/>
-                                    </p:selectOneMenu>
-
-                                    <label>Date &amp; Time</label>
-                                    <h:inputText value="#{counterStaffBean.appointmentDateStr}" type="datetime-local"
-                                                 style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;"/>
+                            <!-- ==================== CUSTOMERS SECTION ==================== -->
+                            <h:panelGroup rendered="#{counterStaffBean.currentSection == 'customers'}">
+                                <div class="search-bar">
+                                    <h:inputText value="#{counterStaffBean.searchKeyword}" styleClass="form-control" placeholder="Search by name, email, IC..."/>
+                                    <p:commandButton value="Search"
+                                                     icon="pi pi-search"
+                                                     action="#{counterStaffBean.searchCustomers()}"
+                                                     update=":mainForm" styleClass="btn-primary"/>
+                                    <p:commandButton value="Clear"
+                                                     icon="pi pi-times"
+                                                     action="#{counterStaffBean.clearSearch()}"
+                                                     update=":mainForm" styleClass="btn-secondary"/>
                                 </div>
-                                <p style="margin:12px 0 0;font-size:12px;color:#6b7280;">
-                                    <i class="pi pi-info-circle" style="margin-right:4px;"/>
-                                    Appointments must be booked within the next 5 days. Normal service = 1 hour, Major service = 3 hours.
-                                </p>
-                                <div class="form-actions">
-                                    <p:commandButton value="Book Appointment" action="#{counterStaffBean.bookAppointment()}"
-                                                     update="mainForm" styleClass="btn-success"/>
+
+                                <div class="panel">
+                                    <p:dataTable value="#{counterStaffBean.customers}" var="c" paginator="true" rows="10"
+                                                 emptyMessage="No customers found.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{c.id}"/>
+                                        </p:column>
+                                        <p:column headerText="Name">
+                                            <h:outputText value="#{c.name}"/>
+                                        </p:column>
+                                        <p:column headerText="Email">
+                                            <h:outputText value="#{c.email}"/>
+                                        </p:column>
+                                        <p:column headerText="Phone">
+                                            <h:outputText value="#{c.phone}"/>
+                                        </p:column>
+                                        <p:column headerText="Gender">
+                                            <h:outputText value="#{c.gender}"/>
+                                        </p:column>
+                                        <p:column headerText="IC">
+                                            <h:outputText value="#{c.ic}"/>
+                                        </p:column>
+                                        <p:column headerText="Actions">
+                                            <p:commandButton value="Edit"
+                                                             icon="pi pi-pencil"
+                                                             styleClass="btn-edit"
+                                                             action="#{counterStaffBean.loadEditCustomer(c.id)}"
+                                                             update=":mainForm"/>
+                                            <p:commandButton value="Delete"
+                                                             icon="pi pi-trash"
+                                                             styleClass="btn-danger"
+                                                             action="#{counterStaffBean.deleteCustomer(c.id)}"
+                                                             update=":mainForm :growl">
+                                                <p:confirm header="Confirm" message="Delete this customer?" icon="pi pi-exclamation-triangle"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
                                 </div>
-                            </div>
-                        </p:outputPanel>
 
-                        <!-- ========== PAYMENT & RECEIPT SECTION ========== -->
-                        <p:outputPanel rendered="#{counterStaffBean.currentSection == 'payment'}">
-                            <div class="panel">
-                                <h3>Collect Payment &amp; Generate Receipt</h3>
-                                <div class="form-grid">
-                                    <label>Appointment</label>
-                                    <p:selectOneMenu value="#{counterStaffBean.paymentAppointmentId}">
-                                        <f:selectItem itemLabel="-- Select Appointment --" itemValue=""/>
-                                        <f:selectItems value="#{counterStaffBean.completedAppointments}" var="a"
-                                                       itemLabel="#{a.id} - #{a.customer != null ? a.customer.name : a.customerId} (RM#{a.paymentAmount})" itemValue="#{a.id}"/>
-                                    </p:selectOneMenu>
+                                <!-- Edit Customer Panel -->
+                                <h:panelGroup rendered="#{counterStaffBean.editingCustomer != null}">
+                                    <div class="edit-panel">
+                                        <h3>Edit Customer</h3>
+                                        <div class="form-grid">
+                                            <div>
+                                                <label>Name</label>
+                                                <p:inputText value="#{counterStaffBean.editingCustomer.name}" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>Email</label>
+                                                <p:inputText value="#{counterStaffBean.editingCustomer.email}" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>Phone</label>
+                                                <p:inputText value="#{counterStaffBean.editingCustomer.phone}" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>Gender</label>
+                                                <p:selectOneMenu value="#{counterStaffBean.editingCustomer.gender}" styleClass="form-control">
+                                                    <f:selectItem itemLabel="Male" itemValue="M"/>
+                                                    <f:selectItem itemLabel="Female" itemValue="F"/>
+                                                    <f:selectItem itemLabel="Other" itemValue="Other"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div>
+                                                <label>IC</label>
+                                                <p:inputText value="#{counterStaffBean.editingCustomer.ic}" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>Address</label>
+                                                <p:inputTextarea value="#{counterStaffBean.editingCustomer.address}" rows="3" styleClass="form-control"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <p:commandButton value="Save Changes"
+                                                             icon="pi pi-check"
+                                                             styleClass="btn-success"
+                                                             action="#{counterStaffBean.saveEditCustomer()}"
+                                                             update=":mainForm :growl"/>
+                                            <p:commandButton value="Cancel"
+                                                             icon="pi pi-times"
+                                                             styleClass="btn-secondary"
+                                                             action="#{counterStaffBean.setEditingCustomer(null)}"
+                                                             update=":mainForm"
+                                                             process="@this"/>
+                                        </div>
+                                    </div>
+                                </h:panelGroup>
+                            </h:panelGroup>
 
-                                    <label>Payment Method</label>
-                                    <p:selectOneMenu value="#{counterStaffBean.paymentMethod}">
-                                        <f:selectItem itemLabel="-- Select Method --" itemValue=""/>
-                                        <f:selectItem itemLabel="Cash" itemValue="Cash"/>
-                                        <f:selectItem itemLabel="Card" itemValue="Card"/>
-                                        <f:selectItem itemLabel="Online Transfer" itemValue="Online"/>
-                                    </p:selectOneMenu>
+                            <!-- ==================== BOOK APPOINTMENT SECTION ==================== -->
+                            <h:panelGroup rendered="#{counterStaffBean.currentSection == 'book-appointment'}">
+                                <div class="panel">
+                                    <h3>Book Service Appointment</h3>
+                                    <div class="form-grid">
+                                        <div>
+                                            <label>Customer</label>
+                                            <p:selectOneMenu value="#{counterStaffBean.selectedCustomerId}" styleClass="form-control">
+                                                <f:selectItem itemLabel="-- Select Customer --" itemValue=""/>
+                                                <f:selectItems value="#{counterStaffBean.customers}" var="c"
+                                                               itemLabel="#{c.name} (#{c.id})" itemValue="#{c.id}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                        <div>
+                                            <label>Service</label>
+                                            <p:selectOneMenu value="#{counterStaffBean.selectedServiceId}" styleClass="form-control">
+                                                <f:selectItem itemLabel="-- Select Service --" itemValue=""/>
+                                                <f:selectItems value="#{counterStaffBean.services}" var="s"
+                                                               itemLabel="#{s.serviceName} - #{s.type} (RM#{s.basePrice})" itemValue="#{s.id}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                        <div>
+                                            <label>Technician</label>
+                                            <p:selectOneMenu value="#{counterStaffBean.selectedTechnicianId}" styleClass="form-control">
+                                                <f:selectItem itemLabel="-- Select Technician --" itemValue=""/>
+                                                <f:selectItems value="#{counterStaffBean.technicians}" var="t"
+                                                               itemLabel="#{t.name} - #{t.specialty}" itemValue="#{t.id}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                        <div>
+                                            <label>Date &amp; Time</label>
+                                            <h:inputText value="#{counterStaffBean.appointmentDateStr}" type="datetime-local" styleClass="form-control"/>
+                                        </div>
+                                    </div>
+                                    <p style="margin:12px 0 0;font-size:12px;color:#6b7280;">
+                                        <i class="pi pi-info-circle" style="margin-right:4px;"/>
+                                        Appointments must be booked within the next 5 days. Normal service = 1 hour, Major service = 3 hours.
+                                    </p>
+                                    <div class="form-actions">
+                                        <p:commandButton value="Book Appointment"
+                                                         icon="pi pi-calendar-plus"
+                                                         action="#{counterStaffBean.bookAppointment()}"
+                                                         update=":mainForm :growl" styleClass="btn-success"/>
+                                    </div>
                                 </div>
-                                <div class="form-actions">
-                                    <p:commandButton value="Collect Payment" action="#{counterStaffBean.collectPayment()}"
-                                                     update="mainForm" styleClass="btn-success"/>
+                            </h:panelGroup>
+
+                            <!-- ==================== PAYMENT &amp; RECEIPT SECTION ==================== -->
+                            <h:panelGroup rendered="#{counterStaffBean.currentSection == 'payment'}">
+                                <div class="panel">
+                                    <h3>Collect Payment &amp; Generate Receipt</h3>
+                                    <div class="form-grid">
+                                        <div>
+                                            <label>Appointment</label>
+                                            <p:selectOneMenu value="#{counterStaffBean.paymentAppointmentId}" styleClass="form-control">
+                                                <f:selectItem itemLabel="-- Select Appointment --" itemValue=""/>
+                                                <f:selectItems value="#{counterStaffBean.completedAppointments}" var="a"
+                                                               itemLabel="#{a.id} - #{a.customer != null ? a.customer.name : a.customerId} (RM#{a.paymentAmount})" itemValue="#{a.id}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                        <div>
+                                            <label>Payment Method</label>
+                                            <p:selectOneMenu value="#{counterStaffBean.paymentMethod}" styleClass="form-control">
+                                                <f:selectItem itemLabel="-- Select Method --" itemValue=""/>
+                                                <f:selectItem itemLabel="Cash" itemValue="Cash"/>
+                                                <f:selectItem itemLabel="Card" itemValue="Card"/>
+                                                <f:selectItem itemLabel="Online Transfer" itemValue="Online"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <p:commandButton value="Collect Payment"
+                                                         icon="pi pi-wallet"
+                                                         action="#{counterStaffBean.collectPayment()}"
+                                                         update=":mainForm :growl" styleClass="btn-success"/>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="panel">
-                                <h3>Payment History</h3>
-                                <p:dataTable value="#{counterStaffBean.payments}" var="p" paginator="true" rows="10"
-                                             emptyMessage="No payments recorded yet.">
-                                    <p:column headerText="Receipt #">
-                                        <h:outputText value="#{p.receiptNumber}"/>
-                                    </p:column>
-                                    <p:column headerText="Appointment">
-                                        <h:outputText value="#{p.appointmentId}"/>
-                                    </p:column>
-                                    <p:column headerText="Customer">
-                                        <h:outputText value="#{p.customerId}"/>
-                                    </p:column>
-                                    <p:column headerText="Amount (RM)">
-                                        <h:outputText value="#{p.amount}"/>
-                                    </p:column>
-                                    <p:column headerText="Method">
-                                        <h:outputText value="#{p.paymentMethod}"/>
-                                    </p:column>
-                                    <p:column headerText="Date">
-                                        <h:outputText value="#{p.paymentDate}"/>
-                                    </p:column>
-                                    <p:column headerText="Status">
-                                        <h:outputText value="#{p.status}"/>
-                                    </p:column>
-                                </p:dataTable>
-                            </div>
-                        </p:outputPanel>
+                                <div class="panel">
+                                    <h3>Payment History</h3>
+                                    <p:dataTable value="#{counterStaffBean.payments}" var="p" paginator="true" rows="10"
+                                                 emptyMessage="No payments recorded yet.">
+                                        <p:column headerText="Receipt #">
+                                            <h:outputText value="#{p.receiptNumber}"/>
+                                        </p:column>
+                                        <p:column headerText="Appointment">
+                                            <h:outputText value="#{p.appointmentId}"/>
+                                        </p:column>
+                                        <p:column headerText="Customer">
+                                            <h:outputText value="#{p.customerId}"/>
+                                        </p:column>
+                                        <p:column headerText="Amount (RM)">
+                                            <h:outputText value="#{p.amount}"/>
+                                        </p:column>
+                                        <p:column headerText="Method">
+                                            <h:outputText value="#{p.paymentMethod}"/>
+                                        </p:column>
+                                        <p:column headerText="Date">
+                                            <h:outputText value="#{p.paymentDate}"/>
+                                        </p:column>
+                                        <p:column headerText="Status">
+                                            <h:outputText value="#{p.status}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </h:panelGroup>
 
-                        <!-- ========== APPOINTMENTS SECTION ========== -->
-                        <p:outputPanel rendered="#{counterStaffBean.currentSection == 'appointments'}">
-                            <div class="panel">
-                                <h3>All Appointments</h3>
-                                <p:dataTable value="#{counterStaffBean.appointments}" var="a" paginator="true" rows="10"
-                                             emptyMessage="No appointments found.">
-                                    <p:column headerText="ID">
-                                        <h:outputText value="#{a.id}"/>
-                                    </p:column>
-                                    <p:column headerText="Customer">
-                                        <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
-                                    </p:column>
-                                    <p:column headerText="Technician">
-                                        <h:outputText value="#{a.technician != null ? a.technician.name : a.technicianId}"/>
-                                    </p:column>
-                                    <p:column headerText="Service">
-                                        <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
-                                    </p:column>
-                                    <p:column headerText="Date/Time">
-                                        <h:outputText value="#{a.appointmentDateTime}"/>
-                                    </p:column>
-                                    <p:column headerText="Status">
-                                        <span class="badge #{a.status == 'Pending' ? 'badge-pending' : (a.status == 'InProgress' ? 'badge-progress' : (a.status == 'Completed' ? 'badge-completed' : (a.status == 'Cancelled' ? 'badge-cancelled' : '')))}">
-                                            <h:outputText value="#{a.status}"/>
-                                        </span>
-                                    </p:column>
-                                    <p:column headerText="Amount (RM)">
-                                        <h:outputText value="#{a.paymentAmount}"/>
-                                    </p:column>
-                                </p:dataTable>
-                            </div>
-                        </p:outputPanel>
+                            <!-- ==================== APPOINTMENTS SECTION ==================== -->
+                            <h:panelGroup rendered="#{counterStaffBean.currentSection == 'appointments'}">
+                                <div class="panel">
+                                    <h3>All Appointments</h3>
+                                    <p:dataTable value="#{counterStaffBean.appointments}" var="a" paginator="true" rows="10"
+                                                 emptyMessage="No appointments found.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{a.id}"/>
+                                        </p:column>
+                                        <p:column headerText="Customer">
+                                            <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
+                                        </p:column>
+                                        <p:column headerText="Technician">
+                                            <h:outputText value="#{a.technician != null ? a.technician.name : a.technicianId}"/>
+                                        </p:column>
+                                        <p:column headerText="Service">
+                                            <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+                                        </p:column>
+                                        <p:column headerText="Date/Time">
+                                            <h:outputText value="#{a.appointmentDateTime}"/>
+                                        </p:column>
+                                        <p:column headerText="Status">
+                                            <h:outputText value="#{a.status}"
+                                                          styleClass="#{a.status == 'Pending' ? 'badge-pending' : a.status == 'Completed' ? 'badge-completed' : a.status == 'InProgress' ? 'badge-progress' : a.status == 'Cancelled' ? 'badge-cancelled' : ''}" />
+                                        </p:column>
+                                        <p:column headerText="Amount (RM)">
+                                            <h:outputText value="#{a.paymentAmount}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </h:panelGroup>
 
-                    </div>
-                </main>
+                        </h:form>
+                    </h:panelGroup>
+                </div>
             </div>
-        </h:form>
+
+        </div>
+
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <p:commandButton value="Yes" type="button" styleClass="btn-danger ui-confirmdialog-yes" icon="pi pi-check" />
+            <p:commandButton value="No" type="button" styleClass="btn-secondary ui-confirmdialog-no" icon="pi pi-times" />
+        </p:confirmDialog>
     </h:body>
 </html>

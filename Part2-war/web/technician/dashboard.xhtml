@@ -1,388 +1,419 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core"
       xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{technicianBean.init()}" />
+    </f:metadata>
+
     <h:head>
         <title>Technician Dashboard - APU ASC</title>
-        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/style.css?v=1.1" />
+        <h:outputStylesheet name="css/style.css" />
     </h:head>
-    <h:body>
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{technicianBean.init()}"/>
-        </f:metadata>
 
+    <h:body>
         <div class="dashboard">
+
             <!-- ==================== SIDEBAR ==================== -->
-            <aside class="sidebar">
+            <div class="sidebar">
                 <div class="sidebar-brand">
-                    <h3>APU-ASC</h3>
-                    <p>Technician Portal</p>
+                    <h2>APU-ASC</h2>
+                    <span>Technician Portal</span>
                 </div>
 
                 <h:form id="sidebarForm">
                     <nav class="sidebar-nav">
+
                         <!-- Main -->
                         <div class="nav-section">Main</div>
-                        <p:commandButton styleClass="nav-link #{technicianBean.currentSection == 'overview' ? 'active' : ''}"
-                                         action="#{technicianBean.navigateTo('overview')}" update=":contentArea :sidebarForm" process="@this">
-                            <i class="pi pi-home"/><span>Overview</span>
-                        </p:commandButton>
-                        <p:commandButton styleClass="nav-link #{technicianBean.currentSection == 'profile' ? 'active' : ''}"
-                                         action="#{technicianBean.navigateTo('profile')}" update=":contentArea :sidebarForm" process="@this">
-                            <i class="pi pi-id-card"/><span>My Profile</span>
-                        </p:commandButton>
+                        <p:commandButton value="Overview"
+                                         icon="pi pi-home"
+                                         styleClass="nav-link #{technicianBean.currentSection == 'overview' ? 'active' : ''}"
+                                         action="#{technicianBean.navigateTo('overview')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="My Profile"
+                                         icon="pi pi-id-card"
+                                         styleClass="nav-link #{technicianBean.currentSection == 'profile' ? 'active' : ''}"
+                                         action="#{technicianBean.navigateTo('profile')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
 
                         <!-- Work -->
                         <div class="nav-section">Work</div>
-                        <p:commandButton styleClass="nav-link #{technicianBean.currentSection == 'appointments' ? 'active' : ''}"
-                                         action="#{technicianBean.navigateTo('appointments')}" update=":contentArea :sidebarForm" process="@this">
-                            <i class="pi pi-calendar"/><span>My Appointments</span>
-                        </p:commandButton>
-                        <p:commandButton styleClass="nav-link #{technicianBean.currentSection == 'feedback' ? 'active' : ''}"
-                                         action="#{technicianBean.navigateTo('feedback')}" update=":contentArea :sidebarForm" process="@this">
-                            <i class="pi pi-pencil"/><span>Write Feedback</span>
-                        </p:commandButton>
+                        <p:commandButton value="My Appointments"
+                                         icon="pi pi-calendar"
+                                         styleClass="nav-link #{technicianBean.currentSection == 'appointments' ? 'active' : ''}"
+                                         action="#{technicianBean.navigateTo('appointments')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="Write Feedback"
+                                         icon="pi pi-pencil"
+                                         styleClass="nav-link #{technicianBean.currentSection == 'feedback' ? 'active' : ''}"
+                                         action="#{technicianBean.navigateTo('feedback')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
 
                         <!-- Info -->
                         <div class="nav-section">Info</div>
-                        <p:commandButton styleClass="nav-link #{technicianBean.currentSection == 'comments' ? 'active' : ''}"
-                                         action="#{technicianBean.navigateTo('comments')}" update=":contentArea :sidebarForm" process="@this">
-                            <i class="pi pi-comments"/><span>Customer Comments</span>
-                        </p:commandButton>
-                        <p:commandButton styleClass="nav-link #{technicianBean.currentSection == 'performance' ? 'active' : ''}"
-                                         action="#{technicianBean.navigateTo('performance')}" update=":contentArea :sidebarForm" process="@this">
-                            <i class="pi pi-chart-bar"/><span>Performance</span>
-                        </p:commandButton>
+                        <p:commandButton value="Customer Comments"
+                                         icon="pi pi-comments"
+                                         styleClass="nav-link #{technicianBean.currentSection == 'comments' ? 'active' : ''}"
+                                         action="#{technicianBean.navigateTo('comments')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
+                        <p:commandButton value="Performance"
+                                         icon="pi pi-chart-bar"
+                                         styleClass="nav-link #{technicianBean.currentSection == 'performance' ? 'active' : ''}"
+                                         action="#{technicianBean.navigateTo('performance')}"
+                                         update=":contentArea :sidebarForm"
+                                         process="@this" />
                     </nav>
                 </h:form>
 
                 <div class="sidebar-footer">
-                    <div class="user-info">
-                        <strong>#{loginBean.userName}</strong>
-                        Technician
-                    </div>
+                    <span>#{loginBean.userName}</span>
+                    <span>Technician</span>
                     <h:form>
-                        <p:commandButton value="Logout" action="#{loginBean.logout()}" styleClass="logout-btn"/>
+                        <p:commandButton value="Logout"
+                                         icon="pi pi-sign-out"
+                                         styleClass="logout-btn"
+                                         action="#{loginBean.logout()}" />
                     </h:form>
                 </div>
-            </aside>
+            </div>
 
             <!-- ==================== MAIN CONTENT ==================== -->
             <div class="main-content">
                 <div class="top-bar">
-                    <h2>
-                        <h:outputText value="Overview" rendered="#{technicianBean.currentSection == 'overview'}"/>
-                        <h:outputText value="My Profile" rendered="#{technicianBean.currentSection == 'profile'}"/>
-                        <h:outputText value="My Appointments" rendered="#{technicianBean.currentSection == 'appointments'}"/>
-                        <h:outputText value="Write Feedback" rendered="#{technicianBean.currentSection == 'feedback'}"/>
-                        <h:outputText value="Customer Comments" rendered="#{technicianBean.currentSection == 'comments'}"/>
-                        <h:outputText value="Performance" rendered="#{technicianBean.currentSection == 'performance'}"/>
-                    </h2>
-                    <span class="breadcrumb">APU-ASC / Technician /
-                        <h:outputText value="Overview" rendered="#{technicianBean.currentSection == 'overview'}"/>
-                        <h:outputText value="My Profile" rendered="#{technicianBean.currentSection == 'profile'}"/>
-                        <h:outputText value="My Appointments" rendered="#{technicianBean.currentSection == 'appointments'}"/>
-                        <h:outputText value="Write Feedback" rendered="#{technicianBean.currentSection == 'feedback'}"/>
-                        <h:outputText value="Customer Comments" rendered="#{technicianBean.currentSection == 'comments'}"/>
-                        <h:outputText value="Performance" rendered="#{technicianBean.currentSection == 'performance'}"/>
-                    </span>
+                    <h1>
+                        <h:outputText value="Overview" rendered="#{technicianBean.currentSection == 'overview'}" />
+                        <h:outputText value="My Profile" rendered="#{technicianBean.currentSection == 'profile'}" />
+                        <h:outputText value="My Appointments" rendered="#{technicianBean.currentSection == 'appointments'}" />
+                        <h:outputText value="Write Feedback" rendered="#{technicianBean.currentSection == 'feedback'}" />
+                        <h:outputText value="Customer Comments" rendered="#{technicianBean.currentSection == 'comments'}" />
+                        <h:outputText value="Performance" rendered="#{technicianBean.currentSection == 'performance'}" />
+                    </h1>
                 </div>
 
-                <h:panelGroup id="contentArea" layout="block" class="content-area">
-                    <h:form id="mainForm">
-                        <p:messages id="msgs" showDetail="true" closable="true" style="margin-bottom:16px;"/>
+                <div class="content-area">
+                    <h:panelGroup id="contentArea">
+                        <p:growl id="growl" showDetail="true" life="4000" />
+                        <h:form id="mainForm">
 
-                        <!-- ========== OVERVIEW SECTION ========== -->
-                        <h:panelGroup rendered="#{technicianBean.currentSection == 'overview'}" layout="block">
-                            <div class="stats-row">
-                                <div class="stat-card">
-                                    <p class="stat-value">#{technicianBean.todayAppointments}</p>
-                                    <p class="stat-label">Today's Appointments</p>
+                            <!-- ==================== OVERVIEW SECTION ==================== -->
+                            <h:panelGroup rendered="#{technicianBean.currentSection == 'overview'}">
+                                <div class="stats-row">
+                                    <div class="stat-card">
+                                        <h3>Today's Appointments</h3>
+                                        <p>#{technicianBean.todayAppointments}</p>
+                                    </div>
+                                    <div class="stat-card accent-red">
+                                        <h3>Pending Tasks</h3>
+                                        <p>#{technicianBean.pendingAppointments}</p>
+                                    </div>
+                                    <div class="stat-card accent-green">
+                                        <h3>Completed This Month</h3>
+                                        <p>#{technicianBean.completedThisMonth}</p>
+                                    </div>
+                                    <div class="stat-card accent-orange">
+                                        <h3>Average Rating</h3>
+                                        <p>#{technicianBean.averageRating}</p>
+                                    </div>
                                 </div>
-                                <div class="stat-card accent-red">
-                                    <p class="stat-value">#{technicianBean.pendingAppointments}</p>
-                                    <p class="stat-label">Pending Tasks</p>
-                                </div>
-                                <div class="stat-card accent-green">
-                                    <p class="stat-value">#{technicianBean.completedThisMonth}</p>
-                                    <p class="stat-label">Completed This Month</p>
-                                </div>
-                                <div class="stat-card accent-orange">
-                                    <p class="stat-value">#{technicianBean.averageRating}</p>
-                                    <p class="stat-label">Average Rating</p>
-                                </div>
-                            </div>
 
-                            <!-- Quick Pending Summary -->
-                            <div class="panel">
-                                <h3>Pending Appointments</h3>
-                                <p:dataTable value="#{technicianBean.pendingAppointmentList}" var="a"
-                                             emptyMessage="No pending appointments." rows="5">
-                                    <p:column headerText="ID">
-                                        <h:outputText value="#{a.id}"/>
-                                    </p:column>
-                                    <p:column headerText="Customer">
-                                        <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
-                                    </p:column>
-                                    <p:column headerText="Service">
-                                        <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
-                                    </p:column>
-                                    <p:column headerText="Date/Time">
-                                        <h:outputText value="#{a.appointmentDateTime}"/>
-                                    </p:column>
-                                    <p:column headerText="Status">
-                                        <span class="badge badge-pending">Pending</span>
-                                    </p:column>
-                                </p:dataTable>
-                            </div>
+                                <!-- Quick Pending Summary -->
+                                <div class="panel">
+                                    <h3>Pending Appointments</h3>
+                                    <p:dataTable value="#{technicianBean.pendingAppointmentList}" var="a"
+                                                 emptyMessage="No pending appointments." rows="5">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{a.id}"/>
+                                        </p:column>
+                                        <p:column headerText="Customer">
+                                            <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
+                                        </p:column>
+                                        <p:column headerText="Service">
+                                            <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+                                        </p:column>
+                                        <p:column headerText="Date/Time">
+                                            <h:outputText value="#{a.appointmentDateTime}"/>
+                                        </p:column>
+                                        <p:column headerText="Status">
+                                            <h:outputText value="Pending" styleClass="badge-pending"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
 
-                            <!-- Quick In Progress Summary -->
-                            <div class="panel">
-                                <h3>In Progress</h3>
-                                <p:dataTable value="#{technicianBean.inProgressAppointmentList}" var="a"
-                                             emptyMessage="No appointments in progress." rows="5">
-                                    <p:column headerText="ID">
-                                        <h:outputText value="#{a.id}"/>
-                                    </p:column>
-                                    <p:column headerText="Customer">
-                                        <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
-                                    </p:column>
-                                    <p:column headerText="Service">
-                                        <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
-                                    </p:column>
-                                    <p:column headerText="Date/Time">
-                                        <h:outputText value="#{a.appointmentDateTime}"/>
-                                    </p:column>
-                                    <p:column headerText="Status">
-                                        <span class="badge badge-progress">In Progress</span>
-                                    </p:column>
-                                </p:dataTable>
-                            </div>
-                        </h:panelGroup>
+                                <!-- Quick In Progress Summary -->
+                                <div class="panel">
+                                    <h3>In Progress</h3>
+                                    <p:dataTable value="#{technicianBean.inProgressAppointmentList}" var="a"
+                                                 emptyMessage="No appointments in progress." rows="5">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{a.id}"/>
+                                        </p:column>
+                                        <p:column headerText="Customer">
+                                            <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
+                                        </p:column>
+                                        <p:column headerText="Service">
+                                            <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+                                        </p:column>
+                                        <p:column headerText="Date/Time">
+                                            <h:outputText value="#{a.appointmentDateTime}"/>
+                                        </p:column>
+                                        <p:column headerText="Status">
+                                            <h:outputText value="In Progress" styleClass="badge-progress"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </h:panelGroup>
 
-                        <!-- ========== MY PROFILE SECTION ========== -->
-                        <h:panelGroup rendered="#{technicianBean.currentSection == 'profile'}" layout="block">
-                            <div class="panel">
-                                <h3>Edit My Profile</h3>
-                                <h:panelGroup rendered="#{technicianBean.profileData != null}" layout="block">
+                            <!-- ==================== MY PROFILE SECTION ==================== -->
+                            <h:panelGroup rendered="#{technicianBean.currentSection == 'profile'}">
+                                <div class="panel">
+                                    <h3>Edit My Profile</h3>
+                                    <h:panelGroup rendered="#{technicianBean.profileData != null}" layout="block">
+                                        <div class="form-grid">
+                                            <div>
+                                                <label>Name</label>
+                                                <p:inputText value="#{technicianBean.profileData.name}" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>Email</label>
+                                                <p:inputText value="#{technicianBean.profileData.email}" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>Gender</label>
+                                                <p:selectOneMenu value="#{technicianBean.profileData.gender}" styleClass="form-control">
+                                                    <f:selectItem itemLabel="Male" itemValue="M"/>
+                                                    <f:selectItem itemLabel="Female" itemValue="F"/>
+                                                    <f:selectItem itemLabel="Other" itemValue="Other"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div>
+                                                <label>Phone</label>
+                                                <p:inputText value="#{technicianBean.profileData.phone}" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>IC</label>
+                                                <p:inputText value="#{technicianBean.profileData.ic}" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>Address</label>
+                                                <p:inputTextarea value="#{technicianBean.profileData.address}" rows="3" styleClass="form-control"/>
+                                            </div>
+                                            <div>
+                                                <label>Specialty</label>
+                                                <p:inputText value="#{technicianBean.profileData.specialty}" styleClass="form-control"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <p:commandButton value="Update Profile"
+                                                             icon="pi pi-check"
+                                                             action="#{technicianBean.updateProfile()}"
+                                                             update=":mainForm :growl" styleClass="btn-primary"/>
+                                        </div>
+                                    </h:panelGroup>
+                                </div>
+                            </h:panelGroup>
+
+                            <!-- ==================== MY APPOINTMENTS SECTION ==================== -->
+                            <h:panelGroup rendered="#{technicianBean.currentSection == 'appointments'}">
+                                <!-- Pending Appointments -->
+                                <div class="panel">
+                                    <h3>Pending Appointments</h3>
+                                    <p:dataTable value="#{technicianBean.pendingAppointmentList}" var="a"
+                                                 emptyMessage="No pending appointments.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{a.id}"/>
+                                        </p:column>
+                                        <p:column headerText="Customer">
+                                            <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
+                                        </p:column>
+                                        <p:column headerText="Service">
+                                            <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+                                        </p:column>
+                                        <p:column headerText="Date/Time">
+                                            <h:outputText value="#{a.appointmentDateTime}"/>
+                                        </p:column>
+                                        <p:column headerText="Amount (RM)">
+                                            <h:outputText value="#{a.paymentAmount}"/>
+                                        </p:column>
+                                        <p:column headerText="Action">
+                                            <p:commandButton value="Start"
+                                                             icon="pi pi-play"
+                                                             action="#{technicianBean.startAppointment(a.id)}"
+                                                             update=":mainForm :growl" styleClass="btn-success"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+
+                                <!-- In Progress Appointments -->
+                                <div class="panel">
+                                    <h3>In Progress</h3>
+                                    <p:dataTable value="#{technicianBean.inProgressAppointmentList}" var="a"
+                                                 emptyMessage="No appointments in progress.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{a.id}"/>
+                                        </p:column>
+                                        <p:column headerText="Customer">
+                                            <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
+                                        </p:column>
+                                        <p:column headerText="Service">
+                                            <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+                                        </p:column>
+                                        <p:column headerText="Date/Time">
+                                            <h:outputText value="#{a.appointmentDateTime}"/>
+                                        </p:column>
+                                        <p:column headerText="Amount (RM)">
+                                            <h:outputText value="#{a.paymentAmount}"/>
+                                        </p:column>
+                                        <p:column headerText="Action">
+                                            <p:commandButton value="Complete"
+                                                             icon="pi pi-check"
+                                                             action="#{technicianBean.completeAppointment(a.id)}"
+                                                             update=":mainForm :growl" styleClass="btn-primary"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+
+                                <!-- Completed Appointments -->
+                                <div class="panel">
+                                    <h3>Completed</h3>
+                                    <p:dataTable value="#{technicianBean.completedAppointmentList}" var="a"
+                                                 paginator="true" rows="10"
+                                                 emptyMessage="No completed appointments.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{a.id}"/>
+                                        </p:column>
+                                        <p:column headerText="Customer">
+                                            <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
+                                        </p:column>
+                                        <p:column headerText="Service">
+                                            <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+                                        </p:column>
+                                        <p:column headerText="Date/Time">
+                                            <h:outputText value="#{a.appointmentDateTime}"/>
+                                        </p:column>
+                                        <p:column headerText="Amount (RM)">
+                                            <h:outputText value="#{a.paymentAmount}"/>
+                                        </p:column>
+                                        <p:column headerText="Status">
+                                            <h:outputText value="Completed" styleClass="badge-completed"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </h:panelGroup>
+
+                            <!-- ==================== WRITE FEEDBACK SECTION ==================== -->
+                            <h:panelGroup rendered="#{technicianBean.currentSection == 'feedback'}">
+                                <div class="panel">
+                                    <h3>Submit Feedback for Completed Appointment</h3>
                                     <div class="form-grid">
-                                        <label>Name</label>
-                                        <p:inputText value="#{technicianBean.profileData.name}" style="width:100%;"/>
-
-                                        <label>Email</label>
-                                        <p:inputText value="#{technicianBean.profileData.email}" style="width:100%;"/>
-
-                                        <label>Gender</label>
-                                        <p:selectOneMenu value="#{technicianBean.profileData.gender}" style="width:100%;">
-                                            <f:selectItem itemLabel="Male" itemValue="M"/>
-                                            <f:selectItem itemLabel="Female" itemValue="F"/>
-                                            <f:selectItem itemLabel="Other" itemValue="Other"/>
-                                        </p:selectOneMenu>
-
-                                        <label>Phone</label>
-                                        <p:inputText value="#{technicianBean.profileData.phone}" style="width:100%;"/>
-
-                                        <label>IC</label>
-                                        <p:inputText value="#{technicianBean.profileData.ic}" style="width:100%;"/>
-
-                                        <label>Address</label>
-                                        <p:inputTextarea value="#{technicianBean.profileData.address}" rows="3" style="width:100%;"/>
-
-                                        <label>Specialty</label>
-                                        <p:inputText value="#{technicianBean.profileData.specialty}" style="width:100%;"/>
+                                        <div>
+                                            <label>Appointment</label>
+                                            <p:selectOneMenu value="#{technicianBean.feedbackAppointmentId}" styleClass="form-control">
+                                                <f:selectItem itemLabel="-- Select Completed Appointment --" itemValue=""/>
+                                                <f:selectItems value="#{technicianBean.completedAppointmentList}" var="a"
+                                                               itemLabel="#{a.id} - #{a.customer != null ? a.customer.name : a.customerId}"
+                                                               itemValue="#{a.id}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                        <div>
+                                            <label>Feedback</label>
+                                            <p:inputTextarea value="#{technicianBean.feedbackText}" rows="5" styleClass="form-control"
+                                                             placeholder="Write your feedback here..."/>
+                                        </div>
                                     </div>
                                     <div class="form-actions">
-                                        <p:commandButton value="Update Profile" action="#{technicianBean.updateProfile()}"
-                                                         update=":mainForm" styleClass="btn-primary"/>
+                                        <p:commandButton value="Submit Feedback"
+                                                         icon="pi pi-check"
+                                                         action="#{technicianBean.submitFeedback()}"
+                                                         update=":mainForm :growl" styleClass="btn-success"/>
                                     </div>
-                                </h:panelGroup>
-                            </div>
-                        </h:panelGroup>
-
-                        <!-- ========== MY APPOINTMENTS SECTION ========== -->
-                        <h:panelGroup rendered="#{technicianBean.currentSection == 'appointments'}" layout="block">
-                            <!-- Pending Appointments -->
-                            <div class="panel">
-                                <h3>Pending Appointments</h3>
-                                <p:dataTable value="#{technicianBean.pendingAppointmentList}" var="a"
-                                             emptyMessage="No pending appointments.">
-                                    <p:column headerText="ID">
-                                        <h:outputText value="#{a.id}"/>
-                                    </p:column>
-                                    <p:column headerText="Customer">
-                                        <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
-                                    </p:column>
-                                    <p:column headerText="Service">
-                                        <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
-                                    </p:column>
-                                    <p:column headerText="Date/Time">
-                                        <h:outputText value="#{a.appointmentDateTime}"/>
-                                    </p:column>
-                                    <p:column headerText="Amount (RM)">
-                                        <h:outputText value="#{a.paymentAmount}"/>
-                                    </p:column>
-                                    <p:column headerText="Action">
-                                        <p:commandButton value="Start" action="#{technicianBean.startAppointment(a.id)}"
-                                                         update=":mainForm" styleClass="btn-success"/>
-                                    </p:column>
-                                </p:dataTable>
-                            </div>
-
-                            <!-- In Progress Appointments -->
-                            <div class="panel">
-                                <h3>In Progress</h3>
-                                <p:dataTable value="#{technicianBean.inProgressAppointmentList}" var="a"
-                                             emptyMessage="No appointments in progress.">
-                                    <p:column headerText="ID">
-                                        <h:outputText value="#{a.id}"/>
-                                    </p:column>
-                                    <p:column headerText="Customer">
-                                        <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
-                                    </p:column>
-                                    <p:column headerText="Service">
-                                        <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
-                                    </p:column>
-                                    <p:column headerText="Date/Time">
-                                        <h:outputText value="#{a.appointmentDateTime}"/>
-                                    </p:column>
-                                    <p:column headerText="Amount (RM)">
-                                        <h:outputText value="#{a.paymentAmount}"/>
-                                    </p:column>
-                                    <p:column headerText="Action">
-                                        <p:commandButton value="Complete" action="#{technicianBean.completeAppointment(a.id)}"
-                                                         update=":mainForm" styleClass="btn-primary"/>
-                                    </p:column>
-                                </p:dataTable>
-                            </div>
-
-                            <!-- Completed Appointments -->
-                            <div class="panel">
-                                <h3>Completed</h3>
-                                <p:dataTable value="#{technicianBean.completedAppointmentList}" var="a"
-                                             paginator="true" rows="10"
-                                             emptyMessage="No completed appointments.">
-                                    <p:column headerText="ID">
-                                        <h:outputText value="#{a.id}"/>
-                                    </p:column>
-                                    <p:column headerText="Customer">
-                                        <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
-                                    </p:column>
-                                    <p:column headerText="Service">
-                                        <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
-                                    </p:column>
-                                    <p:column headerText="Date/Time">
-                                        <h:outputText value="#{a.appointmentDateTime}"/>
-                                    </p:column>
-                                    <p:column headerText="Amount (RM)">
-                                        <h:outputText value="#{a.paymentAmount}"/>
-                                    </p:column>
-                                    <p:column headerText="Status">
-                                        <span class="badge badge-completed">Completed</span>
-                                    </p:column>
-                                </p:dataTable>
-                            </div>
-                        </h:panelGroup>
-
-                        <!-- ========== WRITE FEEDBACK SECTION ========== -->
-                        <h:panelGroup rendered="#{technicianBean.currentSection == 'feedback'}" layout="block">
-                            <div class="panel">
-                                <h3>Submit Feedback for Completed Appointment</h3>
-                                <div class="form-grid">
-                                    <label>Appointment</label>
-                                    <p:selectOneMenu value="#{technicianBean.feedbackAppointmentId}" style="width:100%;">
-                                        <f:selectItem itemLabel="-- Select Completed Appointment --" itemValue=""/>
-                                        <f:selectItems value="#{technicianBean.completedAppointmentList}" var="a"
-                                                       itemLabel="#{a.id} - #{a.customer != null ? a.customer.name : a.customerId}"
-                                                       itemValue="#{a.id}"/>
-                                    </p:selectOneMenu>
-
-                                    <label>Feedback</label>
-                                    <p:inputTextarea value="#{technicianBean.feedbackText}" rows="5" style="width:100%;"
-                                                     placeholder="Write your feedback here..."/>
                                 </div>
-                                <div class="form-actions">
-                                    <p:commandButton value="Submit Feedback" action="#{technicianBean.submitFeedback()}"
-                                                     update=":mainForm" styleClass="btn-success"/>
-                                </div>
-                            </div>
 
-                            <div class="panel">
-                                <h3>My Submitted Feedback</h3>
-                                <p:dataTable value="#{technicianBean.feedbackList}" var="fb"
-                                             paginator="true" rows="10"
-                                             emptyMessage="No feedback submitted yet.">
-                                    <p:column headerText="ID">
-                                        <h:outputText value="#{fb.id}"/>
-                                    </p:column>
-                                    <p:column headerText="Appointment">
-                                        <h:outputText value="#{fb.appointmentId}"/>
-                                    </p:column>
-                                    <p:column headerText="Feedback">
-                                        <h:outputText value="#{fb.feedbackText}"/>
-                                    </p:column>
-                                    <p:column headerText="Date">
-                                        <h:outputText value="#{fb.createdAt}"/>
-                                    </p:column>
-                                </p:dataTable>
-                            </div>
-                        </h:panelGroup>
+                                <div class="panel">
+                                    <h3>My Submitted Feedback</h3>
+                                    <p:dataTable value="#{technicianBean.feedbackList}" var="fb"
+                                                 paginator="true" rows="10"
+                                                 emptyMessage="No feedback submitted yet.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{fb.id}"/>
+                                        </p:column>
+                                        <p:column headerText="Appointment">
+                                            <h:outputText value="#{fb.appointmentId}"/>
+                                        </p:column>
+                                        <p:column headerText="Feedback">
+                                            <h:outputText value="#{fb.feedbackText}"/>
+                                        </p:column>
+                                        <p:column headerText="Date">
+                                            <h:outputText value="#{fb.createdAt}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </h:panelGroup>
 
-                        <!-- ========== CUSTOMER COMMENTS SECTION ========== -->
-                        <h:panelGroup rendered="#{technicianBean.currentSection == 'comments'}" layout="block">
-                            <div class="panel">
-                                <h3>Customer Comments on My Appointments</h3>
-                                <p:dataTable value="#{technicianBean.commentsList}" var="cm"
-                                             paginator="true" rows="10"
-                                             emptyMessage="No customer comments yet.">
-                                    <p:column headerText="ID">
-                                        <h:outputText value="#{cm.id}"/>
-                                    </p:column>
-                                    <p:column headerText="Appointment">
-                                        <h:outputText value="#{cm.appointmentId}"/>
-                                    </p:column>
-                                    <p:column headerText="Customer">
-                                        <h:outputText value="#{cm.customerId}"/>
-                                    </p:column>
-                                    <p:column headerText="Comment">
-                                        <h:outputText value="#{cm.commentText}"/>
-                                    </p:column>
-                                    <p:column headerText="Rating">
-                                        <h:outputText value="#{cm.rating}"/>
-                                    </p:column>
-                                    <p:column headerText="Date">
-                                        <h:outputText value="#{cm.createdAt}"/>
-                                    </p:column>
-                                </p:dataTable>
-                            </div>
-                        </h:panelGroup>
+                            <!-- ==================== CUSTOMER COMMENTS SECTION ==================== -->
+                            <h:panelGroup rendered="#{technicianBean.currentSection == 'comments'}">
+                                <div class="panel">
+                                    <h3>Customer Comments on My Appointments</h3>
+                                    <p:dataTable value="#{technicianBean.commentsList}" var="cm"
+                                                 paginator="true" rows="10"
+                                                 emptyMessage="No customer comments yet.">
+                                        <p:column headerText="ID">
+                                            <h:outputText value="#{cm.id}"/>
+                                        </p:column>
+                                        <p:column headerText="Appointment">
+                                            <h:outputText value="#{cm.appointmentId}"/>
+                                        </p:column>
+                                        <p:column headerText="Customer">
+                                            <h:outputText value="#{cm.customerId}"/>
+                                        </p:column>
+                                        <p:column headerText="Comment">
+                                            <h:outputText value="#{cm.commentText}"/>
+                                        </p:column>
+                                        <p:column headerText="Rating">
+                                            <h:outputText value="#{cm.rating}"/>
+                                        </p:column>
+                                        <p:column headerText="Date">
+                                            <h:outputText value="#{cm.createdAt}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </h:panelGroup>
 
-                        <!-- ========== PERFORMANCE SECTION ========== -->
-                        <h:panelGroup rendered="#{technicianBean.currentSection == 'performance'}" layout="block">
-                            <div class="stats-row">
-                                <div class="stat-card">
-                                    <p class="stat-value">#{technicianBean.totalAppointments}</p>
-                                    <p class="stat-label">Total Appointments</p>
+                            <!-- ==================== PERFORMANCE SECTION ==================== -->
+                            <h:panelGroup rendered="#{technicianBean.currentSection == 'performance'}">
+                                <div class="stats-row">
+                                    <div class="stat-card">
+                                        <h3>Total Appointments</h3>
+                                        <p>#{technicianBean.totalAppointments}</p>
+                                    </div>
+                                    <div class="stat-card accent-green">
+                                        <h3>Completed This Month</h3>
+                                        <p>#{technicianBean.completedThisMonth}</p>
+                                    </div>
+                                    <div class="stat-card accent-orange">
+                                        <h3>Average Rating</h3>
+                                        <p>#{technicianBean.averageRating}</p>
+                                    </div>
+                                    <div class="stat-card accent-cyan">
+                                        <h3>Total Revenue</h3>
+                                        <p>RM #{technicianBean.totalRevenue}</p>
+                                    </div>
                                 </div>
-                                <div class="stat-card accent-green">
-                                    <p class="stat-value">#{technicianBean.completedThisMonth}</p>
-                                    <p class="stat-label">Completed This Month</p>
-                                </div>
-                                <div class="stat-card accent-orange">
-                                    <p class="stat-value">#{technicianBean.averageRating}</p>
-                                    <p class="stat-label">Average Rating</p>
-                                </div>
-                                <div class="stat-card accent-cyan">
-                                    <p class="stat-value">RM #{technicianBean.totalRevenue}</p>
-                                    <p class="stat-label">Total Revenue</p>
-                                </div>
-                            </div>
-                        </h:panelGroup>
+                            </h:panelGroup>
 
-                    </h:form>
-                </h:panelGroup>
+                        </h:form>
+                    </h:panelGroup>
+                </div>
             </div>
+
         </div>
     </h:body>
 </html>

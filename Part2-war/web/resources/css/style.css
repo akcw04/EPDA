@@ -87,6 +87,14 @@ body .sidebar {
 .sidebar-brand h2 { margin: 0; font-size: 20px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
 .sidebar-brand span { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
+/* Ensure the form wrapper inside sidebar participates in flex layout */
+.sidebar > form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
 .sidebar-nav { flex: 1; padding: 16px; overflow-y: auto; }
 .sidebar-nav .nav-section { padding: 20px 12px 8px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
@@ -118,7 +126,10 @@ body .nav-link .ui-button-text { padding: 0 !important; }
 /* -- Main Content -- */
 body .main-content { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
 .top-bar { background: #fff; padding: 24px 40px; border-bottom: 1px solid var(--border-color); }
-.top-bar h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--text-main); }
+.top-bar h1, .top-bar h2 { margin: 0; font-size: 22px; font-weight: 700; color: var(--text-main); }
+.search-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 24px; }
+.search-bar .form-control, .search-bar .ui-inputtext { max-width: 320px; }
+.edit-panel { background: #fff; border-radius: 12px; padding: 32px; margin-top: 24px; border: 1px solid var(--border-color); }
 .content-area { padding: 40px; flex: 1; }
 
 /* ========== STAT CARDS ========== */
@@ -133,6 +144,7 @@ body .main-content { margin-left: var(--sidebar-width); flex: 1; display: flex; 
 .stat-card.accent-orange { border-top-color: var(--warning); }
 .stat-card.accent-red { border-top-color: var(--danger); }
 .stat-card.accent-purple { border-top-color: var(--purple); }
+.stat-card.accent-cyan { border-top-color: #06b6d4; }
 
 /* ========== CONTENT PANELS ========== */
 .panel { background: #fff; border-radius: 12px; padding: 32px; margin-bottom: 24px; border: 1px solid var(--border-color); }
