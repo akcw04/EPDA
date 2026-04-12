@@ -98,7 +98,11 @@ public class ManagerBean implements Serializable {
     private BarChartModel popularityChartModel;
 
     public void init() {
-        loadDashboardData();
+        if (services == null || technicians == null || counterStaffList == null ||
+            customers == null || managers == null || appointments == null ||
+            allFeedback == null || allComments == null) {
+            loadDashboardData();
+        }
     }
 
     public void loadDashboardData() {
@@ -181,6 +185,7 @@ public class ManagerBean implements Serializable {
 
     private void clearRegistrationForm() {
         regName = regEmail = regPassword = regGender = regPhone = regIc = regAddress = regSpecialty = null;
+        regUserType = "Technician";
     }
 
     // ========== STAFF DELETE ==========
@@ -209,11 +214,25 @@ public class ManagerBean implements Serializable {
 
     public void searchStaff() {
         try {
-            if (searchKeyword != null && !searchKeyword.isBlank()) {
-                technicians = userFacade.searchTechnicians(searchKeyword);
-                counterStaffList = userFacade.searchCounterStaff(searchKeyword);
-                managers = userFacade.searchManagers(searchKeyword);
-                customers = userFacade.searchCustomers(searchKeyword);
+            String keyword = searchKeyword != null ? searchKeyword.trim() : null;
+            if (keyword != null && !keyword.isBlank()) {
+                switch (currentSection) {
+                    case "technicians":
+                        technicians = userFacade.searchTechnicians(keyword);
+                        break;
+                    case "counter-staff":
+                        counterStaffList = userFacade.searchCounterStaff(keyword);
+                        break;
+                    case "managers":
+                        managers = userFacade.searchManagers(keyword);
+                        break;
+                    case "customers":
+                        customers = userFacade.searchCustomers(keyword);
+                        break;
+                    default:
+                        loadDashboardData();
+                        break;
+                }
             } else {
                 loadDashboardData();
             }
@@ -338,7 +357,7 @@ public class ManagerBean implements Serializable {
             dailyRevenue = appointmentFacade.getDailyRevenue();
             technicianWorkload = appointmentFacade.getTechnicianWorkload();
             servicePopularity = appointmentFacade.getServicePopularity();
-            customerFeedback = appointmentFacade.getCustomerFeedback();
+            customerFeedback = commentFacade.getCustomerFeedbackSummary();
             statusAnalytics = appointmentFacade.getStatusAnalytics();
             buildWorkloadChart();
             buildStatusChart();
@@ -453,6 +472,12 @@ public class ManagerBean implements Serializable {
 
     public void navigateTo(String section) {
         this.currentSection = section;
+        if ("register-staff".equals(section)) {
+            clearRegistrationForm();
+        }
+        if ("reports".equals(section)) {
+            loadReports();
+        }
     }
 
     // ========== HELPERS ==========

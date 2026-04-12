@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 
 /**
  * AppointmentComment entity. Represents comments written by customers on their appointments.
- * Uses JPA annotations for table generation; accessed via JDBC in AppointmentCommentFacade.
  */
 @Entity
 @Table(name = "APPOINTMENT_COMMENT")
@@ -32,10 +31,12 @@ public class AppointmentComment implements Serializable {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    // Transient fields for in-memory use
-    @Transient
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "appointment_id", insertable = false, updatable = false)
     private Appointment appointment;
-    @Transient
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
     private Customer customer;
 
     public AppointmentComment() {

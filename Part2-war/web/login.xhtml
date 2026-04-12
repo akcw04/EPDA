@@ -15,7 +15,7 @@
                     <h2>APU Automotive Service Centre</h2>
                     <p class="subtitle">Enterprise Service Management System</p>
 
-                    <p:messages id="msgs" showDetail="true" closable="true"/>
+                    <p:messages id="msgs" showDetail="false" closable="true"/>
 
                     <div class="field">
                         <label for="loginForm:email">Email</label>
@@ -32,7 +32,7 @@
                     </div>
 
                     <p:commandButton value="Sign In" action="#{loginBean.login}"
-                                     update="loginForm" styleClass="login-btn"/>
+                                     ajax="false" styleClass="login-btn"/>
                 </h:form>
 
                 <div class="login-footer">

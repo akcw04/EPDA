@@ -60,8 +60,14 @@ public class TechnicianBean implements Serializable {
     private double totalRevenue;
 
     public void init() {
-        loadDashboardData();
-        loadProfile();
+        if (pendingAppointmentList == null || inProgressAppointmentList == null ||
+            completedAppointmentList == null || feedbackList == null ||
+            commentsList == null) {
+            loadDashboardData();
+        }
+        if (profileData == null) {
+            loadProfile();
+        }
     }
 
     public void loadDashboardData() {

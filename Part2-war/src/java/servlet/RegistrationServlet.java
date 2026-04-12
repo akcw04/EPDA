@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 
 /**
  * RegistrationServlet - Handles user registration form submissions.
@@ -70,13 +69,8 @@ public class RegistrationServlet extends HttpServlet {
             }
 
             // Check for duplicate email
-            try {
-                if (isEmailExists(userType, email)) {
-                    sendJsonResponse(out, false, "Email already registered");
-                    return;
-                }
-            } catch (SQLException e) {
-                sendJsonResponse(out, false, "Database error checking email");
+            if (isEmailExists(userType, email)) {
+                sendJsonResponse(out, false, "Email already registered");
                 return;
             }
 
@@ -215,27 +209,19 @@ public class RegistrationServlet extends HttpServlet {
 
     /**
      * Check if email already exists in the database.
-     * @param userType the type of user to check
-     * @param email the email to check
-     * @return true if email exists, false otherwise
-     * @throws SQLException if database error occurs
      */
-    private boolean isEmailExists(String userType, String email) throws SQLException {
-        try {
-            switch (userType.toUpperCase()) {
-                case "CUSTOMER":
-                    return userFacade.getCustomerByEmail(email) != null;
-                case "COUNTERSTAFF":
-                    return userFacade.getCounterStaffByEmail(email) != null;
-                case "TECHNICIAN":
-                    return userFacade.getTechnicianByEmail(email) != null;
-                case "MANAGER":
-                    return userFacade.getManagerByEmail(email) != null;
-                default:
-                    return false;
-            }
-        } catch (SQLException e) {
-            throw new SQLException("Error checking email existence: " + e.getMessage());
+    private boolean isEmailExists(String userType, String email) {
+        switch (userType.toUpperCase()) {
+            case "CUSTOMER":
+                return userFacade.getCustomerByEmail(email) != null;
+            case "COUNTERSTAFF":
+                return userFacade.getCounterStaffByEmail(email) != null;
+            case "TECHNICIAN":
+                return userFacade.getTechnicianByEmail(email) != null;
+            case "MANAGER":
+                return userFacade.getManagerByEmail(email) != null;
+            default:
+                return false;
         }
     }
 

@@ -1,9 +1,6 @@
 package util;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import jakarta.persistence.EntityManager;
 
 /**
  * ID Generator utility for manual ID generation before database insert.
@@ -12,57 +9,58 @@ import java.sql.SQLException;
 public class IDGenerator {
 
     /**
-     * Generate next ID for a given table.
+     * Generate the next ID for a given entity, based on the current MAX id.
+     *
+     * @param em         EntityManager used to run the JPQL query
+     * @param entityName JPQL entity name (e.g. "Technician")
+     * @param idField    JPQL id field on the entity (e.g. "id")
+     * @param prefix     ID prefix (e.g. "T")
      */
-    public static String generateNextID(Connection connection, String tableName,
-                                         String idColumnName, String prefix) throws SQLException {
-        String sql = "SELECT MAX(" + idColumnName + ") FROM " + tableName;
-
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            int nextNumber = 1;
-            if (rs.next() && rs.getString(1) != null) {
-                String maxId = rs.getString(1);
-                String[] parts = maxId.split("-");
-                nextNumber = Integer.parseInt(parts[parts.length - 1]) + 1;
-            }
-            return String.format("%s-%03d", prefix, nextNumber);
+    public static String generateNextID(EntityManager em, String entityName,
+                                        String idField, String prefix) {
+        String jpql = "SELECT MAX(e." + idField + ") FROM " + entityName + " e";
+        String maxId = em.createQuery(jpql, String.class).getSingleResult();
+        int nextNumber = 1;
+        if (maxId != null) {
+            String[] parts = maxId.split("-");
+            nextNumber = Integer.parseInt(parts[parts.length - 1]) + 1;
         }
+        return String.format("%s-%03d", prefix, nextNumber);
     }
 
-    public static String generateTechnicianID(Connection conn) throws SQLException {
-        return generateNextID(conn, "TECHNICIAN", "technician_id", "T");
+    public static String generateTechnicianID(EntityManager em) {
+        return generateNextID(em, "Technician", "id", "T");
     }
 
-    public static String generateCustomerID(Connection conn) throws SQLException {
-        return generateNextID(conn, "CUSTOMER", "customer_id", "C");
+    public static String generateCustomerID(EntityManager em) {
+        return generateNextID(em, "Customer", "id", "C");
     }
 
-    public static String generateServiceID(Connection conn) throws SQLException {
-        return generateNextID(conn, "SERVICE", "service_id", "S");
+    public static String generateServiceID(EntityManager em) {
+        return generateNextID(em, "Service", "id", "S");
     }
 
-    public static String generateAppointmentID(Connection conn) throws SQLException {
-        return generateNextID(conn, "APPOINTMENT", "appointment_id", "A");
+    public static String generateAppointmentID(EntityManager em) {
+        return generateNextID(em, "Appointment", "id", "A");
     }
 
-    public static String generateManagerID(Connection conn) throws SQLException {
-        return generateNextID(conn, "MANAGER", "manager_id", "M");
+    public static String generateManagerID(EntityManager em) {
+        return generateNextID(em, "Manager", "id", "M");
     }
 
-    public static String generateCounterStaffID(Connection conn) throws SQLException {
-        return generateNextID(conn, "COUNTER_STAFF", "counter_staff_id", "CS");
+    public static String generateCounterStaffID(EntityManager em) {
+        return generateNextID(em, "CounterStaff", "id", "CS");
     }
 
-    public static String generateFeedbackID(Connection conn) throws SQLException {
-        return generateNextID(conn, "FEEDBACK", "feedback_id", "FB");
+    public static String generateFeedbackID(EntityManager em) {
+        return generateNextID(em, "Feedback", "id", "FB");
     }
 
-    public static String generatePaymentID(Connection conn) throws SQLException {
-        return generateNextID(conn, "PAYMENT", "payment_id", "PY");
+    public static String generatePaymentID(EntityManager em) {
+        return generateNextID(em, "Payment", "id", "PY");
     }
 
-    public static String generateCommentID(Connection conn) throws SQLException {
-        return generateNextID(conn, "APPOINTMENT_COMMENT", "comment_id", "CM");
+    public static String generateCommentID(EntityManager em) {
+        return generateNextID(em, "AppointmentComment", "id", "CM");
     }
 }

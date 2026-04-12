@@ -62,8 +62,14 @@ public class CustomerBean implements Serializable {
     private Integer commentRating;
 
     public void init() {
-        loadDashboardData();
-        loadProfile();
+        if (services == null || upcomingAppointments == null ||
+            completedAppointmentsList == null || paymentHistory == null ||
+            feedbackList == null || myComments == null) {
+            loadDashboardData();
+        }
+        if (profileData == null) {
+            loadProfile();
+        }
     }
 
     public void loadDashboardData() {

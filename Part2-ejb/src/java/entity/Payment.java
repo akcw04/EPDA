@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 
 /**
  * Payment entity. Represents payment transactions for appointments.
- * Uses JPA annotations for table generation; accessed via JDBC in PaymentFacade.
  */
 @Entity
 @Table(name = "PAYMENT")
@@ -38,10 +37,12 @@ public class Payment implements Serializable {
     @Column(name = "status", length = 20)
     private String status;
 
-    // Transient fields for in-memory use
-    @Transient
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "appointment_id", insertable = false, updatable = false)
     private Appointment appointment;
-    @Transient
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
     private Customer customer;
 
     public Payment() {

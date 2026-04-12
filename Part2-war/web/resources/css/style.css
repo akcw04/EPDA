@@ -48,26 +48,37 @@ body {
 /* Login Input Fields */
 .login-card .field { margin-bottom: 20px; }
 .login-card .field label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main); font-size: 13px; }
-.login-card .field .ui-inputtext, 
-.login-card .field .ui-password input { 
-    width: 100% !important; padding: 12px !important; 
-    border: 1px solid var(--border-color) !important; 
-    border-radius: 8px !important; font-size: 14px !important; 
-    background: #fcfcfd !important;
+
+.login-card .field .ui-inputtext,
+.login-card .field .ui-inputfield {
+    width: 100% !important; padding: 12px !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important; font-size: 14px !important;
+    background: #fcfcfd !important; outline: none !important;
+    box-shadow: none !important; transition: border-color 0.2s, box-shadow 0.2s;
 }
-.login-card .field .ui-inputtext:focus { 
-    border-color: var(--primary) !important; outline: none; 
-    box-shadow: 0 0 0 4px var(--primary-light) !important; 
+.login-card .field .ui-password {
+    display: block !important; width: 100% !important;
+    border: none !important;
+    background: transparent !important; box-shadow: none !important;
+}
+.login-card .field .ui-inputtext:focus,
+.login-card .field .ui-inputfield:focus {
+    border-color: var(--primary) !important; outline: none !important;
+    box-shadow: 0 0 0 3px var(--primary-light) !important;
 }
 
-.login-btn { 
-    width: 100%; padding: 14px !important; 
-    background: var(--primary) !important; color: #fff !important; 
-    border: none !important; border-radius: 8px !important; 
-    font-size: 15px !important; font-weight: 600 !important; 
-    cursor: pointer; margin-top: 10px; 
+.login-card .login-btn.ui-button {
+    width: 100% !important; padding: 14px !important;
+    background: var(--primary) !important; color: #fff !important;
+    border: none !important; border-radius: 8px !important;
+    font-size: 15px !important; font-weight: 600 !important;
+    cursor: pointer; margin-top: 10px;
+    box-shadow: none !important; transition: background 0.2s;
 }
-.login-btn:hover { background: var(--primary-hover) !important; }
+.login-card .login-btn.ui-button:hover,
+.login-card .login-btn.ui-button:focus { background: var(--primary-hover) !important; }
+.login-card .login-btn.ui-button .ui-button-text { padding: 0 !important; }
 
 .login-footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center; }
 .login-footer p { margin: 6px 0; font-size: 12px; color: var(--text-muted); }
@@ -83,7 +94,7 @@ body .sidebar {
     display: flex; flex-direction: column;
     position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
 }
-.sidebar-brand { padding: 32px 24px; border-bottom: 1px solid var(--bg-main); }
+.sidebar-brand { padding: 24px 24px; border-bottom: 1px solid var(--bg-main); }
 .sidebar-brand h2 { margin: 0; font-size: 20px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
 .sidebar-brand span { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
@@ -96,7 +107,7 @@ body .sidebar {
     overflow: hidden;
 }
 .sidebar-nav { flex: 1; padding: 16px; overflow-y: auto; }
-.sidebar-nav .nav-section { padding: 20px 12px 8px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+.sidebar-nav .nav-section { padding: 0px 12px 8px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
 /* Nav Buttons (PrimeFaces Overrides) */
 body .nav-link.ui-button {
@@ -114,14 +125,17 @@ body .nav-link .ui-button-text { padding: 0 !important; }
 
 .sidebar-footer { padding: 24px; border-top: 1px solid var(--border-color); }
 .sidebar-footer span { display: block; font-size: 13px; font-weight: 600; color: var(--text-main); }
-.sidebar-footer span:last-of-type { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+.sidebar-footer span:last-of-type { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; }
 
 .logout-btn.ui-button {
-    width: 100%; background: transparent !important; color: var(--danger) !important;
-    border: 1px solid var(--danger) !important; border-radius: 6px !important;
-    font-size: 12px !important; font-weight: 600 !important; padding: 8px !important;
+    width: 100% !important; background: var(--bg-main) !important; color: var(--text-muted) !important;
+    border: 1px solid var(--border-color) !important; border-radius: 8px !important;
+    font-size: 13px !important; font-weight: 600 !important; padding: 10px !important;
+    box-shadow: none !important; transition: all 0.2s;
 }
-.logout-btn.ui-button:hover { background: var(--danger) !important; color: #fff !important; }
+.logout-btn.ui-button:hover { background: #fef2f2 !important; color: var(--danger) !important; border-color: var(--danger) !important; }
+.logout-btn.ui-button .ui-icon { color: inherit !important; }
+.logout-btn.ui-button .ui-button-text { padding: 0 !important; }
 
 /* -- Main Content -- */
 body .main-content { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; }
@@ -151,29 +165,114 @@ body .main-content { margin-left: var(--sidebar-width); flex: 1; display: flex; 
 .panel h3 { margin: 0 0 24px; font-size: 18px; font-weight: 700; color: var(--text-main); border-bottom: 1px solid var(--bg-main); padding-bottom: 16px; }
 
 /* ========== FORMS & INPUTS ========== */
-.form-grid { display: grid; grid-template-columns: 140px 1fr; gap: 16px 24px; align-items: center; max-width: 800px; }
-.form-grid label { font-weight: 600; font-size: 13px; color: var(--text-main); text-align: right; }
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 900px; }
+.form-grid > div > label,
+.form-grid label { display: block; font-weight: 600; font-size: 13px; color: var(--text-main); margin-bottom: 8px; text-align: left; }
 
 /* General Input Styling for Dashboard Forms */
-body .form-control, 
-body .ui-inputtext, 
-body .ui-selectonemenu, 
-body .ui-password input,
-body .ui-inputtextarea { 
-    width: 100% !important; padding: 10px 12px !important; 
-    border: 1px solid var(--border-color) !important; border-radius: 8px !important; 
-    font-size: 14px !important; background: #fff !important;
+body input.form-control,
+body textarea.form-control,
+body select.form-control,
+body .ui-inputfield,
+body .ui-inputtextarea,
+body .ui-password input {
+    width: 100% !important;
+    min-height: 42px;
+    padding: 10px 12px !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    color: var(--text-main) !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
-body .ui-inputtext:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 3px var(--primary-light) !important; }
+body textarea.form-control,
+body .ui-inputtextarea {
+    min-height: 96px;
+    resize: vertical;
+}
+body input.form-control:focus,
+body textarea.form-control:focus,
+body select.form-control:focus,
+body .ui-inputfield:focus,
+body .ui-inputtextarea:focus,
+body .ui-password input:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px var(--primary-light) !important;
+    outline: none !important;
+}
+
+/* PrimeFaces password wrapper should not create a second border box */
+body .ui-password.form-control {
+    display: block !important;
+    width: 100% !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* PrimeFaces SelectOneMenu */
+body .ui-selectonemenu {
+    display: block !important;
+    width: 100% !important;
+    min-height: 42px;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+}
+body .ui-selectonemenu .ui-selectonemenu-label {
+    min-height: 40px;
+    padding: 10px 12px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    color: var(--text-main) !important;
+    line-height: 1.4 !important;
+}
+body .ui-selectonemenu .ui-selectonemenu-trigger {
+    width: 36px !important;
+    border: none !important;
+    background: transparent !important;
+}
+body .ui-selectonemenu.ui-state-focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px var(--primary-light) !important;
+}
+
+/* Native selects and datetime-local inputs still appear in a few forms */
+body select.form-control {
+    appearance: none;
+    padding-right: 40px !important;
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+        linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+    background-position:
+        calc(100% - 18px) calc(50% - 3px),
+        calc(100% - 12px) calc(50% - 3px);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+}
+body input[type="datetime-local"].form-control {
+    appearance: none;
+}
 
 .form-actions { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--bg-main); display: flex; gap: 12px; }
 
 /* Dashboard Buttons */
-body .btn-primary.ui-button { background: var(--primary) !important; border: none !important; color: #fff !important; padding: 0px 24px !important; font-weight: 600 !important; border-radius: 8px !important; margin-top: 10px; margin-bottom: 10px; margin-right: 10px;}
-body .btn-success.ui-button { background: var(--success) !important; border: none !important; color: #fff !important; padding: 10px 24px !important; font-weight: 600 !important; border-radius: 8px !important; }
-body .btn-danger.ui-button { background: var(--danger) !important; border: none !important; color: #fff !important; border-radius: 6px !important; }
-body .btn-secondary.ui-button { background: var(--text-muted) !important; border: none !important; color: #fff !important; border-radius: 6px !important; }
-body .btn-edit.ui-button { background: var(--primary-light) !important; color: var(--primary) !important; border: none !important; border-radius: 6px !important; margin-right: 6px; margin-top: 10px; margin-bottom: 10px; margin-right: 10px;}
+body .btn-primary.ui-button { background: var(--primary) !important; border: none !important; color: #fff !important; padding: 10px 24px !important; font-weight: 600 !important; border-radius: 8px !important; box-shadow: none !important; transition: background 0.2s; }
+body .btn-primary.ui-button:hover { background: var(--primary-hover) !important; }
+body .btn-success.ui-button { background: var(--success) !important; border: none !important; color: #fff !important; padding: 10px 24px !important; font-weight: 600 !important; border-radius: 8px !important; box-shadow: none !important; }
+body .btn-success.ui-button:hover { background: #059669 !important; }
+body .btn-danger.ui-button { background: var(--danger) !important; border: none !important; color: #fff !important; padding: 10px 24px !important; font-weight: 600 !important; border-radius: 8px !important; box-shadow: none !important; }
+body .btn-danger.ui-button:hover { background: #dc2626 !important; }
+body .btn-secondary.ui-button { background: var(--bg-main) !important; border: 1px solid var(--border-color) !important; color: var(--text-main) !important; padding: 10px 24px !important; font-weight: 600 !important; border-radius: 8px !important; box-shadow: none !important; }
+body .btn-secondary.ui-button:hover { background: var(--border-color) !important; }
+body .btn-edit.ui-button { background: var(--primary-light) !important; color: var(--primary) !important; border: none !important; padding: 10px 24px !important; font-weight: 600 !important; border-radius: 8px !important; margin: 4px 8px 4px 0; box-shadow: none !important; }
+body .btn-edit.ui-button:hover { background: #dbeafe !important; }
+body .ui-button .ui-button-text { padding: .1rem 0rem .1rem 1rem !important; }
 
 /* ========== DATA TABLES ========== */
 body .ui-datatable { border: none !important; }
@@ -196,11 +295,25 @@ body .ui-datatable tbody tr:hover { background-color: var(--primary-light) !impo
 .badge-progress { padding: 4px 12px; border-radius: 20px; background: #eff6ff; color: #1e40af; font-size: 11px; font-weight: 700; }
 .badge-cancelled { padding: 4px 12px; border-radius: 20px; background: #fef2f2; color: #b91c1c; font-size: 11px; font-weight: 700; }
 
+/* ========== FORM GRID RESPONSIVE HELPERS ========== */
+.form-grid > div.full-width { grid-column: 1 / -1; }
+@media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+}
+
+/* ========== REPORT STYLES ========== */
+.report-section { margin-bottom: 32px; }
+.report-section-title { font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0 0 16px; padding-bottom: 12px; border-bottom: 2px solid var(--primary-light); }
+.report-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px; }
+.report-row.three-col { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 900px) {
+    .report-row, .report-row.three-col { grid-template-columns: 1fr; }
+}
+
 /* ========== RESPONSIVE ========== */
 @media (max-width: 1024px) {
     body .sidebar { width: 80px; min-width: 80px; }
     .sidebar-brand h2, .sidebar-brand span, .nav-link span, .nav-section, .sidebar-footer .user-info { display: none; }
     body .main-content { margin-left: 80px; }
     .form-grid { grid-template-columns: 1fr; }
-    .form-grid label { text-align: left; }
 }

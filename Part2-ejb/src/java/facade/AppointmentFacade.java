@@ -1,139 +1,94 @@
 package facade;
 
-import entity.*;
-import util.*;
+import entity.Appointment;
+import entity.Service;
+import util.IDGenerator;
 
 import jakarta.ejb.Stateless;
-import java.sql.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * AppointmentFacade - Stateless EJB for appointment management using JDBC.
+ * AppointmentFacade - Stateless EJB for appointment management.
  * Includes CRUD, concurrency validation, and 5 reporting methods.
  */
 @Stateless
 public class AppointmentFacade {
 
+    @PersistenceContext(unitName = "Part2-ejbPU")
+    private EntityManager em;
+
     // ========== CRUD OPERATIONS ==========
 
-    public Appointment createAppointment(Appointment appointment) throws SQLException {
+    public Appointment createAppointment(Appointment appointment) {
         validateTechnicianAvailability(appointment);
-
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            String appointmentID = IDGenerator.generateAppointmentID(conn);
-            appointment.setId(appointmentID);
-
-            String sql = "INSERT INTO APPOINTMENT (appointment_id, customer_id, technician_id, service_id, " +
-                         "appointment_datetime, status, payment_amount, comments, rating) " +
-                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, appointment.getId());
-                ps.setString(2, appointment.getCustomerId());
-                ps.setString(3, appointment.getTechnicianId());
-                ps.setString(4, appointment.getServiceId());
-                ps.setTimestamp(5, Timestamp.valueOf(appointment.getAppointmentDateTime()));
-                ps.setString(6, appointment.getStatus());
-                ps.setDouble(7, appointment.getPaymentAmount());
-                ps.setString(8, appointment.getComments());
-                ps.setObject(9, appointment.getRating());
-                ps.executeUpdate();
-            }
-            return appointment;
-        }
+        appointment.setId(IDGenerator.generateAppointmentID(em));
+        em.persist(appointment);
+        return appointment;
     }
 
-    public Appointment getAppointmentByID(String appointmentID) throws SQLException {
-        String sql = "SELECT * FROM APPOINTMENT WHERE appointment_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, appointmentID);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Appointment a = mapResultSetToAppointment(rs, conn);
-                rs.close();
-                return a;
-            }
-            rs.close();
-            return null;
-        }
+    public Appointment getAppointmentByID(String appointmentID) {
+        return em.find(Appointment.class, appointmentID);
     }
 
-    public List<Appointment> getAllAppointments() throws SQLException {
-        List<Appointment> appointments = new ArrayList<>();
-        String sql = "SELECT * FROM APPOINTMENT ORDER BY appointment_datetime DESC";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                appointments.add(mapResultSetToAppointment(rs, conn));
-            }
-            rs.close();
-        }
-        return appointments;
+    public List<Appointment> getAllAppointments() {
+        return em.createQuery(
+                "SELECT a FROM Appointment a ORDER BY a.appointmentDateTime DESC",
+                Appointment.class)
+                .getResultList();
     }
 
-    public List<Appointment> getAppointmentsByCustomer(String customerID) throws SQLException {
-        List<Appointment> appointments = new ArrayList<>();
-        String sql = "SELECT * FROM APPOINTMENT WHERE customer_id = ? ORDER BY appointment_datetime DESC";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, customerID);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                appointments.add(mapResultSetToAppointment(rs, conn));
-            }
-            rs.close();
-        }
-        return appointments;
+    public List<Appointment> getAppointmentsByCustomer(String customerID) {
+        return em.createQuery(
+                "SELECT a FROM Appointment a WHERE a.customerId = :cid " +
+                "ORDER BY a.appointmentDateTime DESC",
+                Appointment.class)
+                .setParameter("cid", customerID)
+                .getResultList();
     }
 
-    public List<Appointment> getAppointmentsByTechnician(String technicianID) throws SQLException {
-        List<Appointment> appointments = new ArrayList<>();
-        String sql = "SELECT * FROM APPOINTMENT WHERE technician_id = ? ORDER BY appointment_datetime DESC";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, technicianID);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                appointments.add(mapResultSetToAppointment(rs, conn));
-            }
-            rs.close();
-        }
-        return appointments;
+    public List<Appointment> getAppointmentsByTechnician(String technicianID) {
+        return em.createQuery(
+                "SELECT a FROM Appointment a WHERE a.technicianId = :tid " +
+                "ORDER BY a.appointmentDateTime DESC",
+                Appointment.class)
+                .setParameter("tid", technicianID)
+                .getResultList();
     }
 
-    public void updateAppointment(Appointment appointment) throws SQLException {
-        String sql = "UPDATE APPOINTMENT SET status = ?, payment_amount = ?, comments = ?, rating = ? " +
-                     "WHERE appointment_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, appointment.getStatus());
-            ps.setDouble(2, appointment.getPaymentAmount());
-            ps.setString(3, appointment.getComments());
-            ps.setObject(4, appointment.getRating());
-            ps.setString(5, appointment.getId());
-            ps.executeUpdate();
-        }
+    public void updateAppointment(Appointment appointment) {
+        Appointment managed = em.find(Appointment.class, appointment.getId());
+        if (managed == null) return;
+        managed.setStatus(appointment.getStatus());
+        managed.setPaymentAmount(appointment.getPaymentAmount());
     }
 
-    public void deleteAppointment(String appointmentID) throws SQLException {
-        String sql = "DELETE FROM APPOINTMENT WHERE appointment_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, appointmentID);
-            ps.executeUpdate();
-        }
+    public void deleteAppointment(String appointmentID) {
+        Appointment a = em.find(Appointment.class, appointmentID);
+        if (a != null) em.remove(a);
     }
 
     // ========== CONCURRENCY VALIDATION ==========
 
-    private void validateTechnicianAvailability(Appointment appointment) throws SQLException {
+    /**
+     * Checks whether the technician already has an appointment that overlaps
+     * with the requested time slot. Uses a native query because the Derby
+     * TIMESTAMPADD ODBC escape syntax cannot be expressed in JPQL.
+     */
+    private void validateTechnicianAvailability(Appointment appointment) {
         String technicianID = appointment.getTechnicianId();
         LocalDateTime startTime = appointment.getAppointmentDateTime();
-        int durationMinutes = appointment.getService() != null ?
-                appointment.getService().getDurationMinutes() : 60;
+        int durationMinutes = appointment.getService() != null
+                ? appointment.getService().getDurationMinutes() : 60;
         LocalDateTime endTime = startTime.plusMinutes(durationMinutes);
 
         String sql = "SELECT COUNT(*) FROM APPOINTMENT a " +
@@ -143,192 +98,96 @@ public class AppointmentFacade {
                      "AND a.appointment_datetime < ? " +
                      "AND {fn TIMESTAMPADD(SQL_TSI_MINUTE, s.duration_minutes, a.appointment_datetime)} > ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, technicianID);
-            ps.setTimestamp(2, Timestamp.valueOf(endTime));
-            ps.setTimestamp(3, Timestamp.valueOf(startTime));
-            ResultSet rs = ps.executeQuery();
-            if (rs.next() && rs.getInt(1) > 0) {
-                rs.close();
-                throw new SQLException("Technician has overlapping appointment in the requested time slot");
-            }
-            rs.close();
+        Query q = em.createNativeQuery(sql);
+        q.setParameter(1, technicianID);
+        q.setParameter(2, Timestamp.valueOf(endTime));
+        q.setParameter(3, Timestamp.valueOf(startTime));
+        Number count = (Number) q.getSingleResult();
+        if (count.intValue() > 0) {
+            throw new IllegalStateException(
+                    "Technician has overlapping appointment in the requested time slot");
         }
     }
 
     // ========== 5 REPORTING METHODS ==========
 
-    public double getDailyRevenue() throws SQLException {
-        String sql = "SELECT SUM(payment_amount) FROM APPOINTMENT " +
-                     "WHERE status = 'Completed' AND CAST(appointment_datetime AS DATE) = CURRENT_DATE";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            double revenue = 0.0;
-            if (rs.next()) revenue = rs.getDouble(1);
-            rs.close();
-            return revenue;
-        }
+    public double getDailyRevenue() {
+        LocalDateTime dayStart = LocalDate.now().atStartOfDay();
+        LocalDateTime dayEnd = dayStart.plusDays(1);
+        Double revenue = em.createQuery(
+                "SELECT SUM(a.paymentAmount) FROM Appointment a " +
+                "WHERE a.status = 'Completed' " +
+                "AND a.appointmentDateTime >= :start AND a.appointmentDateTime < :end",
+                Double.class)
+                .setParameter("start", dayStart)
+                .setParameter("end", dayEnd)
+                .getSingleResult();
+        return revenue != null ? revenue : 0.0;
     }
 
-    public Map<String, Integer> getTechnicianWorkload() throws SQLException {
-        Map<String, Integer> workload = new HashMap<>();
-        String sql = "SELECT t.name, COUNT(a.appointment_id) as task_count FROM APPOINTMENT a " +
-                     "JOIN TECHNICIAN t ON a.technician_id = t.technician_id " +
-                     "WHERE a.status IN ('Pending', 'InProgress') " +
-                     "GROUP BY t.name ORDER BY task_count DESC";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                workload.put(rs.getString("name"), rs.getInt("task_count"));
-            }
-            rs.close();
+    public Map<String, Integer> getTechnicianWorkload() {
+        List<Object[]> rows = em.createQuery(
+                "SELECT t.name, COUNT(a) FROM Appointment a JOIN a.technician t " +
+                "WHERE a.status IN ('Pending', 'InProgress') " +
+                "GROUP BY t.name ORDER BY COUNT(a) DESC",
+                Object[].class)
+                .getResultList();
+
+        Map<String, Integer> workload = new LinkedHashMap<>();
+        for (Object[] row : rows) {
+            workload.put((String) row[0], ((Number) row[1]).intValue());
         }
         return workload;
     }
 
-    public Map<String, Integer> getServicePopularity() throws SQLException {
+    public Map<String, Integer> getServicePopularity() {
+        List<Service> services = em.createQuery(
+                "SELECT s FROM Service s", Service.class).getResultList();
+
+        List<Object[]> counts = em.createQuery(
+                "SELECT a.serviceId, COUNT(a) FROM Appointment a GROUP BY a.serviceId",
+                Object[].class).getResultList();
+
+        Map<String, Integer> countsByServiceId = new HashMap<>();
+        for (Object[] row : counts) {
+            countsByServiceId.put((String) row[0], ((Number) row[1]).intValue());
+        }
+
+        services.sort(Comparator.comparingInt(
+                (Service s) -> countsByServiceId.getOrDefault(s.getId(), 0)).reversed());
+
         Map<String, Integer> popularity = new LinkedHashMap<>();
-        String sql = "SELECT s.service_name, COUNT(a.appointment_id) as service_count " +
-                     "FROM SERVICE s LEFT JOIN APPOINTMENT a ON s.service_id = a.service_id " +
-                     "GROUP BY s.service_id, s.service_name ORDER BY service_count DESC";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                popularity.put(rs.getString("service_name"), rs.getInt("service_count"));
-            }
-            rs.close();
+        for (Service s : services) {
+            popularity.put(s.getServiceName(), countsByServiceId.getOrDefault(s.getId(), 0));
         }
         return popularity;
     }
 
-    public List<Map<String, Object>> getCustomerFeedback() throws SQLException {
-        List<Map<String, Object>> feedback = new ArrayList<>();
-        String sql = "SELECT c.name, a.comments, a.rating FROM APPOINTMENT a " +
-                     "JOIN CUSTOMER c ON a.customer_id = c.customer_id " +
-                     "WHERE a.comments IS NOT NULL OR a.rating IS NOT NULL " +
-                     "ORDER BY a.appointment_datetime DESC";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Map<String, Object> entry = new HashMap<>();
-                entry.put("customerName", rs.getString("name"));
-                entry.put("comments", rs.getString("comments"));
-                entry.put("rating", rs.getObject("rating"));
-                feedback.add(entry);
-            }
-            rs.close();
-        }
-        return feedback;
-    }
+    public Map<String, Object> getStatusAnalytics() {
+        List<Object[]> rows = em.createQuery(
+                "SELECT a.status, COUNT(a) FROM Appointment a GROUP BY a.status",
+                Object[].class)
+                .getResultList();
 
-    public Map<String, Object> getStatusAnalytics() throws SQLException {
+        int pending = 0, completed = 0, inProgress = 0, cancelled = 0, total = 0;
+        for (Object[] row : rows) {
+            String status = (String) row[0];
+            int count = ((Number) row[1]).intValue();
+            total += count;
+            if ("Pending".equals(status)) pending = count;
+            else if ("Completed".equals(status)) completed = count;
+            else if ("InProgress".equals(status)) inProgress = count;
+            else if ("Cancelled".equals(status)) cancelled = count;
+        }
+
         Map<String, Object> analytics = new HashMap<>();
-        String sql = "SELECT status, COUNT(*) as status_count FROM APPOINTMENT GROUP BY status";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            int pending = 0, completed = 0, inProgress = 0, cancelled = 0, total = 0;
-            while (rs.next()) {
-                String status = rs.getString("status");
-                int count = rs.getInt("status_count");
-                total += count;
-                if ("Pending".equals(status)) pending = count;
-                else if ("Completed".equals(status)) completed = count;
-                else if ("InProgress".equals(status)) inProgress = count;
-                else if ("Cancelled".equals(status)) cancelled = count;
-            }
-            rs.close();
-            analytics.put("pending", pending);
-            analytics.put("completed", completed);
-            analytics.put("inProgress", inProgress);
-            analytics.put("cancelled", cancelled);
-            analytics.put("total", total);
-            analytics.put("pendingRatio", total > 0 ? (double) pending / total : 0.0);
-            analytics.put("completedRatio", total > 0 ? (double) completed / total : 0.0);
-        }
+        analytics.put("pending", pending);
+        analytics.put("completed", completed);
+        analytics.put("inProgress", inProgress);
+        analytics.put("cancelled", cancelled);
+        analytics.put("total", total);
+        analytics.put("pendingRatio", total > 0 ? (double) pending / total : 0.0);
+        analytics.put("completedRatio", total > 0 ? (double) completed / total : 0.0);
         return analytics;
-    }
-
-    // ========== HELPER METHODS ==========
-
-    private Appointment mapResultSetToAppointment(ResultSet rs, Connection conn) throws SQLException {
-        Appointment a = new Appointment();
-        a.setId(rs.getString("appointment_id"));
-        a.setCustomerId(rs.getString("customer_id"));
-        a.setTechnicianId(rs.getString("technician_id"));
-        a.setServiceId(rs.getString("service_id"));
-        a.setStatus(rs.getString("status"));
-        a.setPaymentAmount(rs.getDouble("payment_amount"));
-        a.setComments(rs.getString("comments"));
-        a.setRating((Integer) rs.getObject("rating"));
-        Timestamp ts = rs.getTimestamp("appointment_datetime");
-        if (ts != null) a.setAppointmentDateTime(ts.toLocalDateTime());
-
-        a.setCustomer(fetchCustomerByID(a.getCustomerId(), conn));
-        a.setTechnician(fetchTechnicianByID(a.getTechnicianId(), conn));
-        a.setService(fetchServiceByID(a.getServiceId(), conn));
-
-        return a;
-    }
-
-    private Customer fetchCustomerByID(String customerID, Connection conn) throws SQLException {
-        String sql = "SELECT * FROM CUSTOMER WHERE customer_id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, customerID);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Customer c = new Customer(
-                        rs.getString("customer_id"), rs.getString("name"),
-                        rs.getString("email"), rs.getString("password"),
-                        rs.getString("gender"), rs.getString("phone"),
-                        rs.getString("ic"), rs.getString("address"));
-                rs.close();
-                return c;
-            }
-            rs.close();
-        }
-        return null;
-    }
-
-    private Technician fetchTechnicianByID(String technicianID, Connection conn) throws SQLException {
-        String sql = "SELECT * FROM TECHNICIAN WHERE technician_id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, technicianID);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Technician t = new Technician(
-                        rs.getString("technician_id"), rs.getString("name"),
-                        rs.getString("email"), rs.getString("password"),
-                        rs.getString("gender"), rs.getString("phone"),
-                        rs.getString("ic"), rs.getString("address"),
-                        rs.getString("specialty"), rs.getBoolean("available"));
-                rs.close();
-                return t;
-            }
-            rs.close();
-        }
-        return null;
-    }
-
-    private Service fetchServiceByID(String serviceID, Connection conn) throws SQLException {
-        String sql = "SELECT * FROM SERVICE WHERE service_id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, serviceID);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Service s = new Service(
-                        rs.getString("service_id"), rs.getString("service_name"),
-                        rs.getString("type"), rs.getDouble("base_price"));
-                rs.close();
-                return s;
-            }
-            rs.close();
-        }
-        return null;
     }
 }

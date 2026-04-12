@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 
 /**
  * Feedback entity. Represents feedback written by technicians about their appointments.
- * Uses JPA annotations for table generation; accessed via JDBC in FeedbackFacade.
  */
 @Entity
 @Table(name = "FEEDBACK")
@@ -29,10 +28,12 @@ public class Feedback implements Serializable {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    // Transient fields for in-memory use (populated by facade)
-    @Transient
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "appointment_id", insertable = false, updatable = false)
     private Appointment appointment;
-    @Transient
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "technician_id", insertable = false, updatable = false)
     private Technician technician;
 
     public Feedback() {

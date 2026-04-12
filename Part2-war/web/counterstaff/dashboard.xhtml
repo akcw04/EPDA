@@ -242,14 +242,16 @@
                             <!-- ==================== CUSTOMERS SECTION ==================== -->
                             <h:panelGroup rendered="#{counterStaffBean.currentSection == 'customers'}">
                                 <div class="search-bar">
-                                    <h:inputText value="#{counterStaffBean.searchKeyword}" styleClass="form-control" placeholder="Search by name, email, IC..."/>
+                                    <p:inputText value="#{counterStaffBean.searchKeyword}" styleClass="form-control" placeholder="Search by name, email, IC..."/>
                                     <p:commandButton value="Search"
                                                      icon="pi pi-search"
                                                      action="#{counterStaffBean.searchCustomers()}"
+                                                     process="@form"
                                                      update=":mainForm" styleClass="btn-primary"/>
                                     <p:commandButton value="Clear"
                                                      icon="pi pi-times"
                                                      action="#{counterStaffBean.clearSearch()}"
+                                                     process="@this"
                                                      update=":mainForm" styleClass="btn-secondary"/>
                                 </div>
 

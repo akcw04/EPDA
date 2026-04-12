@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
 /**
- * Appointment entity. Uses JPA for table generation, JDBC for data access.
+ * Appointment entity.
  * Status: Pending, InProgress, Completed, Cancelled
  */
 @Entity
@@ -35,24 +35,22 @@ public class Appointment implements Serializable {
     @Column(name = "payment_amount")
     private double paymentAmount;
 
-    @Column(name = "comments", length = 500)
-    private String comments;
-
-    @Column(name = "rating")
-    private Integer rating;
-
     // Status constants
     public static final String STATUS_PENDING = "Pending";
     public static final String STATUS_IN_PROGRESS = "InProgress";
     public static final String STATUS_COMPLETED = "Completed";
     public static final String STATUS_CANCELLED = "Cancelled";
 
-    // Transient fields for in-memory use (populated by facade)
-    @Transient
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
     private Customer customer;
-    @Transient
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "technician_id", insertable = false, updatable = false)
     private Technician technician;
-    @Transient
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "service_id", insertable = false, updatable = false)
     private Service service;
 
     public Appointment() {
@@ -115,12 +113,6 @@ public class Appointment implements Serializable {
 
     public double getPaymentAmount() { return paymentAmount; }
     public void setPaymentAmount(double paymentAmount) { this.paymentAmount = paymentAmount; }
-
-    public String getComments() { return comments; }
-    public void setComments(String comments) { this.comments = comments; }
-
-    public Integer getRating() { return rating; }
-    public void setRating(Integer rating) { this.rating = rating; }
 
     @Override
     public String toString() {

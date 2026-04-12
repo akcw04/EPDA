@@ -68,8 +68,13 @@ public class CounterStaffBean implements Serializable {
     private String searchKeyword;
 
     public void init() {
-        loadDashboardData();
-        loadProfile();
+        if (customers == null || services == null || technicians == null ||
+            appointments == null || payments == null) {
+            loadDashboardData();
+        }
+        if (profileData == null) {
+            loadProfile();
+        }
     }
 
     public void loadDashboardData() {
