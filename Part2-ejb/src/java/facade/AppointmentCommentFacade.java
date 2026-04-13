@@ -9,6 +9,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,55 +66,63 @@ public class AppointmentCommentFacade {
                 .getResultList();
     }
 
+    public boolean hasCommentForAppointmentByCustomer(String appointmentId, String customerId) {
+        Long count = em.createQuery(
+                "SELECT COUNT(c) FROM AppointmentComment c " +
+                "WHERE c.appointmentId = :aid AND c.customerId = :cid",
+                Long.class)
+                .setParameter("aid", appointmentId)
+                .setParameter("cid", customerId)
+                .getSingleResult();
+        return count != null && count > 0;
+    }
+
     /**
-     * Build a per-customer summary for customers who have submitted comments.
+     * Build a per-customer feedback summary from actual customer comments.
      */
     public List<Map<String, Object>> getCustomerFeedbackSummary() {
         List<AppointmentComment> comments = getAllComments();
         Map<String, Map<String, Object>> summaryByCustomer = new LinkedHashMap<>();
+        Map<String, Integer> ratedCounts = new HashMap<>();
+        Map<String, Integer> ratingTotals = new HashMap<>();
 
         for (AppointmentComment comment : comments) {
             String customerId = comment.getCustomerId();
-            if (customerId == null || summaryByCustomer.containsKey(customerId)) {
+            if (customerId == null || customerId.isBlank()) {
                 continue;
             }
 
-            Map<String, Object> entry = new LinkedHashMap<>();
-            String customerName = comment.getCustomer() != null
-                    ? comment.getCustomer().getName()
-                    : customerId;
-            entry.put("customerName", customerName);
-            entry.put("totalAppointments", 0);
-            entry.put("completedAppointments", 0);
-            entry.put("totalSpent", 0.0);
-            summaryByCustomer.put(customerId, entry);
-        }
-
-        if (summaryByCustomer.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        List<String> customerIds = new ArrayList<>(summaryByCustomer.keySet());
-        List<Object[]> appointmentRows = em.createQuery(
-                "SELECT a.customerId, COUNT(a), " +
-                "SUM(CASE WHEN a.status = 'Completed' THEN 1 ELSE 0 END), " +
-                "SUM(CASE WHEN a.status = 'Completed' THEN a.paymentAmount ELSE 0.0 END) " +
-                "FROM Appointment a " +
-                "WHERE a.customerId IN :customerIds " +
-                "GROUP BY a.customerId",
-                Object[].class)
-                .setParameter("customerIds", customerIds)
-                .getResultList();
-
-        for (Object[] row : appointmentRows) {
-            Map<String, Object> entry = summaryByCustomer.get((String) row[0]);
+            Map<String, Object> entry = summaryByCustomer.get(customerId);
             if (entry == null) {
-                continue;
+                entry = new LinkedHashMap<>();
+                String customerName = comment.getCustomer() != null
+                        ? comment.getCustomer().getName()
+                        : customerId;
+                entry.put("customerName", customerName);
+                entry.put("totalComments", 0);
+                entry.put("averageRating", null);
+                entry.put("latestComment", comment.getCommentText());
+                entry.put("latestCommentDate", comment.getCreatedAt());
+                summaryByCustomer.put(customerId, entry);
             }
 
-            entry.put("totalAppointments", row[1] != null ? ((Number) row[1]).intValue() : 0);
-            entry.put("completedAppointments", row[2] != null ? ((Number) row[2]).intValue() : 0);
-            entry.put("totalSpent", row[3] != null ? ((Number) row[3]).doubleValue() : 0.0);
+            entry.put("totalComments", ((Number) entry.get("totalComments")).intValue() + 1);
+
+            if (comment.getRating() != null) {
+                ratedCounts.put(customerId, ratedCounts.getOrDefault(customerId, 0) + 1);
+                ratingTotals.put(customerId, ratingTotals.getOrDefault(customerId, 0) + comment.getRating());
+            }
+        }
+
+        for (Map.Entry<String, Map<String, Object>> summaryEntry : summaryByCustomer.entrySet()) {
+            String customerId = summaryEntry.getKey();
+            Integer ratedCount = ratedCounts.get(customerId);
+            if (ratedCount != null && ratedCount > 0) {
+                double avg = (double) ratingTotals.get(customerId) / ratedCount;
+                summaryEntry.getValue().put("averageRating", avg);
+            } else {
+                summaryEntry.getValue().put("averageRating", "N/A");
+            }
         }
 
         return new ArrayList<>(summaryByCustomer.values());

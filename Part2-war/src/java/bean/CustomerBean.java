@@ -148,10 +148,20 @@ public class CustomerBean implements Serializable {
         try {
             Appointment a = appointmentFacade.getAppointmentByID(appointmentId);
             if (a != null) {
+                if (!loginBean.getUserId().equals(a.getCustomerId())) {
+                    addError("You can only cancel your own appointments.");
+                    return;
+                }
+                if (!Appointment.STATUS_PENDING.equalsIgnoreCase(a.getStatus())) {
+                    addError("Only pending appointments can be cancelled.");
+                    return;
+                }
                 a.setStatus(Appointment.STATUS_CANCELLED);
                 appointmentFacade.updateAppointment(a);
                 addInfo("Appointment cancelled.");
                 loadDashboardData();
+            } else {
+                addError("Appointment not found.");
             }
         } catch (Exception e) {
             addError("Error: " + e.getMessage());
@@ -169,10 +179,24 @@ public class CustomerBean implements Serializable {
             }
 
             String custId = loginBean.getUserId();
+            Appointment appointment = appointmentFacade.getAppointmentByID(commentAppointmentId);
+            if (appointment == null || !custId.equals(appointment.getCustomerId())) {
+                addError("Invalid appointment selected.");
+                return;
+            }
+            if (!Appointment.STATUS_COMPLETED.equalsIgnoreCase(appointment.getStatus())) {
+                addError("Comments can only be submitted for completed appointments.");
+                return;
+            }
+            if (commentFacade.hasCommentForAppointmentByCustomer(commentAppointmentId, custId)) {
+                addError("You have already submitted a comment for this appointment.");
+                return;
+            }
+
             AppointmentComment comment = new AppointmentComment();
             comment.setAppointmentId(commentAppointmentId);
             comment.setCustomerId(custId);
-            comment.setCommentText(commentText);
+            comment.setCommentText(commentText.trim());
             comment.setRating(commentRating);
 
             boolean success = commentFacade.createComment(comment);

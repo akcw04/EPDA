@@ -61,6 +61,15 @@ public class FeedbackFacade {
         return list.isEmpty() ? null : list.get(0);
     }
 
+    public boolean hasFeedbackForAppointment(String appointmentId) {
+        Long count = em.createQuery(
+                "SELECT COUNT(f) FROM Feedback f WHERE f.appointmentId = :aid",
+                Long.class)
+                .setParameter("aid", appointmentId)
+                .getSingleResult();
+        return count != null && count > 0;
+    }
+
     public boolean updateFeedback(Feedback feedback) {
         try {
             em.merge(feedback);

@@ -161,6 +161,14 @@ public class TechnicianBean implements Serializable {
         try {
             Appointment a = appointmentFacade.getAppointmentByID(appointmentId);
             if (a != null) {
+                if (!loginBean.getUserId().equals(a.getTechnicianId())) {
+                    addError("You can only update your own appointments.");
+                    return;
+                }
+                if (!Appointment.STATUS_PENDING.equalsIgnoreCase(a.getStatus())) {
+                    addError("Only pending appointments can be started.");
+                    return;
+                }
                 a.setStatus(Appointment.STATUS_IN_PROGRESS);
                 appointmentFacade.updateAppointment(a);
                 addInfo("Appointment started.");
@@ -175,6 +183,14 @@ public class TechnicianBean implements Serializable {
         try {
             Appointment a = appointmentFacade.getAppointmentByID(appointmentId);
             if (a != null) {
+                if (!loginBean.getUserId().equals(a.getTechnicianId())) {
+                    addError("You can only update your own appointments.");
+                    return;
+                }
+                if (!Appointment.STATUS_IN_PROGRESS.equalsIgnoreCase(a.getStatus())) {
+                    addError("Only appointments in progress can be completed.");
+                    return;
+                }
                 a.setStatus(Appointment.STATUS_COMPLETED);
                 appointmentFacade.updateAppointment(a);
                 addInfo("Appointment marked as completed.");
@@ -196,10 +212,24 @@ public class TechnicianBean implements Serializable {
             }
 
             String techId = loginBean.getUserId();
+            Appointment appointment = appointmentFacade.getAppointmentByID(feedbackAppointmentId);
+            if (appointment == null || !techId.equals(appointment.getTechnicianId())) {
+                addError("Invalid appointment selected.");
+                return;
+            }
+            if (!Appointment.STATUS_COMPLETED.equalsIgnoreCase(appointment.getStatus())) {
+                addError("Feedback can only be submitted for completed appointments.");
+                return;
+            }
+            if (feedbackFacade.hasFeedbackForAppointment(feedbackAppointmentId)) {
+                addError("Feedback has already been submitted for this appointment.");
+                return;
+            }
+
             Feedback feedback = new Feedback();
             feedback.setAppointmentId(feedbackAppointmentId);
             feedback.setTechnicianId(techId);
-            feedback.setFeedbackText(feedbackText);
+            feedback.setFeedbackText(feedbackText.trim());
 
             boolean success = feedbackFacade.createFeedback(feedback);
             if (success) {

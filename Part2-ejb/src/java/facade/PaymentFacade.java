@@ -7,6 +7,7 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -72,6 +73,47 @@ public class PaymentFacade {
                 "SELECT SUM(p.amount) FROM Payment p WHERE p.customerId = :cid AND p.status = 'Completed'",
                 Double.class)
                 .setParameter("cid", customerId)
+                .getSingleResult();
+        return total != null ? total : 0.0;
+    }
+
+    public double getRevenueForPeriod(String period) {
+        LocalDate today = LocalDate.now();
+        String selectedPeriod = period != null ? period.toLowerCase() : "daily";
+        LocalDateTime start;
+        LocalDateTime end;
+
+        switch (selectedPeriod) {
+            case "monthly":
+                start = today.withDayOfMonth(1).atStartOfDay();
+                end = start.plusMonths(1);
+                break;
+            case "yearly":
+                start = today.withDayOfYear(1).atStartOfDay();
+                end = start.plusYears(1);
+                break;
+            case "daily":
+            default:
+                start = today.atStartOfDay();
+                end = start.plusDays(1);
+                break;
+        }
+
+        return getRevenueBetween(start, end);
+    }
+
+    public double getDailyRevenue() {
+        return getRevenueForPeriod("daily");
+    }
+
+    private double getRevenueBetween(LocalDateTime start, LocalDateTime end) {
+        Double total = em.createQuery(
+                "SELECT SUM(p.amount) FROM Payment p " +
+                "WHERE p.status = 'Completed' " +
+                "AND p.paymentDate >= :start AND p.paymentDate < :end",
+                Double.class)
+                .setParameter("start", start)
+                .setParameter("end", end)
                 .getSingleResult();
         return total != null ? total : 0.0;
     }

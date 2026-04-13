@@ -104,7 +104,8 @@ public class UserFacade {
         String kw = "%" + keyword.toLowerCase() + "%";
         return em.createQuery(
                 "SELECT c FROM Customer c WHERE LOWER(c.name) LIKE :kw " +
-                "OR LOWER(c.email) LIKE :kw OR LOWER(c.phone) LIKE :kw ORDER BY c.name",
+                "OR LOWER(c.email) LIKE :kw OR LOWER(c.phone) LIKE :kw " +
+                "OR LOWER(c.ic) LIKE :kw ORDER BY c.name",
                 Customer.class)
                 .setParameter("kw", kw)
                 .getResultList();

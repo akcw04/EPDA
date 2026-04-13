@@ -9,6 +9,8 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,8 @@ public class ManagerBean implements Serializable {
     private UserFacade userFacade;
     @EJB
     private AppointmentFacade appointmentFacade;
+    @EJB
+    private PaymentFacade paymentFacade;
     @EJB
     private FeedbackFacade feedbackFacade;
     @EJB
@@ -87,6 +91,7 @@ public class ManagerBean implements Serializable {
 
     // Reports
     private double dailyRevenue;
+    private String revenuePeriod = "daily";
     private Map<String, Integer> technicianWorkload;
     private Map<String, Integer> servicePopularity;
     private List<Map<String, Object>> customerFeedback;
@@ -316,11 +321,15 @@ public class ManagerBean implements Serializable {
 
     public void createService() {
         try {
-            if (newServiceName == null || newServiceType == null || newServicePrice <= 0) {
+            String serviceName = newServiceName != null ? newServiceName.trim() : null;
+            String serviceType = newServiceType != null ? newServiceType.trim() : null;
+            if (serviceName == null || serviceName.isBlank() ||
+                serviceType == null || serviceType.isBlank() ||
+                newServicePrice <= 0) {
                 addError("Service name, type, and price are required.");
                 return;
             }
-            Service s = new Service(null, newServiceName, newServiceType, newServicePrice);
+            Service s = new Service(null, serviceName, serviceType, newServicePrice);
             serviceFacade.createService(s);
             newServiceName = null; newServiceType = null; newServicePrice = 0;
             loadDashboardData();
@@ -330,9 +339,47 @@ public class ManagerBean implements Serializable {
         }
     }
 
+    public void loadEditService(String serviceId) {
+        try {
+            Service service = serviceFacade.getServiceByID(serviceId);
+            if (service == null) {
+                addError("Service not found.");
+                return;
+            }
+
+            editingService = new Service();
+            editingService.setId(service.getId());
+            editingService.setServiceName(service.getServiceName());
+            editingService.setType(service.getType());
+            editingService.setBasePrice(service.getBasePrice());
+        } catch (Exception e) {
+            addError("Error loading service: " + e.getMessage());
+        }
+    }
+
     public void updateService(Service service) {
         try {
+            if (service == null) {
+                addError("Service not found.");
+                return;
+            }
+            if (serviceFacade.getServiceByID(service.getId()) == null) {
+                editingService = null;
+                addError("Service no longer exists.");
+                loadDashboardData();
+                return;
+            }
+            if (service.getServiceName() == null || service.getServiceName().trim().isBlank() ||
+                service.getType() == null || service.getType().trim().isBlank() ||
+                service.getBasePrice() <= 0) {
+                addError("Service name, type, and price are required.");
+                return;
+            }
+
+            service.setServiceName(service.getServiceName().trim());
+            service.setType(service.getType().trim());
             serviceFacade.updateService(service);
+            editingService = null;
             loadDashboardData();
             addInfo("Service updated.");
         } catch (Exception e) {
@@ -340,9 +387,20 @@ public class ManagerBean implements Serializable {
         }
     }
 
+    public void saveEditService() {
+        updateService(editingService);
+    }
+
+    public void cancelEditService() {
+        editingService = null;
+    }
+
     public void deleteService(String serviceId) {
         try {
             serviceFacade.deleteService(serviceId);
+            if (editingService != null && serviceId.equals(editingService.getId())) {
+                editingService = null;
+            }
             loadDashboardData();
             addInfo("Service deleted.");
         } catch (Exception e) {
@@ -354,7 +412,7 @@ public class ManagerBean implements Serializable {
 
     public void loadReports() {
         try {
-            dailyRevenue = appointmentFacade.getDailyRevenue();
+            dailyRevenue = paymentFacade.getRevenueForPeriod(revenuePeriod);
             technicianWorkload = appointmentFacade.getTechnicianWorkload();
             servicePopularity = appointmentFacade.getServicePopularity();
             customerFeedback = commentFacade.getCustomerFeedbackSummary();
@@ -539,6 +597,24 @@ public class ManagerBean implements Serializable {
     public void setSearchKeyword(String searchKeyword) { this.searchKeyword = searchKeyword; }
 
     public double getDailyRevenue() { return dailyRevenue; }
+    public String getRevenuePeriod() { return revenuePeriod; }
+    public void setRevenuePeriod(String revenuePeriod) { this.revenuePeriod = revenuePeriod; }
+
+    public String getRevenuePeriodDescription() {
+        LocalDate today = LocalDate.now();
+        switch (revenuePeriod != null ? revenuePeriod : "daily") {
+            case "monthly":
+                return "Completed payments recorded in " +
+                        today.format(DateTimeFormatter.ofPattern("MMMM yyyy"));
+            case "yearly":
+                return "Completed payments recorded in " + today.getYear();
+            case "daily":
+            default:
+                return "Completed payments recorded on " +
+                        today.format(DateTimeFormatter.ofPattern("MMMM d, yyyy"));
+        }
+    }
+
     public Map<String, Integer> getTechnicianWorkload() { return technicianWorkload; }
     public Map<String, Integer> getServicePopularity() { return servicePopularity; }
     public List<Map<String, Object>> getCustomerFeedback() { return customerFeedback; }
@@ -559,6 +635,9 @@ public class ManagerBean implements Serializable {
 
     public Customer getEditingCustomer() { return editingCustomer; }
     public void setEditingCustomer(Customer editingCustomer) { this.editingCustomer = editingCustomer; }
+
+    public Service getEditingService() { return editingService; }
+    public void setEditingService(Service editingService) { this.editingService = editingService; }
 
     public String getCurrentSection() { return currentSection; }
     public void setCurrentSection(String currentSection) { this.currentSection = currentSection; }

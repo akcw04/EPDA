@@ -215,6 +215,7 @@
                                             <p:commandButton value="Update Profile"
                                                              icon="pi pi-check"
                                                              action="#{technicianBean.updateProfile()}"
+                                                             process="@form"
                                                              update=":mainForm :growl" styleClass="btn-primary"/>
                                         </div>
                                     </h:panelGroup>
@@ -333,6 +334,7 @@
                                         <p:commandButton value="Submit Feedback"
                                                          icon="pi pi-check"
                                                          action="#{technicianBean.submitFeedback()}"
+                                                         process="@form"
                                                          update=":mainForm :growl" styleClass="btn-success"/>
                                     </div>
                                 </div>

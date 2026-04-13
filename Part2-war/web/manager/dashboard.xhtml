@@ -236,6 +236,7 @@
                                                          icon="pi pi-user-plus"
                                                          styleClass="btn-primary"
                                                          action="#{managerBean.registerStaff()}"
+                                                         process="@form"
                                                          update=":mainForm :growl" />
                                     </div>
                                 </div>
@@ -287,7 +288,7 @@
                                             <h:outputText value="Yes" rendered="#{t.available}" styleClass="badge-yes" />
                                             <h:outputText value="No" rendered="#{!t.available}" styleClass="badge-no" />
                                         </p:column>
-                                        <p:column headerText="Actions">
+                                        <p:column headerText="Actions" styleClass="actions-column" headerStyleClass="actions-column">
                                             <p:commandButton value="Edit"
                                                              icon="pi pi-pencil"
                                                              styleClass="btn-edit"
@@ -354,6 +355,7 @@
                                                              icon="pi pi-check"
                                                              styleClass="btn-success"
                                                              action="#{managerBean.saveEditTechnician()}"
+                                                             process="@form"
                                                              update=":mainForm :growl" />
                                             <p:commandButton value="Cancel"
                                                              icon="pi pi-times"
@@ -408,7 +410,7 @@
                                         <p:column headerText="Address">
                                             <h:outputText value="#{cs.address}" />
                                         </p:column>
-                                        <p:column headerText="Actions">
+                                        <p:column headerText="Actions" styleClass="actions-column" headerStyleClass="actions-column">
                                             <p:commandButton value="Edit"
                                                              icon="pi pi-pencil"
                                                              styleClass="btn-edit"
@@ -464,6 +466,7 @@
                                                              icon="pi pi-check"
                                                              styleClass="btn-success"
                                                              action="#{managerBean.saveEditCounterStaff()}"
+                                                             process="@form"
                                                              update=":mainForm :growl" />
                                             <p:commandButton value="Cancel"
                                                              icon="pi pi-times"
@@ -509,7 +512,7 @@
                                         <p:column headerText="Phone">
                                             <h:outputText value="#{m.phone}" />
                                         </p:column>
-                                        <p:column headerText="Actions">
+                                        <p:column headerText="Actions" styleClass="actions-column" headerStyleClass="actions-column">
                                             <p:commandButton value="Edit"
                                                              icon="pi pi-pencil"
                                                              styleClass="btn-edit"
@@ -565,6 +568,7 @@
                                                              icon="pi pi-check"
                                                              styleClass="btn-success"
                                                              action="#{managerBean.saveEditManager()}"
+                                                             process="@form"
                                                              update=":mainForm :growl" />
                                             <p:commandButton value="Cancel"
                                                              icon="pi pi-times"
@@ -613,7 +617,7 @@
                                         <p:column headerText="Gender">
                                             <h:outputText value="#{c.gender}" />
                                         </p:column>
-                                        <p:column headerText="Actions">
+                                        <p:column headerText="Actions" styleClass="actions-column" headerStyleClass="actions-column">
                                             <p:commandButton value="Edit"
                                                              icon="pi pi-pencil"
                                                              styleClass="btn-edit"
@@ -669,6 +673,7 @@
                                                              icon="pi pi-check"
                                                              styleClass="btn-success"
                                                              action="#{managerBean.saveEditCustomer()}"
+                                                             process="@form"
                                                              update=":mainForm :growl" />
                                             <p:commandButton value="Cancel"
                                                              icon="pi pi-times"
@@ -708,12 +713,57 @@
                                                          icon="pi pi-plus"
                                                          styleClass="btn-primary"
                                                          action="#{managerBean.createService()}"
+                                                         process="@form"
                                                          update=":mainForm :growl" />
                                     </div>
                                 </div>
 
                                 <div class="panel">
                                     <h3>All Services</h3>
+                                    <h:panelGroup rendered="#{managerBean.editingService != null}">
+                                        <div class="edit-panel" style="margin-bottom:16px;">
+                                            <h3>Edit Service</h3>
+                                            <div class="form-grid">
+                                                <div>
+                                                    <label>Service ID</label>
+                                                    <p:inputText value="#{managerBean.editingService.id}" readonly="true" styleClass="form-control" />
+                                                </div>
+                                                <div>
+                                                    <label>Service Name</label>
+                                                    <p:inputText value="#{managerBean.editingService.serviceName}" styleClass="form-control" />
+                                                </div>
+                                                <div>
+                                                    <label>Service Type</label>
+                                                    <p:selectOneMenu value="#{managerBean.editingService.type}" styleClass="form-control">
+                                                        <f:selectItem itemValue="Normal" itemLabel="Normal" />
+                                                        <f:selectItem itemValue="Major" itemLabel="Major" />
+                                                    </p:selectOneMenu>
+                                                </div>
+                                                <div>
+                                                    <label>Duration</label>
+                                                    <p:inputText value="#{managerBean.editingService.durationMinutes}" readonly="true" styleClass="form-control" />
+                                                </div>
+                                                <div>
+                                                    <label>Price (RM)</label>
+                                                    <h:inputText value="#{managerBean.editingService.basePrice}" styleClass="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="form-actions">
+                                                <p:commandButton value="Save Changes"
+                                                                 icon="pi pi-check"
+                                                                 styleClass="btn-success"
+                                                                 action="#{managerBean.saveEditService()}"
+                                                                 process="@form"
+                                                                 update=":mainForm :growl" />
+                                                <p:commandButton value="Cancel"
+                                                                 icon="pi pi-times"
+                                                                 styleClass="btn-secondary"
+                                                                 action="#{managerBean.cancelEditService()}"
+                                                                 update=":mainForm"
+                                                                 process="@this" />
+                                            </div>
+                                        </div>
+                                    </h:panelGroup>
                                     <p:dataTable value="#{managerBean.services}" var="s"
                                                  emptyMessage="No services found.">
                                         <p:column headerText="ID">
@@ -731,7 +781,12 @@
                                         <p:column headerText="Price (RM)">
                                             <h:outputText value="#{s.basePrice}" />
                                         </p:column>
-                                        <p:column headerText="Actions">
+                                        <p:column headerText="Actions" styleClass="actions-column" headerStyleClass="actions-column">
+                                            <p:commandButton value="Edit"
+                                                             icon="pi pi-pencil"
+                                                             styleClass="btn-edit"
+                                                             action="#{managerBean.loadEditService(s.id)}"
+                                                             update=":mainForm" />
                                             <p:commandButton value="Delete"
                                                              icon="pi pi-trash"
                                                              styleClass="btn-danger"
@@ -833,9 +888,26 @@
                                 <!-- Report 1: Daily Revenue -->
                                 <div class="report-section">
                                     <div class="report-card">
-                                        <h3>Report 1: Daily Revenue</h3>
-                                        <div class="report-value">RM #{managerBean.dailyRevenue}</div>
-                                        <p style="color:var(--text-muted);font-size:13px;margin:8px 0 0;">Total revenue from completed appointments today</p>
+                                        <h3>Report 1: Revenue Overview</h3>
+                                        <div class="report-toolbar">
+                                            <span class="report-filter-label">View By</span>
+                                            <p:selectOneButton value="#{managerBean.revenuePeriod}" styleClass="period-switch">
+                                                <f:selectItem itemLabel="Daily" itemValue="daily" />
+                                                <f:selectItem itemLabel="Monthly" itemValue="monthly" />
+                                                <f:selectItem itemLabel="Yearly" itemValue="yearly" />
+                                                <p:ajax process="@this"
+                                                        listener="#{managerBean.loadReports()}"
+                                                        update="revenueCard" />
+                                            </p:selectOneButton>
+                                        </div>
+                                        <h:panelGroup id="revenueCard" layout="block">
+                                            <div class="report-value">
+                                                RM <h:outputText value="#{managerBean.dailyRevenue}">
+                                                    <f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
+                                                </h:outputText>
+                                            </div>
+                                            <p class="report-caption">#{managerBean.revenuePeriodDescription}</p>
+                                        </h:panelGroup>
                                     </div>
                                 </div>
 
@@ -896,21 +968,24 @@
                                         <p:dataTable value="#{managerBean.customerFeedback}" var="cf"
                                                      rendered="#{managerBean.customerFeedback != null and not empty managerBean.customerFeedback}"
                                                      emptyMessage="No feedback data.">
-                                            <p:column headerText="Customer Name">
+                                            <p:column headerText="Customer">
                                                 <h:outputText value="#{cf['customerName']}" />
                                             </p:column>
-                                            <p:column headerText="Total Appointments">
-                                                <h:outputText value="#{cf['totalAppointments']}" />
+                                            <p:column headerText="Comments Submitted">
+                                                <h:outputText value="#{cf['totalComments']}" />
                                             </p:column>
-                                            <p:column headerText="Completed">
-                                                <h:outputText value="#{cf['completedAppointments']}" />
+                                            <p:column headerText="Average Rating">
+                                                <h:outputText value="#{cf['averageRating']}" />
                                             </p:column>
-                                            <p:column headerText="Total Spent (RM)">
-                                                <h:outputText value="#{cf['totalSpent']}" />
+                                            <p:column headerText="Latest Comment">
+                                                <h:outputText value="#{cf['latestComment']}" />
+                                            </p:column>
+                                            <p:column headerText="Latest Submitted">
+                                                <h:outputText value="#{cf['latestCommentDate']}" />
                                             </p:column>
                                         </p:dataTable>
                                         <h:panelGroup rendered="#{managerBean.customerFeedback == null or empty managerBean.customerFeedback}">
-                                            <p style="color:var(--text-muted);text-align:center;padding:24px;">No customer feedback data available.</p>
+                                            <p style="color:var(--text-muted);text-align:center;padding:24px;">No customer comments submitted yet.</p>
                                         </h:panelGroup>
                                     </div>
                                 </div>

@@ -9,7 +9,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -110,20 +109,6 @@ public class AppointmentFacade {
     }
 
     // ========== 5 REPORTING METHODS ==========
-
-    public double getDailyRevenue() {
-        LocalDateTime dayStart = LocalDate.now().atStartOfDay();
-        LocalDateTime dayEnd = dayStart.plusDays(1);
-        Double revenue = em.createQuery(
-                "SELECT SUM(a.paymentAmount) FROM Appointment a " +
-                "WHERE a.status = 'Completed' " +
-                "AND a.appointmentDateTime >= :start AND a.appointmentDateTime < :end",
-                Double.class)
-                .setParameter("start", dayStart)
-                .setParameter("end", dayEnd)
-                .getSingleResult();
-        return revenue != null ? revenue : 0.0;
-    }
 
     public Map<String, Integer> getTechnicianWorkload() {
         List<Object[]> rows = em.createQuery(

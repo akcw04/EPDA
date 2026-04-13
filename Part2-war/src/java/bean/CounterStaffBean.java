@@ -165,8 +165,9 @@ public class CounterStaffBean implements Serializable {
 
     public void searchCustomers() {
         try {
-            if (searchKeyword != null && !searchKeyword.isBlank()) {
-                customers = userFacade.searchCustomers(searchKeyword);
+            String keyword = searchKeyword != null ? searchKeyword.trim() : null;
+            if (keyword != null && !keyword.isBlank()) {
+                customers = userFacade.searchCustomers(keyword);
             } else {
                 customers = userFacade.getAllCustomers();
             }
@@ -263,6 +264,14 @@ public class CounterStaffBean implements Serializable {
                 addError("Appointment not found.");
                 return;
             }
+            if (!Appointment.STATUS_COMPLETED.equalsIgnoreCase(appointment.getStatus())) {
+                addError("Payment can only be collected for completed appointments.");
+                return;
+            }
+            if (!paymentFacade.getPaymentsByAppointment(paymentAppointmentId).isEmpty()) {
+                addError("Payment has already been collected for this appointment.");
+                return;
+            }
 
             Payment payment = new Payment();
             payment.setAppointmentId(paymentAppointmentId);
@@ -273,9 +282,6 @@ public class CounterStaffBean implements Serializable {
 
             boolean success = paymentFacade.createPayment(payment);
             if (success) {
-                // Update appointment status
-                appointment.setStatus(Appointment.STATUS_COMPLETED);
-                appointmentFacade.updateAppointment(appointment);
                 addInfo("Payment collected. Receipt: " + payment.getReceiptNumber());
                 paymentAppointmentId = null;
                 paymentMethod = null;
@@ -306,6 +312,18 @@ public class CounterStaffBean implements Serializable {
                 new FacesMessage(FacesMessage.SEVERITY_INFO, msg, null));
     }
 
+    private boolean hasPaymentForAppointment(String appointmentId) {
+        if (payments == null) {
+            return false;
+        }
+        for (Payment payment : payments) {
+            if (appointmentId.equals(payment.getAppointmentId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Get only completed appointments (for payment collection).
      */
@@ -313,7 +331,8 @@ public class CounterStaffBean implements Serializable {
         List<Appointment> list = new ArrayList<>();
         if (appointments != null) {
             for (Appointment a : appointments) {
-                if ("Completed".equalsIgnoreCase(a.getStatus()) || "InProgress".equalsIgnoreCase(a.getStatus())) {
+                if (Appointment.STATUS_COMPLETED.equalsIgnoreCase(a.getStatus()) &&
+                    !hasPaymentForAppointment(a.getId())) {
                     list.add(a);
                 }
             }

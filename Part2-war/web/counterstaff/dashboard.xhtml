@@ -185,6 +185,7 @@
                                             <p:commandButton value="Update Profile"
                                                              icon="pi pi-check"
                                                              action="#{counterStaffBean.updateProfile()}"
+                                                             process="@form"
                                                              update=":mainForm :growl" styleClass="btn-primary"/>
                                         </div>
                                     </h:panelGroup>
@@ -234,6 +235,7 @@
                                         <p:commandButton value="Register Customer"
                                                          icon="pi pi-user-plus"
                                                          action="#{counterStaffBean.registerCustomer()}"
+                                                         process="@form"
                                                          update=":mainForm :growl" styleClass="btn-success"/>
                                     </div>
                                 </div>
@@ -276,7 +278,7 @@
                                         <p:column headerText="IC">
                                             <h:outputText value="#{c.ic}"/>
                                         </p:column>
-                                        <p:column headerText="Actions">
+                                        <p:column headerText="Actions" styleClass="actions-column" headerStyleClass="actions-column">
                                             <p:commandButton value="Edit"
                                                              icon="pi pi-pencil"
                                                              styleClass="btn-edit"
@@ -332,6 +334,7 @@
                                                              icon="pi pi-check"
                                                              styleClass="btn-success"
                                                              action="#{counterStaffBean.saveEditCustomer()}"
+                                                             process="@form"
                                                              update=":mainForm :growl"/>
                                             <p:commandButton value="Cancel"
                                                              icon="pi pi-times"
@@ -386,6 +389,7 @@
                                         <p:commandButton value="Book Appointment"
                                                          icon="pi pi-calendar-plus"
                                                          action="#{counterStaffBean.bookAppointment()}"
+                                                         process="@form"
                                                          update=":mainForm :growl" styleClass="btn-success"/>
                                     </div>
                                 </div>
@@ -418,6 +422,7 @@
                                         <p:commandButton value="Collect Payment"
                                                          icon="pi pi-wallet"
                                                          action="#{counterStaffBean.collectPayment()}"
+                                                         process="@form"
                                                          update=":mainForm :growl" styleClass="btn-success"/>
                                     </div>
                                 </div>
