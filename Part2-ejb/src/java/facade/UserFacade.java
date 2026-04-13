@@ -14,9 +14,9 @@ import jakarta.persistence.PersistenceException;
 import java.util.List;
 
 /**
- * UserFacade - Stateless EJB for user management.
- * Handles CRUD for Manager, CounterStaff, Technician, Customer.
- * All user types have: name, password, gender, phone, IC, email, address.
+ * UserFacade - Stateless EJB for user management. Handles CRUD for Manager,
+ * CounterStaff, Technician, Customer. All user types have: name, password,
+ * gender, phone, IC, email, address.
  */
 @Stateless
 public class UserFacade {
@@ -25,7 +25,6 @@ public class UserFacade {
     private EntityManager em;
 
     // ========== TECHNICIAN OPERATIONS ==========
-
     public boolean createTechnician(Technician technician) {
         try {
             technician.setId(IDGenerator.generateTechnicianID(em));
@@ -51,8 +50,8 @@ public class UserFacade {
     public List<Technician> searchTechnicians(String keyword) {
         String kw = "%" + keyword.toLowerCase() + "%";
         return em.createQuery(
-                "SELECT t FROM Technician t WHERE LOWER(t.name) LIKE :kw " +
-                "OR LOWER(t.email) LIKE :kw OR LOWER(t.specialty) LIKE :kw ORDER BY t.name",
+                "SELECT t FROM Technician t WHERE LOWER(t.name) LIKE :kw "
+                + "OR LOWER(t.email) LIKE :kw OR LOWER(t.specialty) LIKE :kw ORDER BY t.name",
                 Technician.class)
                 .setParameter("kw", kw)
                 .getResultList();
@@ -60,7 +59,9 @@ public class UserFacade {
 
     public void updateTechnician(Technician technician) {
         Technician managed = em.find(Technician.class, technician.getId());
-        if (managed == null) return;
+        if (managed == null) {
+            return;
+        }
         managed.setName(technician.getName());
         managed.setEmail(technician.getEmail());
         managed.setGender(technician.getGender());
@@ -73,11 +74,12 @@ public class UserFacade {
 
     public void deleteTechnician(String technicianID) {
         Technician t = em.find(Technician.class, technicianID);
-        if (t != null) em.remove(t);
+        if (t != null) {
+            em.remove(t);
+        }
     }
 
     // ========== CUSTOMER OPERATIONS ==========
-
     public boolean createCustomer(Customer customer) {
         try {
             customer.setId(IDGenerator.generateCustomerID(em));
@@ -103,9 +105,9 @@ public class UserFacade {
     public List<Customer> searchCustomers(String keyword) {
         String kw = "%" + keyword.toLowerCase() + "%";
         return em.createQuery(
-                "SELECT c FROM Customer c WHERE LOWER(c.name) LIKE :kw " +
-                "OR LOWER(c.email) LIKE :kw OR LOWER(c.phone) LIKE :kw " +
-                "OR LOWER(c.ic) LIKE :kw ORDER BY c.name",
+                "SELECT c FROM Customer c WHERE LOWER(c.name) LIKE :kw "
+                + "OR LOWER(c.email) LIKE :kw OR LOWER(c.phone) LIKE :kw "
+                + "OR LOWER(c.ic) LIKE :kw ORDER BY c.name",
                 Customer.class)
                 .setParameter("kw", kw)
                 .getResultList();
@@ -113,7 +115,9 @@ public class UserFacade {
 
     public void updateCustomer(Customer customer) {
         Customer managed = em.find(Customer.class, customer.getId());
-        if (managed == null) return;
+        if (managed == null) {
+            return;
+        }
         managed.setName(customer.getName());
         managed.setEmail(customer.getEmail());
         managed.setGender(customer.getGender());
@@ -124,11 +128,12 @@ public class UserFacade {
 
     public void deleteCustomer(String customerID) {
         Customer c = em.find(Customer.class, customerID);
-        if (c != null) em.remove(c);
+        if (c != null) {
+            em.remove(c);
+        }
     }
 
     // ========== MANAGER OPERATIONS ==========
-
     public boolean createManager(Manager manager) {
         try {
             manager.setId(IDGenerator.generateManagerID(em));
@@ -154,15 +159,17 @@ public class UserFacade {
     public List<Manager> searchManagers(String keyword) {
         String kw = "%" + keyword.toLowerCase() + "%";
         return em.createQuery(
-                "SELECT m FROM Manager m WHERE LOWER(m.name) LIKE :kw " +
-                "OR LOWER(m.email) LIKE :kw ORDER BY m.name", Manager.class)
+                "SELECT m FROM Manager m WHERE LOWER(m.name) LIKE :kw "
+                + "OR LOWER(m.email) LIKE :kw ORDER BY m.name", Manager.class)
                 .setParameter("kw", kw)
                 .getResultList();
     }
 
     public void updateManager(Manager manager) {
         Manager managed = em.find(Manager.class, manager.getId());
-        if (managed == null) return;
+        if (managed == null) {
+            return;
+        }
         managed.setName(manager.getName());
         managed.setEmail(manager.getEmail());
         managed.setGender(manager.getGender());
@@ -173,11 +180,12 @@ public class UserFacade {
 
     public void deleteManager(String managerID) {
         Manager m = em.find(Manager.class, managerID);
-        if (m != null) em.remove(m);
+        if (m != null) {
+            em.remove(m);
+        }
     }
 
     // ========== COUNTER STAFF OPERATIONS ==========
-
     public boolean createCounterStaff(CounterStaff counterStaff) {
         try {
             counterStaff.setId(IDGenerator.generateCounterStaffID(em));
@@ -203,15 +211,17 @@ public class UserFacade {
     public List<CounterStaff> searchCounterStaff(String keyword) {
         String kw = "%" + keyword.toLowerCase() + "%";
         return em.createQuery(
-                "SELECT cs FROM CounterStaff cs WHERE LOWER(cs.name) LIKE :kw " +
-                "OR LOWER(cs.email) LIKE :kw ORDER BY cs.name", CounterStaff.class)
+                "SELECT cs FROM CounterStaff cs WHERE LOWER(cs.name) LIKE :kw "
+                + "OR LOWER(cs.email) LIKE :kw ORDER BY cs.name", CounterStaff.class)
                 .setParameter("kw", kw)
                 .getResultList();
     }
 
     public void updateCounterStaff(CounterStaff counterStaff) {
         CounterStaff managed = em.find(CounterStaff.class, counterStaff.getId());
-        if (managed == null) return;
+        if (managed == null) {
+            return;
+        }
         managed.setName(counterStaff.getName());
         managed.setEmail(counterStaff.getEmail());
         managed.setGender(counterStaff.getGender());
@@ -222,25 +232,34 @@ public class UserFacade {
 
     public void deleteCounterStaff(String counterStaffID) {
         CounterStaff cs = em.find(CounterStaff.class, counterStaffID);
-        if (cs != null) em.remove(cs);
+        if (cs != null) {
+            em.remove(cs);
+        }
     }
 
     // ========== AUTHENTICATION ==========
-
     public Object[] authenticate(String email, String plainPassword) {
         String hashed = SecurityUtil.hashPassword(plainPassword);
 
         Manager m = findManagerByCredentials(email, hashed);
-        if (m != null) return new Object[]{m, "Manager"};
+        if (m != null) {
+            return new Object[]{m, "Manager"};
+        }
 
         CounterStaff cs = findCounterStaffByCredentials(email, hashed);
-        if (cs != null) return new Object[]{cs, "CounterStaff"};
+        if (cs != null) {
+            return new Object[]{cs, "CounterStaff"};
+        }
 
         Technician t = findTechnicianByCredentials(email, hashed);
-        if (t != null) return new Object[]{t, "Technician"};
+        if (t != null) {
+            return new Object[]{t, "Technician"};
+        }
 
         Customer c = findCustomerByCredentials(email, hashed);
-        if (c != null) return new Object[]{c, "Customer"};
+        if (c != null) {
+            return new Object[]{c, "Customer"};
+        }
 
         return null;
     }
@@ -277,7 +296,6 @@ public class UserFacade {
     }
 
     // ========== EMAIL LOOKUP ==========
-
     public Customer getCustomerByEmail(String email) {
         List<Customer> list = em.createQuery(
                 "SELECT c FROM Customer c WHERE c.email = :e", Customer.class)
@@ -304,5 +322,36 @@ public class UserFacade {
                 "SELECT cs FROM CounterStaff cs WHERE cs.email = :e", CounterStaff.class)
                 .setParameter("e", email).getResultList();
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    // ========== DUPLICATION CHECKING ==========
+    private boolean existsICInEntity(Class<?> entityClass, String ic) {
+        Long count = em.createQuery(
+                "SELECT COUNT(e) FROM " + entityClass.getSimpleName() + " e WHERE e.ic = :ic", Long.class)
+                .setParameter("ic", ic)
+                .getSingleResult();
+        return count > 0;
+    }
+
+    public boolean isDuplicateIC(String ic) {
+        return existsICInEntity(Customer.class, ic)
+                || existsICInEntity(Manager.class, ic)
+                || existsICInEntity(Technician.class, ic)
+                || existsICInEntity(CounterStaff.class, ic);
+    }
+    
+    private boolean existsEmailInEntity(Class<?> entityClass, String email) {
+        Long count = em.createQuery(
+                "SELECT COUNT(e) FROM " + entityClass.getSimpleName() + " e WHERE e.email = :email", Long.class)
+                .setParameter("email", email)
+                .getSingleResult();
+        return count > 0;
+    }
+
+    public boolean isDuplicateEmail(String email) {
+        return existsEmailInEntity(Customer.class, email)
+                || existsEmailInEntity(Manager.class, email)
+                || existsEmailInEntity(Technician.class, email)
+                || existsEmailInEntity(CounterStaff.class, email);
     }
 }

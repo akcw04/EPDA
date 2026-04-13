@@ -238,12 +238,15 @@ public class CounterStaffBean implements Serializable {
             appointment.setStatus(Appointment.STATUS_PENDING);
             appointment.setPaymentAmount(service.getBasePrice());
 
-            appointmentFacade.createAppointment(appointment);
-            addInfo("Appointment booked successfully.");
-
-            selectedCustomerId = selectedServiceId = selectedTechnicianId = null;
-            appointmentDateStr = null;
-            loadDashboardData();
+            Boolean appointmentCreation = appointmentFacade.createAppointment(appointment);
+            if (!appointmentCreation) {
+                addError("Timeslot has been booked by other customer.");
+            } else {
+                addInfo("Appointment booked successfully.");
+                selectedCustomerId = selectedServiceId = selectedTechnicianId = null;
+                appointmentDateStr = null;
+                loadDashboardData();
+            }
         } catch (Exception e) {
             addError("Booking error: " + e.getMessage());
         }

@@ -28,11 +28,14 @@ public class AppointmentFacade {
 
     // ========== CRUD OPERATIONS ==========
 
-    public Appointment createAppointment(Appointment appointment) {
-        validateTechnicianAvailability(appointment);
-        appointment.setId(IDGenerator.generateAppointmentID(em));
-        em.persist(appointment);
-        return appointment;
+    public boolean createAppointment(Appointment appointment) {
+        boolean created = false;
+        if (validateTechnicianAvailability(appointment)) {
+            appointment.setId(IDGenerator.generateAppointmentID(em));
+            em.persist(appointment);
+            created = true;
+        }
+        return created;
     }
 
     public Appointment getAppointmentByID(String appointmentID) {
@@ -83,7 +86,8 @@ public class AppointmentFacade {
      * with the requested time slot. Uses a native query because the Derby
      * TIMESTAMPADD ODBC escape syntax cannot be expressed in JPQL.
      */
-    private void validateTechnicianAvailability(Appointment appointment) {
+    private boolean validateTechnicianAvailability(Appointment appointment) {
+        boolean available = true;
         String technicianID = appointment.getTechnicianId();
         LocalDateTime startTime = appointment.getAppointmentDateTime();
         int durationMinutes = appointment.getService() != null
@@ -103,9 +107,9 @@ public class AppointmentFacade {
         q.setParameter(3, Timestamp.valueOf(startTime));
         Number count = (Number) q.getSingleResult();
         if (count.intValue() > 0) {
-            throw new IllegalStateException(
-                    "Technician has overlapping appointment in the requested time slot");
+            available = false;
         }
+        return available;
     }
 
     // ========== 5 REPORTING METHODS ==========
