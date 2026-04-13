@@ -33,13 +33,13 @@
                                          icon="pi pi-home"
                                          styleClass="nav-link #{customerBean.currentSection == 'overview' ? 'active' : ''}"
                                          action="#{customerBean.navigateTo('overview')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="My Profile"
                                          icon="pi pi-id-card"
                                          styleClass="nav-link #{customerBean.currentSection == 'profile' ? 'active' : ''}"
                                          action="#{customerBean.navigateTo('profile')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
 
                         <!-- Appointments -->
@@ -48,13 +48,13 @@
                                          icon="pi pi-calendar"
                                          styleClass="nav-link #{customerBean.currentSection == 'appointments' ? 'active' : ''}"
                                          action="#{customerBean.navigateTo('appointments')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Services Catalog"
                                          icon="pi pi-list"
                                          styleClass="nav-link #{customerBean.currentSection == 'services' ? 'active' : ''}"
                                          action="#{customerBean.navigateTo('services')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
 
                         <!-- History -->
@@ -63,19 +63,19 @@
                                          icon="pi pi-wallet"
                                          styleClass="nav-link #{customerBean.currentSection == 'payments' ? 'active' : ''}"
                                          action="#{customerBean.navigateTo('payments')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Feedback"
                                          icon="pi pi-star"
                                          styleClass="nav-link #{customerBean.currentSection == 'feedback' ? 'active' : ''}"
                                          action="#{customerBean.navigateTo('feedback')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Write Comment"
                                          icon="pi pi-comments"
                                          styleClass="nav-link #{customerBean.currentSection == 'comments' ? 'active' : ''}"
                                          action="#{customerBean.navigateTo('comments')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                     </nav>
                 </h:form>
@@ -95,15 +95,17 @@
             <!-- ==================== MAIN CONTENT ==================== -->
             <div class="main-content">
                 <div class="top-bar">
-                    <h1>
-                        <h:outputText value="Overview" rendered="#{customerBean.currentSection == 'overview'}" />
-                        <h:outputText value="My Profile" rendered="#{customerBean.currentSection == 'profile'}" />
-                        <h:outputText value="My Appointments" rendered="#{customerBean.currentSection == 'appointments'}" />
-                        <h:outputText value="Services Catalog" rendered="#{customerBean.currentSection == 'services'}" />
-                        <h:outputText value="Payments" rendered="#{customerBean.currentSection == 'payments'}" />
-                        <h:outputText value="Feedback" rendered="#{customerBean.currentSection == 'feedback'}" />
-                        <h:outputText value="Write Comment" rendered="#{customerBean.currentSection == 'comments'}" />
-                    </h1>
+                    <h:panelGroup id="pageTitle" layout="block">
+                        <h1>
+                            <h:outputText value="Overview" rendered="#{customerBean.currentSection == 'overview'}" />
+                            <h:outputText value="My Profile" rendered="#{customerBean.currentSection == 'profile'}" />
+                            <h:outputText value="My Appointments" rendered="#{customerBean.currentSection == 'appointments'}" />
+                            <h:outputText value="Services Catalog" rendered="#{customerBean.currentSection == 'services'}" />
+                            <h:outputText value="Payments" rendered="#{customerBean.currentSection == 'payments'}" />
+                            <h:outputText value="Feedback" rendered="#{customerBean.currentSection == 'feedback'}" />
+                            <h:outputText value="Write Comment" rendered="#{customerBean.currentSection == 'comments'}" />
+                        </h1>
+                    </h:panelGroup>
                 </div>
 
                 <div class="content-area">

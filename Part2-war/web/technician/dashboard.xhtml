@@ -33,13 +33,13 @@
                                          icon="pi pi-home"
                                          styleClass="nav-link #{technicianBean.currentSection == 'overview' ? 'active' : ''}"
                                          action="#{technicianBean.navigateTo('overview')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="My Profile"
                                          icon="pi pi-id-card"
                                          styleClass="nav-link #{technicianBean.currentSection == 'profile' ? 'active' : ''}"
                                          action="#{technicianBean.navigateTo('profile')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
 
                         <!-- Work -->
@@ -48,13 +48,13 @@
                                          icon="pi pi-calendar"
                                          styleClass="nav-link #{technicianBean.currentSection == 'appointments' ? 'active' : ''}"
                                          action="#{technicianBean.navigateTo('appointments')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Write Feedback"
                                          icon="pi pi-pencil"
                                          styleClass="nav-link #{technicianBean.currentSection == 'feedback' ? 'active' : ''}"
                                          action="#{technicianBean.navigateTo('feedback')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
 
                         <!-- Info -->
@@ -63,13 +63,13 @@
                                          icon="pi pi-comments"
                                          styleClass="nav-link #{technicianBean.currentSection == 'comments' ? 'active' : ''}"
                                          action="#{technicianBean.navigateTo('comments')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Performance"
                                          icon="pi pi-chart-bar"
                                          styleClass="nav-link #{technicianBean.currentSection == 'performance' ? 'active' : ''}"
                                          action="#{technicianBean.navigateTo('performance')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                     </nav>
                 </h:form>
@@ -89,14 +89,16 @@
             <!-- ==================== MAIN CONTENT ==================== -->
             <div class="main-content">
                 <div class="top-bar">
-                    <h1>
-                        <h:outputText value="Overview" rendered="#{technicianBean.currentSection == 'overview'}" />
-                        <h:outputText value="My Profile" rendered="#{technicianBean.currentSection == 'profile'}" />
-                        <h:outputText value="My Appointments" rendered="#{technicianBean.currentSection == 'appointments'}" />
-                        <h:outputText value="Write Feedback" rendered="#{technicianBean.currentSection == 'feedback'}" />
-                        <h:outputText value="Customer Comments" rendered="#{technicianBean.currentSection == 'comments'}" />
-                        <h:outputText value="Performance" rendered="#{technicianBean.currentSection == 'performance'}" />
-                    </h1>
+                    <h:panelGroup id="pageTitle" layout="block">
+                        <h1>
+                            <h:outputText value="Overview" rendered="#{technicianBean.currentSection == 'overview'}" />
+                            <h:outputText value="My Profile" rendered="#{technicianBean.currentSection == 'profile'}" />
+                            <h:outputText value="My Appointments" rendered="#{technicianBean.currentSection == 'appointments'}" />
+                            <h:outputText value="Write Feedback" rendered="#{technicianBean.currentSection == 'feedback'}" />
+                            <h:outputText value="Customer Comments" rendered="#{technicianBean.currentSection == 'comments'}" />
+                            <h:outputText value="Performance" rendered="#{technicianBean.currentSection == 'performance'}" />
+                        </h1>
+                    </h:panelGroup>
                 </div>
 
                 <div class="content-area">

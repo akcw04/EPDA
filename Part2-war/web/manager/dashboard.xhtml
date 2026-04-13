@@ -34,7 +34,7 @@
                                          icon="pi pi-home"
                                          styleClass="nav-link #{managerBean.currentSection == 'overview' ? 'active' : ''}"
                                          action="#{managerBean.navigateTo('overview')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
 
                         <!-- Staff Management -->
@@ -43,31 +43,31 @@
                                          icon="pi pi-user-plus"
                                          styleClass="nav-link #{managerBean.currentSection == 'register-staff' ? 'active' : ''}"
                                          action="#{managerBean.navigateTo('register-staff')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Technicians"
                                          icon="pi pi-wrench"
                                          styleClass="nav-link #{managerBean.currentSection == 'technicians' ? 'active' : ''}"
                                          action="#{managerBean.navigateTo('technicians')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Counter Staff"
                                          icon="pi pi-users"
                                          styleClass="nav-link #{managerBean.currentSection == 'counter-staff' ? 'active' : ''}"
                                          action="#{managerBean.navigateTo('counter-staff')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Managers"
                                          icon="pi pi-shield"
                                          styleClass="nav-link #{managerBean.currentSection == 'managers' ? 'active' : ''}"
                                          action="#{managerBean.navigateTo('managers')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Customers"
                                          icon="pi pi-user"
                                          styleClass="nav-link #{managerBean.currentSection == 'customers' ? 'active' : ''}"
                                          action="#{managerBean.navigateTo('customers')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
 
                         <!-- Operations -->
@@ -76,19 +76,19 @@
                                          icon="pi pi-tag"
                                          styleClass="nav-link #{managerBean.currentSection == 'services' ? 'active' : ''}"
                                          action="#{managerBean.navigateTo('services')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Appointments"
                                          icon="pi pi-calendar"
                                          styleClass="nav-link #{managerBean.currentSection == 'appointments' ? 'active' : ''}"
                                          action="#{managerBean.navigateTo('appointments')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Feedback &amp; Comments"
                                          icon="pi pi-comments"
                                          styleClass="nav-link #{managerBean.currentSection == 'feedback' ? 'active' : ''}"
                                          action="#{managerBean.navigateTo('feedback')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
 
                         <!-- Analytics -->
@@ -97,7 +97,7 @@
                                          icon="pi pi-chart-bar"
                                          styleClass="nav-link #{managerBean.currentSection == 'reports' ? 'active' : ''}"
                                          action="#{managerBean.navigateTo('reports')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                     </nav>
                 </h:form>
@@ -117,18 +117,20 @@
             <!-- ==================== MAIN CONTENT ==================== -->
             <div class="main-content">
                 <div class="top-bar">
-                    <h1>
-                        <h:outputText value="Overview" rendered="#{managerBean.currentSection == 'overview'}" />
-                        <h:outputText value="Register Staff" rendered="#{managerBean.currentSection == 'register-staff'}" />
-                        <h:outputText value="Technicians" rendered="#{managerBean.currentSection == 'technicians'}" />
-                        <h:outputText value="Counter Staff" rendered="#{managerBean.currentSection == 'counter-staff'}" />
-                        <h:outputText value="Managers" rendered="#{managerBean.currentSection == 'managers'}" />
-                        <h:outputText value="Customers" rendered="#{managerBean.currentSection == 'customers'}" />
-                        <h:outputText value="Services &amp; Pricing" rendered="#{managerBean.currentSection == 'services'}" />
-                        <h:outputText value="Appointments" rendered="#{managerBean.currentSection == 'appointments'}" />
-                        <h:outputText value="Feedback &amp; Comments" rendered="#{managerBean.currentSection == 'feedback'}" />
-                        <h:outputText value="Reports" rendered="#{managerBean.currentSection == 'reports'}" />
-                    </h1>
+                    <h:panelGroup id="pageTitle" layout="block">
+                        <h1>
+                            <h:outputText value="Overview" rendered="#{managerBean.currentSection == 'overview'}" />
+                            <h:outputText value="Register Staff" rendered="#{managerBean.currentSection == 'register-staff'}" />
+                            <h:outputText value="Technicians" rendered="#{managerBean.currentSection == 'technicians'}" />
+                            <h:outputText value="Counter Staff" rendered="#{managerBean.currentSection == 'counter-staff'}" />
+                            <h:outputText value="Managers" rendered="#{managerBean.currentSection == 'managers'}" />
+                            <h:outputText value="Customers" rendered="#{managerBean.currentSection == 'customers'}" />
+                            <h:outputText value="Services &amp; Pricing" rendered="#{managerBean.currentSection == 'services'}" />
+                            <h:outputText value="Appointments" rendered="#{managerBean.currentSection == 'appointments'}" />
+                            <h:outputText value="Feedback &amp; Comments" rendered="#{managerBean.currentSection == 'feedback'}" />
+                            <h:outputText value="Reports" rendered="#{managerBean.currentSection == 'reports'}" />
+                        </h1>
+                    </h:panelGroup>
                 </div>
 
                 <div class="content-area">

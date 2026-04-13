@@ -33,13 +33,13 @@
                                          icon="pi pi-home"
                                          styleClass="nav-link #{counterStaffBean.currentSection == 'overview' ? 'active' : ''}"
                                          action="#{counterStaffBean.navigateTo('overview')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="My Profile"
                                          icon="pi pi-id-card"
                                          styleClass="nav-link #{counterStaffBean.currentSection == 'profile' ? 'active' : ''}"
                                          action="#{counterStaffBean.navigateTo('profile')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
 
                         <!-- Customer Management -->
@@ -48,13 +48,13 @@
                                          icon="pi pi-user-plus"
                                          styleClass="nav-link #{counterStaffBean.currentSection == 'register-customer' ? 'active' : ''}"
                                          action="#{counterStaffBean.navigateTo('register-customer')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Customers"
                                          icon="pi pi-users"
                                          styleClass="nav-link #{counterStaffBean.currentSection == 'customers' ? 'active' : ''}"
                                          action="#{counterStaffBean.navigateTo('customers')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
 
                         <!-- Operations -->
@@ -63,19 +63,19 @@
                                          icon="pi pi-calendar-plus"
                                          styleClass="nav-link #{counterStaffBean.currentSection == 'book-appointment' ? 'active' : ''}"
                                          action="#{counterStaffBean.navigateTo('book-appointment')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Payment &amp; Receipt"
                                          icon="pi pi-wallet"
                                          styleClass="nav-link #{counterStaffBean.currentSection == 'payment' ? 'active' : ''}"
                                          action="#{counterStaffBean.navigateTo('payment')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                         <p:commandButton value="Appointments"
                                          icon="pi pi-calendar"
                                          styleClass="nav-link #{counterStaffBean.currentSection == 'appointments' ? 'active' : ''}"
                                          action="#{counterStaffBean.navigateTo('appointments')}"
-                                         update=":contentArea :sidebarForm"
+                                         update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
                     </nav>
                 </h:form>
@@ -95,15 +95,17 @@
             <!-- ==================== MAIN CONTENT ==================== -->
             <div class="main-content">
                 <div class="top-bar">
-                    <h1>
-                        <h:outputText value="Overview" rendered="#{counterStaffBean.currentSection == 'overview'}" />
-                        <h:outputText value="My Profile" rendered="#{counterStaffBean.currentSection == 'profile'}" />
-                        <h:outputText value="Register Customer" rendered="#{counterStaffBean.currentSection == 'register-customer'}" />
-                        <h:outputText value="Customers" rendered="#{counterStaffBean.currentSection == 'customers'}" />
-                        <h:outputText value="Book Appointment" rendered="#{counterStaffBean.currentSection == 'book-appointment'}" />
-                        <h:outputText value="Payment &amp; Receipt" rendered="#{counterStaffBean.currentSection == 'payment'}" />
-                        <h:outputText value="Appointments" rendered="#{counterStaffBean.currentSection == 'appointments'}" />
-                    </h1>
+                    <h:panelGroup id="pageTitle" layout="block">
+                        <h1>
+                            <h:outputText value="Overview" rendered="#{counterStaffBean.currentSection == 'overview'}" />
+                            <h:outputText value="My Profile" rendered="#{counterStaffBean.currentSection == 'profile'}" />
+                            <h:outputText value="Register Customer" rendered="#{counterStaffBean.currentSection == 'register-customer'}" />
+                            <h:outputText value="Customers" rendered="#{counterStaffBean.currentSection == 'customers'}" />
+                            <h:outputText value="Book Appointment" rendered="#{counterStaffBean.currentSection == 'book-appointment'}" />
+                            <h:outputText value="Payment &amp; Receipt" rendered="#{counterStaffBean.currentSection == 'payment'}" />
+                            <h:outputText value="Appointments" rendered="#{counterStaffBean.currentSection == 'appointments'}" />
+                        </h1>
+                    </h:panelGroup>
                 </div>
 
                 <div class="content-area">
@@ -136,11 +138,11 @@
                                     <h3>Quick Actions</h3>
                                     <div style="display:flex;gap:12px;flex-wrap:wrap;">
                                         <p:commandButton value="Register Customer" icon="pi pi-user-plus" styleClass="btn-primary"
-                                                         action="#{counterStaffBean.navigateTo('register-customer')}" update=":contentArea :sidebarForm" process="@this"/>
+                                                         action="#{counterStaffBean.navigateTo('register-customer')}" update=":pageTitle :contentArea :sidebarForm" process="@this"/>
                                         <p:commandButton value="Book Appointment" icon="pi pi-calendar-plus" styleClass="btn-success"
-                                                         action="#{counterStaffBean.navigateTo('book-appointment')}" update=":contentArea :sidebarForm" process="@this"/>
+                                                         action="#{counterStaffBean.navigateTo('book-appointment')}" update=":pageTitle :contentArea :sidebarForm" process="@this"/>
                                         <p:commandButton value="Collect Payment" icon="pi pi-wallet" styleClass="btn-primary"
-                                                         action="#{counterStaffBean.navigateTo('payment')}" update=":contentArea :sidebarForm" process="@this"/>
+                                                         action="#{counterStaffBean.navigateTo('payment')}" update=":pageTitle :contentArea :sidebarForm" process="@this"/>
                                     </div>
                                 </div>
                             </h:panelGroup>
