@@ -595,24 +595,15 @@
                             <!-- ==================== CUSTOMERS SECTION ==================== -->
                             <h:panelGroup rendered="#{managerBean.currentSection == 'customers'}">
                                 <div class="search-bar">
-                                    <p:inputText value="#{managerBean.searchKeyword}" styleClass="form-control" placeholder="Search by name, email, phone..."/>
-                                    <p:commandButton value="Search"
-                                                     icon="pi pi-search"
-                                                     styleClass="btn-primary"
-                                                     action="#{managerBean.searchStaff()}"
-                                                     process="@form"
-                                                     update=":mainForm" />
-                                    <p:commandButton value="Clear"
-                                                     icon="pi pi-times"
-                                                     styleClass="btn-secondary"
-                                                     action="#{managerBean.clearSearch()}"
-                                                     process="@this"
-                                                     update=":mainForm" />
+                                    <h:inputText id="searchInput" onkeyup="filterTable()" styleClass="form-control">
+                                        <f:passThroughAttribute name="placeholder" value="Type anything..." />
+                                    </h:inputText>
                                 </div>
 
                                 <div class="panel">
                                     <p:dataTable value="#{managerBean.customers}" var="c"
-                                                 emptyMessage="No customers found.">
+                                                 emptyMessage="No customers found."
+                                                 id="staffTable">
                                         <p:column headerText="ID">
                                             <h:outputText value="#{c.id}" />
                                         </p:column>
@@ -722,7 +713,9 @@
                                         </div>
                                         <div>
                                             <label>Price (RM)</label>
-                                            <h:inputText value="#{managerBean.newServicePrice}" styleClass="form-control" />
+                                            <h:inputText value="#{managerBean.newServicePrice}"
+                                                         styleClass="form-control"
+                                                         converterMessage="Service price must be a valid number." />
                                         </div>
                                     </div>
                                     <div class="form-actions">
@@ -762,7 +755,9 @@
                                                 </div>
                                                 <div>
                                                     <label>Price (RM)</label>
-                                                    <h:inputText value="#{managerBean.editingService.basePrice}" styleClass="form-control" />
+                                                    <h:inputText value="#{managerBean.editingService.basePrice}"
+                                                                 styleClass="form-control"
+                                                                 converterMessage="Service price must be a valid number." />
                                                 </div>
                                             </div>
                                             <div class="form-actions">
@@ -1067,5 +1062,29 @@
             <p:commandButton value="Yes" type="button" styleClass="btn-danger ui-confirmdialog-yes" icon="pi pi-check" />
             <p:commandButton value="No" type="button" styleClass="btn-secondary ui-confirmdialog-no" icon="pi pi-times" />
         </p:confirmDialog>
+        
+        <script type="text/javascript">
+            //<![CDATA[
+            function filterTable() {
+                var input = document.getElementById("#{facesContext.viewRoot.findComponent('mainForm:searchInput').clientId}");
+                var filter = input.value.toLowerCase();
+                var table = document.getElementById("#{facesContext.viewRoot.findComponent('mainForm:staffTable').clientId}");
+                var trs = table.getElementsByTagName("tr");
+
+                // Start from 1 to skip the header row
+                for (var i = 1; i < trs.length; i++) {
+                    var tds = trs[i].getElementsByTagName("td");
+                    var show = false;
+                    for (var j = 0; j < tds.length; j++) {
+                        if (tds[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                            show = true;
+                            break;
+                        }
+                    }
+                    trs[i].style.display = show ? "" : "none";
+                }
+            }
+            //]]>
+        </script>
     </h:body>
 </html>

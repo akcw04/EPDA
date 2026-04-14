@@ -201,15 +201,15 @@
                                     <div class="form-grid">
                                         <div>
                                             <label>Name</label>
-                                            <p:inputText value="#{counterStaffBean.custName}" required="true" requiredMessage="Name is required" styleClass="form-control"/>
+                                            <p:inputText value="#{counterStaffBean.custName}" styleClass="form-control"/>
                                         </div>
                                         <div>
                                             <label>Email</label>
-                                            <p:inputText value="#{counterStaffBean.custEmail}" required="true" requiredMessage="Email is required" styleClass="form-control"/>
+                                            <p:inputText value="#{counterStaffBean.custEmail}" styleClass="form-control"/>
                                         </div>
                                         <div>
                                             <label>Password</label>
-                                            <p:password value="#{counterStaffBean.custPassword}" required="true" requiredMessage="Password is required" styleClass="form-control"/>
+                                            <p:password value="#{counterStaffBean.custPassword}" styleClass="form-control"/>
                                         </div>
                                         <div>
                                             <label>Gender</label>
@@ -440,7 +440,7 @@
                                             <h:outputText value="#{p.appointmentId}"/>
                                         </p:column>
                                         <p:column headerText="Customer">
-                                            <h:outputText value="#{p.customerId}"/>
+                                            <h:outputText value="#{p.customer != null ? p.customer.name : p.customerId}"/>
                                         </p:column>
                                         <p:column headerText="Amount (RM)">
                                             <h:outputText value="#{p.amount}"/>

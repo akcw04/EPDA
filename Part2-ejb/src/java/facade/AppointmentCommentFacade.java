@@ -133,11 +133,13 @@ public class AppointmentCommentFacade {
      */
     public List<AppointmentComment> getCommentsByTechnician(String technicianId) {
         return em.createQuery(
-                "SELECT c FROM AppointmentComment c WHERE c.appointment.technicianId = :tid " +
-                "ORDER BY c.createdAt DESC",
-                AppointmentComment.class)
-                .setParameter("tid", technicianId)
-                .getResultList();
+            "SELECT c FROM AppointmentComment c " +
+            "JOIN FETCH c.customer " +
+            "WHERE c.appointment.technicianId = :tid " +
+            "ORDER BY c.createdAt DESC",
+            AppointmentComment.class)
+            .setParameter("tid", technicianId)
+            .getResultList();
     }
 
     /**

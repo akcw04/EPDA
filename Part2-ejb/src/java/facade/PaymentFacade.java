@@ -48,7 +48,9 @@ public class PaymentFacade {
 
     public List<Payment> getAllPayments() {
         return em.createQuery(
-                "SELECT p FROM Payment p ORDER BY p.paymentDate DESC", Payment.class)
+                "SELECT p FROM Payment p " +
+                "JOIN FETCH p.customer " +
+                "ORDER BY p.paymentDate DESC", Payment.class)
                 .getResultList();
     }
 

@@ -25,6 +25,7 @@ import org.primefaces.model.charts.axes.cartesian.CartesianScales;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
 import org.primefaces.model.charts.bar.BarChartOptions;
 import org.primefaces.model.charts.pie.PieChartOptions;
+import util.ValidationUtil;
 
 /**
  * Manager Dashboard Bean. Requirements: Register/delete/search/update all staff
@@ -79,7 +80,7 @@ public class ManagerBean implements Serializable {
     // Service form
     private Service editingService;
     private String newServiceName, newServiceType;
-    private double newServicePrice;
+    private Double newServicePrice;
 
     // Search
     private String searchKeyword;
@@ -89,16 +90,6 @@ public class ManagerBean implements Serializable {
     private CounterStaff editingCounterStaff;
     private Manager editingManager;
     private Customer editingCustomer;
-    
-    // Editing selected staff original values
-    private String originalEditingTechnicianEmailValue;
-    private String originalEditingTechnicianIcValue;
-    private String originalEditingCounterStaffEmailValue;
-    private String originalEditingCounterStaffIcValue;
-    private String originalEditingManagerEmailValue;
-    private String originalEditingManagerIcValue;
-    private String originalEditingCustomerEmailValue;
-    private String originalEditingCustomerIcValue;
 
     // Reports
     private double dailyRevenue;
@@ -158,113 +149,69 @@ public class ManagerBean implements Serializable {
     // ========== STAFF REGISTRATION ==========
     public void registerStaff() {
         try {
-            boolean valuesCorrect = false;
+            boolean valid = true;
 
-            // Name validation 
-            if (!ValidationUtil.isValidName(regName)) {
-                addError(ValidationUtil.getErrorMessage("name"));
+            if (!isValidStaffUserType(regUserType)) {
+                addError("Please select a valid staff type.");
+                valid = false;
+            }
+            if (!validateStaffFields(regName, regEmail, regPassword, regGender, regPhone, regIc, regAddress, null, null, true)) {
+                valid = false;
+            }
+            if ("Technician".equals(regUserType) && !validateOptionalSpecialty(regSpecialty)) {
+                valid = false;
+            }
+
+            if (!valid) {
                 return;
             }
 
-            // Email validation
-            if (!ValidationUtil.isValidEmail(regEmail)) {
-                addError(ValidationUtil.getErrorMessage("email"));
-                return;
-            } else {
-                // Email duplication validation
-                boolean duplicateEmailFound = userFacade.isDuplicateEmail(regEmail);
-                if (duplicateEmailFound) {
-                    addError("Email may have been registered.");
+            boolean success = false;
+            switch (regUserType) {
+                case "Technician":
+                    Technician t = new Technician();
+                    t.setName(sanitizeText(regName));
+                    t.setEmail(ValidationUtil.normalizeEmail(regEmail));
+                    t.setPassword(regPassword);
+                    t.setGender(sanitizeText(regGender));
+                    t.setPhone(sanitizeText(regPhone));
+                    t.setIc(sanitizeText(regIc));
+                    t.setAddress(sanitizeText(regAddress));
+                    t.setSpecialty(resolveSpecialty(regSpecialty));
+                    t.setAvailable(true);
+                    success = userFacade.createTechnician(t);
+                    break;
+                case "CounterStaff":
+                    CounterStaff cs = new CounterStaff();
+                    cs.setName(sanitizeText(regName));
+                    cs.setEmail(ValidationUtil.normalizeEmail(regEmail));
+                    cs.setPassword(regPassword);
+                    cs.setGender(sanitizeText(regGender));
+                    cs.setPhone(sanitizeText(regPhone));
+                    cs.setIc(sanitizeText(regIc));
+                    cs.setAddress(sanitizeText(regAddress));
+                    success = userFacade.createCounterStaff(cs);
+                    break;
+                case "Manager":
+                    Manager m = new Manager();
+                    m.setName(sanitizeText(regName));
+                    m.setEmail(ValidationUtil.normalizeEmail(regEmail));
+                    m.setPassword(regPassword);
+                    m.setGender(sanitizeText(regGender));
+                    m.setPhone(sanitizeText(regPhone));
+                    m.setIc(sanitizeText(regIc));
+                    m.setAddress(sanitizeText(regAddress));
+                    success = userFacade.createManager(m);
+                    break;
+                default:
+                    addError("Please select a valid staff type.");
                     return;
-                }
             }
-
-            // Gender validation
-            if (!ValidationUtil.isValidGender(regGender)) {
-                addError(ValidationUtil.getErrorMessage("gender"));
-                return;
-            }
-
-            // Phone validation
-            if (!ValidationUtil.isValidPhone(regPhone)) {
-                addError(ValidationUtil.getErrorMessage("phone"));
-                return;
-            }
-
-            // IC validation
-            if (!ValidationUtil.isValidIC(regIc)) {
-                addError(ValidationUtil.getErrorMessage("ic"));
-                return;
-            } else {
-                // IC duplication validation
-                boolean duplicateIcFound = userFacade.isDuplicateIC(regIc);
-                if (duplicateIcFound) {
-                    addError("IC number may have been registered.");
-                    return;
-                }
-            }
-
-            // Address validation
-            if (!ValidationUtil.isValidAddress(regAddress)) {
-                addError(ValidationUtil.getErrorMessage("address"));
-                return;
-            }
-
-            // Password validation
-            if (!ValidationUtil.isValidPassword(regPassword)) {
-                addError(ValidationUtil.getErrorMessage("password"));
-                return;
-            } else {
-                valuesCorrect = true;
-            }
-
-            if (valuesCorrect) {
-                boolean success = false;
-
-                switch (regUserType) {
-                    case "Technician":
-                        Technician t = new Technician();
-                        t.setName(regName);
-                        t.setEmail(regEmail);
-                        t.setPassword(regPassword);
-                        t.setGender(regGender);
-                        t.setPhone(regPhone);
-                        t.setIc(regIc);
-                        t.setAddress(regAddress);
-                        t.setSpecialty(regSpecialty != null ? regSpecialty : "General");
-                        t.setAvailable(true);
-                        success = userFacade.createTechnician(t);
-                        break;
-                    case "CounterStaff":
-                        CounterStaff cs = new CounterStaff();
-                        cs.setName(regName);
-                        cs.setEmail(regEmail);
-                        cs.setPassword(regPassword);
-                        cs.setGender(regGender);
-                        cs.setPhone(regPhone);
-                        cs.setIc(regIc);
-                        cs.setAddress(regAddress);
-                        success = userFacade.createCounterStaff(cs);
-                        break;
-                    case "Manager":
-                        Manager m = new Manager();
-                        m.setName(regName);
-                        m.setEmail(regEmail);
-                        m.setPassword(regPassword);
-                        m.setGender(regGender);
-                        m.setPhone(regPhone);
-                        m.setIc(regIc);
-                        m.setAddress(regAddress);
-                        success = userFacade.createManager(m);
-                        break;
-                }
-                if (success) {
-                    addInfo(regUserType + " registered successfully.");
-                    clearRegistrationForm();
-                    loadDashboardData();
-                } else {
-                    addError("Failed to register " + regUserType);
-                }
+            
+            if (success) {
+                addInfo(regUserType + " has been sucessfully registered.");
+                clearRegistrationForm();
+                loadDashboardData();
             }
         } catch (Exception e) {
             addError("Error: " + e.getMessage());
@@ -317,47 +264,10 @@ public class ManagerBean implements Serializable {
         }
     }
 
-    // ========== SEARCH ==========
-    public void searchStaff() {
-        try {
-            String keyword = searchKeyword != null ? searchKeyword.trim() : null;
-            if (keyword != null && !keyword.isBlank()) {
-                switch (currentSection) {
-                    case "technicians":
-                        technicians = userFacade.searchTechnicians(keyword);
-                        break;
-                    case "counter-staff":
-                        counterStaffList = userFacade.searchCounterStaff(keyword);
-                        break;
-                    case "managers":
-                        managers = userFacade.searchManagers(keyword);
-                        break;
-                    case "customers":
-                        customers = userFacade.searchCustomers(keyword);
-                        break;
-                    default:
-                        loadDashboardData();
-                        break;
-                }
-            } else {
-                loadDashboardData();
-            }
-        } catch (Exception e) {
-            addError("Search error: " + e.getMessage());
-        }
-    }
-
-    public void clearSearch() {
-        searchKeyword = null;
-        loadDashboardData();
-    }
-
     // ========== EDIT / UPDATE STAFF ==========
     public void loadEditTechnician(String id) {
         try {
             editingTechnician = userFacade.getTechnicianByID(id);
-            setOriginalEditingTechnicianEmailValue(editingTechnician.getEmail());
-            setOriginalEditingTechnicianIcValue(editingTechnician.getIc());
         } catch (Exception e) {
             addError("Error loading technician: " + e.getMessage());
         }
@@ -365,78 +275,57 @@ public class ManagerBean implements Serializable {
 
     public void saveEditTechnician() {
         try {
-            if (editingTechnician != null) {
-                boolean valuesCorrect = false;
-                
-                // Name validation 
-                if (!ValidationUtil.isValidName(editingTechnician.getName())) {
-                    addError(ValidationUtil.getErrorMessage("name"));
-                    return;
-                }
-                
-                // Email validation
-                if (!ValidationUtil.isValidEmail(editingTechnician.getEmail())) {
-                    addError(ValidationUtil.getErrorMessage("email"));
-                    return;
-                } else {
-                    // Email duplication validation
-                    boolean duplicateEmailFound = userFacade.isDuplicateEmail(editingTechnician.getEmail());
-                    if (duplicateEmailFound && (!editingTechnician.getEmail().equals(getOriginalEditingTechnicianEmailValue()))) {
-                        addError("Email may have been registered.");
-                        return;
-                    }
-                }
-                
-                // Gender validation
-                if (!ValidationUtil.isValidGender(editingTechnician.getGender())) {
-                    addError(ValidationUtil.getErrorMessage("gender"));
-                    return;
-                }
-
-                // Phone validation
-                if (!ValidationUtil.isValidPhone(editingTechnician.getPhone())) {
-                    addError(ValidationUtil.getErrorMessage("phone"));
-                    return;
-                }
-
-                // IC validation
-                if (!ValidationUtil.isValidIC(editingTechnician.getIc())) {
-                    addError(ValidationUtil.getErrorMessage("ic"));
-                    return;
-                } else {
-                    // IC duplication validation
-                    boolean duplicateIcFound = userFacade.isDuplicateIC(editingTechnician.getIc());
-                    if (duplicateIcFound && (!editingTechnician.getIc().equals(getOriginalEditingTechnicianIcValue()))) {
-                        addError("IC number may have been registered.");
-                        return;
-                    }
-                }
-                
-                // Address validation
-                if (!ValidationUtil.isValidAddress(editingTechnician.getAddress())) {
-                    addError(ValidationUtil.getErrorMessage("address"));
-                    return;
-                } else {
-                    valuesCorrect = true;
-                }
-                
-                if (valuesCorrect) {
-                    userFacade.updateTechnician(editingTechnician);
-                    editingTechnician = null;
-                    loadDashboardData();
-                    addInfo("Technician updated successfully.");
-                }
+            if (editingTechnician == null) {
+                addError("Technician not found.");
+                return;
             }
-        } catch (Exception e) {
-            addError("Error: " + e.getMessage());
-        }
+
+            Technician existing = userFacade.getTechnicianByID(editingTechnician.getId());
+            if (existing == null) {
+                editingTechnician = null;
+                loadDashboardData();
+                addError("Technician no longer exists.");
+                return;
+            }
+
+            boolean valid = validateStaffFields(
+                    editingTechnician.getName(),
+                    editingTechnician.getEmail(),
+                    null,
+                    editingTechnician.getGender(),
+                    editingTechnician.getPhone(),
+                    editingTechnician.getIc(),
+                    editingTechnician.getAddress(),
+                    existing.getEmail(),
+                    existing.getIc(),
+                    false);
+
+            if (!validateOptionalSpecialty(editingTechnician.getSpecialty())) {
+                valid = false;
+            }
+
+            if (!valid) {
+                return;
+            }
+
+            editingTechnician.setName(sanitizeText(editingTechnician.getName()));
+            editingTechnician.setEmail(ValidationUtil.normalizeEmail(editingTechnician.getEmail()));
+            editingTechnician.setGender(sanitizeText(editingTechnician.getGender()));
+            editingTechnician.setPhone(sanitizeText(editingTechnician.getPhone()));
+            editingTechnician.setIc(sanitizeText(editingTechnician.getIc()));
+            editingTechnician.setAddress(sanitizeText(editingTechnician.getAddress()));
+            editingTechnician.setSpecialty(resolveSpecialty(editingTechnician.getSpecialty()));
+
+            userFacade.updateTechnician(editingTechnician);
+            editingTechnician = null;
+            loadDashboardData();
+            addInfo("Technician updated successfully.");
+        } catch (Exception e) { addError("Error: " + e.getMessage()); }
     }
 
     public void loadEditCounterStaff(String id) {
         try {
             editingCounterStaff = userFacade.getCounterStaffByID(id);
-            setOriginalEditingCounterStaffEmailValue(editingCounterStaff.getEmail());
-            setOriginalEditingCounterStaffIcValue(editingCounterStaff.getIc());
         } catch (Exception e) {
             addError("Error loading counter staff: " + e.getMessage());
         }
@@ -444,78 +333,50 @@ public class ManagerBean implements Serializable {
 
     public void saveEditCounterStaff() {
         try {
-            if (editingCounterStaff != null) {
-                boolean valuesCorrect = false;
-                
-                // Name validation 
-                if (!ValidationUtil.isValidName(editingCounterStaff.getName())) {
-                    addError(ValidationUtil.getErrorMessage("name"));
-                    return;
-                }
-                
-                // Email validation
-                if (!ValidationUtil.isValidEmail(editingCounterStaff.getEmail())) {
-                    addError(ValidationUtil.getErrorMessage("email"));
-                    return;
-                } else {
-                    // Email duplication validation
-                    boolean duplicateEmailFound = userFacade.isDuplicateEmail(editingCounterStaff.getEmail());
-                    if (duplicateEmailFound && (!editingCounterStaff.getEmail().equals(getOriginalEditingCounterStaffEmailValue()))) {
-                        addError("Email may have been registered.");
-                        return;
-                    }
-                }
-                
-                // Gender validation
-                if (!ValidationUtil.isValidGender(editingCounterStaff.getGender())) {
-                    addError(ValidationUtil.getErrorMessage("gender"));
-                    return;
-                }
-
-                // Phone validation
-                if (!ValidationUtil.isValidPhone(editingCounterStaff.getPhone())) {
-                    addError(ValidationUtil.getErrorMessage("phone"));
-                    return;
-                }
-
-                // IC validation
-                if (!ValidationUtil.isValidIC(editingCounterStaff.getIc())) {
-                    addError(ValidationUtil.getErrorMessage("ic"));
-                    return;
-                } else {
-                    // IC duplication validation
-                    boolean duplicateIcFound = userFacade.isDuplicateIC(editingCounterStaff.getIc());
-                    if (duplicateIcFound && (!editingCounterStaff.getIc().equals(getOriginalEditingCounterStaffIcValue()))) {
-                        addError("IC number may have been registered.");
-                        return;
-                    }
-                }
-                
-                // Address validation
-                if (!ValidationUtil.isValidAddress(editingCounterStaff.getAddress())) {
-                    addError(ValidationUtil.getErrorMessage("address"));
-                    return;
-                } else {
-                    valuesCorrect = true;
-                }
-                
-                if (valuesCorrect) {
-                    userFacade.updateCounterStaff(editingCounterStaff);
-                    editingCounterStaff = null;
-                    loadDashboardData();
-                    addInfo("Counter staff updated successfully.");
-                }
+            if (editingCounterStaff == null) {
+                addError("Counter staff not found.");
+                return;
             }
-        } catch (Exception e) {
-            addError("Error: " + e.getMessage());
-        }
+
+            CounterStaff existing = userFacade.getCounterStaffByID(editingCounterStaff.getId());
+            if (existing == null) {
+                editingCounterStaff = null;
+                loadDashboardData();
+                addError("Counter staff no longer exists.");
+                return;
+            }
+
+            if (!validateStaffFields(
+                    editingCounterStaff.getName(),
+                    editingCounterStaff.getEmail(),
+                    null,
+                    editingCounterStaff.getGender(),
+                    editingCounterStaff.getPhone(),
+                    editingCounterStaff.getIc(),
+                    editingCounterStaff.getAddress(),
+                    existing.getEmail(),
+                    existing.getIc(),
+                    false)) {
+                return;
+            }
+
+            editingCounterStaff.setName(sanitizeText(editingCounterStaff.getName()));
+            editingCounterStaff.setEmail(ValidationUtil.normalizeEmail(editingCounterStaff.getEmail()));
+            editingCounterStaff.setGender(sanitizeText(editingCounterStaff.getGender()));
+            editingCounterStaff.setPhone(sanitizeText(editingCounterStaff.getPhone()));
+            editingCounterStaff.setIc(sanitizeText(editingCounterStaff.getIc()));
+            editingCounterStaff.setAddress(sanitizeText(editingCounterStaff.getAddress()));
+
+            userFacade.updateCounterStaff(editingCounterStaff);
+            editingCounterStaff = null;
+            loadDashboardData();
+            addInfo("Counter staff updated successfully.");
+        } catch (Exception e) { addError("Error: " + e.getMessage()); }
     }
 
     public void loadEditManager(String id) {
         try {
             editingManager = userFacade.getManagerByID(id);
-            setOriginalEditingManagerEmailValue(editingManager.getEmail());
-            setOriginalEditingManagerIcValue(editingManager.getIc());
         } catch (Exception e) {
             addError("Error loading manager: " + e.getMessage());
         }
@@ -523,78 +384,50 @@ public class ManagerBean implements Serializable {
 
     public void saveEditManager() {
         try {
-            if (editingManager != null) {
-                boolean valuesCorrect = false;
-                
-                // Name validation 
-                if (!ValidationUtil.isValidName(editingManager.getName())) {
-                    addError(ValidationUtil.getErrorMessage("name"));
-                    return;
-                }
-                
-                // Email validation
-                if (!ValidationUtil.isValidEmail(editingManager.getEmail())) {
-                    addError(ValidationUtil.getErrorMessage("email"));
-                    return;
-                } else {
-                    // Email duplication validation
-                    boolean duplicateEmailFound = userFacade.isDuplicateEmail(editingManager.getEmail());
-                    if (duplicateEmailFound && (!editingManager.getEmail().equals(getOriginalEditingManagerEmailValue()))) {
-                        addError("Email may have been registered.");
-                        return;
-                    }
-                }
-                
-                // Gender validation
-                if (!ValidationUtil.isValidGender(editingManager.getGender())) {
-                    addError(ValidationUtil.getErrorMessage("gender"));
-                    return;
-                }
-
-                // Phone validation
-                if (!ValidationUtil.isValidPhone(editingManager.getPhone())) {
-                    addError(ValidationUtil.getErrorMessage("phone"));
-                    return;
-                }
-
-                // IC validation
-                if (!ValidationUtil.isValidIC(editingManager.getIc())) {
-                    addError(ValidationUtil.getErrorMessage("ic"));
-                    return;
-                } else {
-                    // IC duplication validation
-                    boolean duplicateIcFound = userFacade.isDuplicateIC(editingManager.getIc());
-                    if (duplicateIcFound && (!editingManager.getIc().equals(getOriginalEditingManagerIcValue()))) {
-                        addError("IC number may have been registered.");
-                        return;
-                    }
-                }
-                
-                // Address validation
-                if (!ValidationUtil.isValidAddress(editingManager.getAddress())) {
-                    addError(ValidationUtil.getErrorMessage("address"));
-                    return;
-                } else {
-                    valuesCorrect = true;
-                }
-                
-                if (valuesCorrect) {
-                    userFacade.updateManager(editingManager);
-                    editingManager = null;
-                    loadDashboardData();
-                    addInfo("Manager updated successfully.");
-                }
+            if (editingManager == null) {
+                addError("Manager not found.");
+                return;
             }
-        } catch (Exception e) {
-            addError("Error: " + e.getMessage());
-        }
+
+            Manager existing = userFacade.getManagerByID(editingManager.getId());
+            if (existing == null) {
+                editingManager = null;
+                loadDashboardData();
+                addError("Manager no longer exists.");
+                return;
+            }
+
+            if (!validateStaffFields(
+                    editingManager.getName(),
+                    editingManager.getEmail(),
+                    null,
+                    editingManager.getGender(),
+                    editingManager.getPhone(),
+                    editingManager.getIc(),
+                    editingManager.getAddress(),
+                    existing.getEmail(),
+                    existing.getIc(),
+                    false)) {
+                return;
+            }
+
+            editingManager.setName(sanitizeText(editingManager.getName()));
+            editingManager.setEmail(ValidationUtil.normalizeEmail(editingManager.getEmail()));
+            editingManager.setGender(sanitizeText(editingManager.getGender()));
+            editingManager.setPhone(sanitizeText(editingManager.getPhone()));
+            editingManager.setIc(sanitizeText(editingManager.getIc()));
+            editingManager.setAddress(sanitizeText(editingManager.getAddress()));
+
+            userFacade.updateManager(editingManager);
+            editingManager = null;
+            loadDashboardData();
+            addInfo("Manager updated successfully.");
+        } catch (Exception e) { addError("Error: " + e.getMessage()); }
     }
 
     public void loadEditCustomer(String id) {
         try {
             editingCustomer = userFacade.getCustomerByID(id);
-            setOriginalEditingCustomerEmailValue(editingCustomer.getEmail());
-            setOriginalEditingCustomerIcValue(editingCustomer.getIc());
         } catch (Exception e) {
             addError("Error loading customer: " + e.getMessage());
         }
@@ -602,104 +435,62 @@ public class ManagerBean implements Serializable {
 
     public void saveEditCustomer() {
         try {
-            if (editingCustomer != null) {
-                boolean valuesCorrect = false;
-                
-                // Name validation 
-                if (!ValidationUtil.isValidName(editingCustomer.getName())) {
-                    addError(ValidationUtil.getErrorMessage("name"));
-                    return;
-                }
-                
-                // Email validation
-                if (!ValidationUtil.isValidEmail(editingCustomer.getEmail())) {
-                    addError(ValidationUtil.getErrorMessage("email"));
-                    return;
-                } else {
-                    // Email duplication validation
-                    boolean duplicateEmailFound = userFacade.isDuplicateEmail(editingCustomer.getEmail());
-                    if (duplicateEmailFound && (!editingCustomer.getEmail().equals(getOriginalEditingCustomerEmailValue()))) {
-                        addError("Email may have been registered.");
-                        return;
-                    }
-                }
-                
-                // Gender validation
-                if (!ValidationUtil.isValidGender(editingCustomer.getGender())) {
-                    addError(ValidationUtil.getErrorMessage("gender"));
-                    return;
-                }
-
-                // Phone validation
-                if (!ValidationUtil.isValidPhone(editingCustomer.getPhone())) {
-                    addError(ValidationUtil.getErrorMessage("phone"));
-                    return;
-                }
-
-                // IC validation
-                if (!ValidationUtil.isValidIC(editingCustomer.getIc())) {
-                    addError(ValidationUtil.getErrorMessage("ic"));
-                    return;
-                } else {
-                    // IC duplication validation
-                    boolean duplicateIcFound = userFacade.isDuplicateIC(editingCustomer.getIc());
-                    if (duplicateIcFound && (!editingCustomer.getIc().equals(getOriginalEditingCustomerIcValue()))) {
-                        addError("IC number may have been registered.");
-                        return;
-                    }
-                }
-                
-                // Address validation
-                if (!ValidationUtil.isValidAddress(editingCustomer.getAddress())) {
-                    addError(ValidationUtil.getErrorMessage("address"));
-                    return;
-                } else {
-                    valuesCorrect = true;
-                }
-                
-                if (valuesCorrect) {
-                    userFacade.updateCustomer(editingCustomer);
-                    editingCustomer = null;
-                    loadDashboardData();
-                    addInfo("Customer updated successfully.");
-                }
+            if (editingCustomer == null) {
+                addError("Customer not found.");
+                return;
             }
-        } catch (Exception e) {
-            addError("Error: " + e.getMessage());
-        }
+
+            Customer existing = userFacade.getCustomerByID(editingCustomer.getId());
+            if (existing == null) {
+                editingCustomer = null;
+                loadDashboardData();
+                addError("Customer no longer exists.");
+                return;
+            }
+
+            if (!validateStaffFields(
+                    editingCustomer.getName(),
+                    editingCustomer.getEmail(),
+                    null,
+                    editingCustomer.getGender(),
+                    editingCustomer.getPhone(),
+                    editingCustomer.getIc(),
+                    editingCustomer.getAddress(),
+                    existing.getEmail(),
+                    existing.getIc(),
+                    false)) {
+                return;
+            }
+
+            editingCustomer.setName(sanitizeText(editingCustomer.getName()));
+            editingCustomer.setEmail(ValidationUtil.normalizeEmail(editingCustomer.getEmail()));
+            editingCustomer.setGender(sanitizeText(editingCustomer.getGender()));
+            editingCustomer.setPhone(sanitizeText(editingCustomer.getPhone()));
+            editingCustomer.setIc(sanitizeText(editingCustomer.getIc()));
+            editingCustomer.setAddress(sanitizeText(editingCustomer.getAddress()));
+
+            userFacade.updateCustomer(editingCustomer);
+            editingCustomer = null;
+            loadDashboardData();
+            addInfo("Customer updated successfully.");
+        } catch (Exception e) { addError("Error: " + e.getMessage()); }
     }
 
     // ========== SERVICE MANAGEMENT (SET PRICES) ==========
     public void createService() {
         try {
-            boolean valuesCorrect = false;
-
-            if (!ValidationUtil.isValidName(newServiceName)) {
-                addError(ValidationUtil.getErrorMessage("serviceName"));
+            if (!validateServiceFields(newServiceName, newServiceType, newServicePrice, null)) {
                 return;
             }
-
-            if (ValidationUtil.isInputEmpty(newServiceType)) {
-                addError(ValidationUtil.getErrorMessage("serviceType"));
-                return;
-            }
-
-            if (!ValidationUtil.isValidServicePrice(newServicePrice)) {
-                addError(ValidationUtil.getErrorMessage("servicePrice"));
-                return;
-            } else {
-                valuesCorrect = true;
-            }
-
-            if (valuesCorrect) {
-                Service s = new Service(null, newServiceName, newServiceType, newServicePrice);
-                serviceFacade.createService(s);
-                newServiceName = null;
-                newServiceType = null;
-                newServicePrice = 0;
-                loadDashboardData();
-                addInfo("Service created.");
-            }
+            String serviceName = sanitizeText(newServiceName);
+            String serviceType = sanitizeText(newServiceType);
+            Service s = new Service(null, serviceName, serviceType, newServicePrice);
+            serviceFacade.createService(s);
+            newServiceName = null;
+            newServiceType = null;
+            newServicePrice = null;
+            loadDashboardData();
+            addInfo("Service created.");
         } catch (Exception e) {
             addError("Error creating service: " + e.getMessage());
         }
@@ -735,15 +526,12 @@ public class ManagerBean implements Serializable {
                 loadDashboardData();
                 return;
             }
-            if (service.getServiceName() == null || service.getServiceName().trim().isBlank()
-                    || service.getType() == null || service.getType().trim().isBlank()
-                    || service.getBasePrice() <= 0) {
-                addError("Service name, type, and price are required.");
+            if (!validateServiceFields(service.getServiceName(), service.getType(), service.getBasePrice(), service.getId())) {
                 return;
             }
 
-            service.setServiceName(service.getServiceName().trim());
-            service.setType(service.getType().trim());
+            service.setServiceName(sanitizeText(service.getServiceName()));
+            service.setType(sanitizeText(service.getType()));
             serviceFacade.updateService(service);
             editingService = null;
             loadDashboardData();
@@ -928,6 +716,126 @@ public class ManagerBean implements Serializable {
                 new FacesMessage(FacesMessage.SEVERITY_INFO, msg, null));
     }
 
+    private boolean validateStaffFields(String name, String email, String password, String gender,
+                                        String phone, String ic, String address,
+                                        String existingEmail, String existingIc,
+                                        boolean requirePassword) {
+        boolean valid = true;
+
+        if (!ValidationUtil.isValidName(name)) {
+            addError(ValidationUtil.getErrorMessage("name"));
+            valid = false;
+        }
+
+        String normalizedEmail = ValidationUtil.normalizeEmail(email);
+        if (!ValidationUtil.isValidEmail(email)) {
+            addError(ValidationUtil.getErrorMessage("email"));
+            valid = false;
+        } else if (emailChanged(normalizedEmail, existingEmail) && userFacade.isDuplicateEmail(normalizedEmail)) {
+            addError("Email is already registered.");
+            valid = false;
+        }
+
+        if (requirePassword && !ValidationUtil.isValidPassword(password)) {
+            addError(ValidationUtil.getErrorMessage("password"));
+            valid = false;
+        }
+
+        if (!ValidationUtil.isValidGender(gender)) {
+            addError(ValidationUtil.getErrorMessage("gender"));
+            valid = false;
+        }
+
+        if (!ValidationUtil.isValidPhone(phone)) {
+            addError(ValidationUtil.getErrorMessage("phone"));
+            valid = false;
+        }
+
+        String normalizedIc = ValidationUtil.normalizeIC(ic);
+        if (!ValidationUtil.isValidIC(ic)) {
+            addError(ValidationUtil.getErrorMessage("ic"));
+            valid = false;
+        } else if (icChanged(normalizedIc, existingIc) && userFacade.isDuplicateIC(ic)) {
+            addError("IC number is already registered.");
+            valid = false;
+        }
+
+        if (!ValidationUtil.isValidAddress(address)) {
+            addError(ValidationUtil.getErrorMessage("address"));
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    private boolean validateOptionalSpecialty(String specialty) {
+        String trimmedSpecialty = sanitizeText(specialty);
+        if (trimmedSpecialty == null) {
+            return true;
+        }
+        if (!ValidationUtil.isValidSpecialty(trimmedSpecialty)) {
+            addError(ValidationUtil.getErrorMessage("specialty"));
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateServiceFields(String serviceName, String serviceType, Double servicePrice,
+                                          String existingServiceId) {
+        boolean valid = true;
+
+        if (!ValidationUtil.isValidServiceName(serviceName)) {
+            addError(ValidationUtil.getErrorMessage("serviceName"));
+            valid = false;
+        } else if (serviceFacade.isDuplicateServiceName(serviceName, existingServiceId)) {
+            addError("Service name already exists.");
+            valid = false;
+        }
+
+        if (!ValidationUtil.isValidServiceType(serviceType)) {
+            addError(ValidationUtil.getErrorMessage("serviceType"));
+            valid = false;
+        }
+
+        if (!ValidationUtil.isValidServicePrice(servicePrice)) {
+            addError(ValidationUtil.getErrorMessage("servicePrice"));
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    private boolean isValidStaffUserType(String staffUserType) {
+        return "Technician".equals(staffUserType)
+                || "CounterStaff".equals(staffUserType)
+                || "Manager".equals(staffUserType);
+    }
+
+    private boolean emailChanged(String normalizedEmail, String existingEmail) {
+        String normalizedExistingEmail = ValidationUtil.normalizeEmail(existingEmail);
+        if (normalizedExistingEmail == null) {
+            return normalizedEmail != null;
+        }
+        return normalizedEmail != null && !normalizedExistingEmail.equals(normalizedEmail);
+    }
+
+    private boolean icChanged(String normalizedIc, String existingIc) {
+        String normalizedExistingIc = ValidationUtil.normalizeIC(existingIc);
+        if (normalizedExistingIc == null) {
+            return normalizedIc != null;
+        }
+        return normalizedIc != null && !normalizedExistingIc.equals(normalizedIc);
+    }
+
+    private String sanitizeText(String value) {
+        return ValidationUtil.trimToNull(value);
+    }
+
+    private String resolveSpecialty(String specialty) {
+        String trimmedSpecialty = sanitizeText(specialty);
+        return trimmedSpecialty == null ? "General" : trimmedSpecialty;
+    }
+
     // ========== GETTERS & SETTERS ==========
     public int getTotalServices() {
         if (services == null) {
@@ -956,13 +864,17 @@ public class ManagerBean implements Serializable {
         }
         return totalCounterStaff;
     }
-
+    
     public int getPendingAppointments() {
-        if (appointments == null) {
-            loadDashboardData();
-        }
         return pendingAppointments;
     }
+
+    public String getNewServiceName() { return newServiceName; }
+    public void setNewServiceName(String newServiceName) { this.newServiceName = newServiceName; }
+    public String getNewServiceType() { return newServiceType; }
+    public void setNewServiceType(String newServiceType) { this.newServiceType = newServiceType; }
+    public Double getNewServicePrice() { return newServicePrice; }
+    public void setNewServicePrice(Double newServicePrice) { this.newServicePrice = newServicePrice; }
 
     public List<Service> getServices() {
         if (services == null) {
@@ -1092,26 +1004,6 @@ public class ManagerBean implements Serializable {
         this.regUserType = regUserType;
     }
 
-    public String getNewServiceName() {
-        return newServiceName;
-    }
-
-    public void setNewServiceName(String newServiceName) {
-        this.newServiceName = newServiceName;
-    }
-
-    public String getNewServiceType() {
-        return newServiceType;
-    }
-
-    public void setNewServiceType(String newServiceType) {
-        this.newServiceType = newServiceType;
-    }
-
-    public double getNewServicePrice() {
-        return newServicePrice;
-    }
-
     public void setNewServicePrice(double newServicePrice) {
         this.newServicePrice = newServicePrice;
     }
@@ -1187,44 +1079,12 @@ public class ManagerBean implements Serializable {
         this.editingTechnician = editingTechnician;
     }
     
-    public String getOriginalEditingTechnicianEmailValue() {
-        return originalEditingTechnicianEmailValue;
-    }
-
-    public void setOriginalEditingTechnicianEmailValue(String originalEditingTechnicianEmailValue) {
-        this.originalEditingTechnicianEmailValue = originalEditingTechnicianEmailValue;
-    }
-
-    public String getOriginalEditingTechnicianIcValue() {
-        return originalEditingTechnicianIcValue;
-    }
-
-    public void setOriginalEditingTechnicianIcValue(String originalEditingTechnicianIcValue) {
-        this.originalEditingTechnicianIcValue = originalEditingTechnicianIcValue;
-    }
-    
     public CounterStaff getEditingCounterStaff() {
         return editingCounterStaff;
     }
 
     public void setEditingCounterStaff(CounterStaff editingCounterStaff) {
         this.editingCounterStaff = editingCounterStaff;
-    }
-
-    public String getOriginalEditingCounterStaffEmailValue() {
-        return originalEditingCounterStaffEmailValue;
-    }
-
-    public void setOriginalEditingCounterStaffEmailValue(String originalEditingCounterStaffEmailValue) {
-        this.originalEditingCounterStaffEmailValue = originalEditingCounterStaffEmailValue;
-    }
-
-    public String getOriginalEditingCounterStaffIcValue() {
-        return originalEditingCounterStaffIcValue;
-    }
-
-    public void setOriginalEditingCounterStaffIcValue(String originalEditingCounterStaffIcValue) {
-        this.originalEditingCounterStaffIcValue = originalEditingCounterStaffIcValue;
     }
 
     public Manager getEditingManager() {
@@ -1234,22 +1094,6 @@ public class ManagerBean implements Serializable {
     public void setEditingManager(Manager editingManager) {
         this.editingManager = editingManager;
     }
-
-    public String getOriginalEditingManagerEmailValue() {
-        return originalEditingManagerEmailValue;
-    }
-
-    public void setOriginalEditingManagerEmailValue(String originalEditingManagerEmailValue) {
-        this.originalEditingManagerEmailValue = originalEditingManagerEmailValue;
-    }
-
-    public String getOriginalEditingManagerIcValue() {
-        return originalEditingManagerIcValue;
-    }
-
-    public void setOriginalEditingManagerIcValue(String originalEditingManagerIcValue) {
-        this.originalEditingManagerIcValue = originalEditingManagerIcValue;
-    }
     
     public Customer getEditingCustomer() {
         return editingCustomer;
@@ -1257,22 +1101,6 @@ public class ManagerBean implements Serializable {
 
     public void setEditingCustomer(Customer editingCustomer) {
         this.editingCustomer = editingCustomer;
-    }
-
-    public String getOriginalEditingCustomerEmailValue() {
-        return originalEditingCustomerEmailValue;
-    }
-
-    public void setOriginalEditingCustomerEmailValue(String originalEditingCustomerEmailValue) {
-        this.originalEditingCustomerEmailValue = originalEditingCustomerEmailValue;
-    }
-
-    public String getOriginalEditingCustomerIcValue() {
-        return originalEditingCustomerIcValue;
-    }
-
-    public void setOriginalEditingCustomerIcValue(String originalEditingCustomerIcValue) {
-        this.originalEditingCustomerIcValue = originalEditingCustomerIcValue;
     }
 
     public Service getEditingService() {

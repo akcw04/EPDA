@@ -126,7 +126,9 @@
                                     </div>
                                     <div class="stat-card accent-orange">
                                         <h3>Total Spent</h3>
-                                        <p>RM #{customerBean.totalSpent}</p>
+                                        <p>RM <h:outputText value="#{customerBean.totalSpent}">
+                                            <f:convertNumber type="number" minFractionDigits="2" maxFractionDigits="2"/>
+                                        </h:outputText></p>
                                     </div>
                                     <div class="stat-card accent-red">
                                         <h3>Pending</h3>
