@@ -707,7 +707,9 @@
                                         </div>
                                         <div>
                                             <label>Price (RM)</label>
-                                            <h:inputText value="#{managerBean.newServicePrice}" styleClass="form-control" />
+                                            <h:inputText value="#{managerBean.newServicePrice}"
+                                                         styleClass="form-control"
+                                                         converterMessage="Service price must be a valid number." />
                                         </div>
                                     </div>
                                     <div class="form-actions">
@@ -747,7 +749,9 @@
                                                 </div>
                                                 <div>
                                                     <label>Price (RM)</label>
-                                                    <h:inputText value="#{managerBean.editingService.basePrice}" styleClass="form-control" />
+                                                    <h:inputText value="#{managerBean.editingService.basePrice}"
+                                                                 styleClass="form-control"
+                                                                 converterMessage="Service price must be a valid number." />
                                                 </div>
                                             </div>
                                             <div class="form-actions">

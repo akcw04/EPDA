@@ -7,6 +7,7 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * ServiceFacade - Stateless EJB for service management.
@@ -54,6 +55,30 @@ public class ServiceFacade {
                 .getResultList();
     }
 
+    public boolean isDuplicateServiceName(String serviceName) {
+        return isDuplicateServiceName(serviceName, null);
+    }
+
+    public boolean isDuplicateServiceName(String serviceName, String excludedServiceId) {
+        String normalizedServiceName = normalizeServiceName(serviceName);
+        if (normalizedServiceName == null) {
+            return false;
+        }
+        String query = "SELECT COUNT(s) FROM Service s WHERE LOWER(TRIM(s.serviceName)) = :serviceName";
+        if (excludedServiceId != null) {
+            query += " AND s.id <> :excludedId";
+        }
+
+        var typedQuery = em.createQuery(query, Long.class)
+                .setParameter("serviceName", normalizedServiceName);
+        if (excludedServiceId != null) {
+            typedQuery.setParameter("excludedId", excludedServiceId);
+        }
+
+        Long count = typedQuery.getSingleResult();
+        return count != null && count > 0;
+    }
+
     /**
      * Update an existing service.
      */
@@ -69,5 +94,13 @@ public class ServiceFacade {
         if (s != null) {
             em.remove(s);
         }
+    }
+
+    private String normalizeServiceName(String serviceName) {
+        if (serviceName == null) {
+            return null;
+        }
+        String trimmed = serviceName.trim();
+        return trimmed.isEmpty() ? null : trimmed.toLowerCase(Locale.ROOT);
     }
 }

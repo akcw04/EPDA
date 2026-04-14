@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import util.ValidationUtil;
 
 /**
  * Customer Dashboard Bean.
@@ -133,10 +134,40 @@ public class CustomerBean implements Serializable {
 
     public void updateProfile() {
         try {
-            if (profileData != null) {
-                userFacade.updateCustomer(profileData);
-                addInfo("Profile updated successfully.");
+            if (profileData == null) {
+                addError("Profile not found.");
+                return;
             }
+
+            Customer existing = userFacade.getCustomerByID(profileData.getId());
+            if (existing == null) {
+                profileData = null;
+                addError("Profile no longer exists.");
+                return;
+            }
+
+            if (!validateUserFields(
+                    profileData.getName(),
+                    profileData.getEmail(),
+                    profileData.getGender(),
+                    profileData.getPhone(),
+                    profileData.getIc(),
+                    profileData.getAddress(),
+                    existing.getEmail(),
+                    existing.getIc())) {
+                return;
+            }
+
+            profileData.setName(sanitizeText(profileData.getName()));
+            profileData.setEmail(ValidationUtil.normalizeEmail(profileData.getEmail()));
+            profileData.setGender(sanitizeText(profileData.getGender()));
+            profileData.setPhone(sanitizeText(profileData.getPhone()));
+            profileData.setIc(sanitizeText(profileData.getIc()));
+            profileData.setAddress(sanitizeText(profileData.getAddress()));
+
+            userFacade.updateCustomer(profileData);
+            loadProfile();
+            addInfo("Profile updated successfully.");
         } catch (Exception e) {
             addError("Error updating profile: " + e.getMessage());
         }
@@ -230,6 +261,72 @@ public class CustomerBean implements Serializable {
     private void addInfo(String msg) {
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO, msg, null));
+    }
+
+    private boolean validateUserFields(String name, String email, String gender,
+                                       String phone, String ic, String address,
+                                       String existingEmail, String existingIc) {
+        boolean valid = true;
+
+        if (!ValidationUtil.isValidName(name)) {
+            addError(ValidationUtil.getErrorMessage("name"));
+            valid = false;
+        }
+
+        String normalizedEmail = ValidationUtil.normalizeEmail(email);
+        if (!ValidationUtil.isValidEmail(email)) {
+            addError(ValidationUtil.getErrorMessage("email"));
+            valid = false;
+        } else if (emailChanged(normalizedEmail, existingEmail) && userFacade.isDuplicateEmail(normalizedEmail)) {
+            addError("Email is already registered.");
+            valid = false;
+        }
+
+        if (!ValidationUtil.isValidGender(gender)) {
+            addError(ValidationUtil.getErrorMessage("gender"));
+            valid = false;
+        }
+
+        if (!ValidationUtil.isValidPhone(phone)) {
+            addError(ValidationUtil.getErrorMessage("phone"));
+            valid = false;
+        }
+
+        String normalizedIc = ValidationUtil.normalizeIC(ic);
+        if (!ValidationUtil.isValidIC(ic)) {
+            addError(ValidationUtil.getErrorMessage("ic"));
+            valid = false;
+        } else if (icChanged(normalizedIc, existingIc) && userFacade.isDuplicateIC(ic)) {
+            addError("IC number is already registered.");
+            valid = false;
+        }
+
+        if (!ValidationUtil.isValidAddress(address)) {
+            addError(ValidationUtil.getErrorMessage("address"));
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    private boolean emailChanged(String normalizedEmail, String existingEmail) {
+        String normalizedExistingEmail = ValidationUtil.normalizeEmail(existingEmail);
+        if (normalizedExistingEmail == null) {
+            return normalizedEmail != null;
+        }
+        return normalizedEmail != null && !normalizedExistingEmail.equals(normalizedEmail);
+    }
+
+    private boolean icChanged(String normalizedIc, String existingIc) {
+        String normalizedExistingIc = ValidationUtil.normalizeIC(existingIc);
+        if (normalizedExistingIc == null) {
+            return normalizedIc != null;
+        }
+        return normalizedIc != null && !normalizedExistingIc.equals(normalizedIc);
+    }
+
+    private String sanitizeText(String value) {
+        return ValidationUtil.trimToNull(value);
     }
 
     // ========== GETTERS & SETTERS ==========

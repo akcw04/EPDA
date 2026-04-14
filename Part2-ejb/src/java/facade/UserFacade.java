@@ -6,6 +6,7 @@ import entity.Manager;
 import entity.Technician;
 import util.IDGenerator;
 import util.SecurityUtil;
+import util.ValidationUtil;
 
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
@@ -246,63 +247,140 @@ public class UserFacade {
     }
 
     private Manager findManagerByCredentials(String email, String hashed) {
+        String normalizedEmail = ValidationUtil.normalizeEmail(email);
+        if (normalizedEmail == null) {
+            return null;
+        }
         List<Manager> list = em.createQuery(
-                "SELECT m FROM Manager m WHERE m.email = :e AND m.password = :p", Manager.class)
-                .setParameter("e", email).setParameter("p", hashed).getResultList();
+                "SELECT m FROM Manager m WHERE LOWER(TRIM(m.email)) = :e AND m.password = :p", Manager.class)
+                .setParameter("e", normalizedEmail).setParameter("p", hashed).getResultList();
         return list.isEmpty() ? null : list.get(0);
     }
 
     private CounterStaff findCounterStaffByCredentials(String email, String hashed) {
+        String normalizedEmail = ValidationUtil.normalizeEmail(email);
+        if (normalizedEmail == null) {
+            return null;
+        }
         List<CounterStaff> list = em.createQuery(
-                "SELECT cs FROM CounterStaff cs WHERE cs.email = :e AND cs.password = :p",
+                "SELECT cs FROM CounterStaff cs WHERE LOWER(TRIM(cs.email)) = :e AND cs.password = :p",
                 CounterStaff.class)
-                .setParameter("e", email).setParameter("p", hashed).getResultList();
+                .setParameter("e", normalizedEmail).setParameter("p", hashed).getResultList();
         return list.isEmpty() ? null : list.get(0);
     }
 
     private Technician findTechnicianByCredentials(String email, String hashed) {
+        String normalizedEmail = ValidationUtil.normalizeEmail(email);
+        if (normalizedEmail == null) {
+            return null;
+        }
         List<Technician> list = em.createQuery(
-                "SELECT t FROM Technician t WHERE t.email = :e AND t.password = :p",
+                "SELECT t FROM Technician t WHERE LOWER(TRIM(t.email)) = :e AND t.password = :p",
                 Technician.class)
-                .setParameter("e", email).setParameter("p", hashed).getResultList();
+                .setParameter("e", normalizedEmail).setParameter("p", hashed).getResultList();
         return list.isEmpty() ? null : list.get(0);
     }
 
     private Customer findCustomerByCredentials(String email, String hashed) {
+        String normalizedEmail = ValidationUtil.normalizeEmail(email);
+        if (normalizedEmail == null) {
+            return null;
+        }
         List<Customer> list = em.createQuery(
-                "SELECT c FROM Customer c WHERE c.email = :e AND c.password = :p",
+                "SELECT c FROM Customer c WHERE LOWER(TRIM(c.email)) = :e AND c.password = :p",
                 Customer.class)
-                .setParameter("e", email).setParameter("p", hashed).getResultList();
+                .setParameter("e", normalizedEmail).setParameter("p", hashed).getResultList();
         return list.isEmpty() ? null : list.get(0);
     }
 
     // ========== EMAIL LOOKUP ==========
 
     public Customer getCustomerByEmail(String email) {
+        String normalizedEmail = ValidationUtil.normalizeEmail(email);
+        if (normalizedEmail == null) {
+            return null;
+        }
         List<Customer> list = em.createQuery(
-                "SELECT c FROM Customer c WHERE c.email = :e", Customer.class)
-                .setParameter("e", email).getResultList();
+                "SELECT c FROM Customer c WHERE LOWER(TRIM(c.email)) = :e", Customer.class)
+                .setParameter("e", normalizedEmail).getResultList();
         return list.isEmpty() ? null : list.get(0);
     }
 
     public Technician getTechnicianByEmail(String email) {
+        String normalizedEmail = ValidationUtil.normalizeEmail(email);
+        if (normalizedEmail == null) {
+            return null;
+        }
         List<Technician> list = em.createQuery(
-                "SELECT t FROM Technician t WHERE t.email = :e", Technician.class)
-                .setParameter("e", email).getResultList();
+                "SELECT t FROM Technician t WHERE LOWER(TRIM(t.email)) = :e", Technician.class)
+                .setParameter("e", normalizedEmail).getResultList();
         return list.isEmpty() ? null : list.get(0);
     }
 
     public Manager getManagerByEmail(String email) {
+        String normalizedEmail = ValidationUtil.normalizeEmail(email);
+        if (normalizedEmail == null) {
+            return null;
+        }
         List<Manager> list = em.createQuery(
-                "SELECT m FROM Manager m WHERE m.email = :e", Manager.class)
-                .setParameter("e", email).getResultList();
+                "SELECT m FROM Manager m WHERE LOWER(TRIM(m.email)) = :e", Manager.class)
+                .setParameter("e", normalizedEmail).getResultList();
         return list.isEmpty() ? null : list.get(0);
     }
 
     public CounterStaff getCounterStaffByEmail(String email) {
+        String normalizedEmail = ValidationUtil.normalizeEmail(email);
+        if (normalizedEmail == null) {
+            return null;
+        }
         List<CounterStaff> list = em.createQuery(
-                "SELECT cs FROM CounterStaff cs WHERE cs.email = :e", CounterStaff.class)
-                .setParameter("e", email).getResultList();
+                "SELECT cs FROM CounterStaff cs WHERE LOWER(TRIM(cs.email)) = :e", CounterStaff.class)
+                .setParameter("e", normalizedEmail).getResultList();
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    public boolean isDuplicateEmail(String email) {
+        String normalizedEmail = ValidationUtil.normalizeEmail(email);
+        if (normalizedEmail == null) {
+            return false;
+        }
+        return existsEmailInEntity(Customer.class, normalizedEmail)
+                || existsEmailInEntity(Manager.class, normalizedEmail)
+                || existsEmailInEntity(Technician.class, normalizedEmail)
+                || existsEmailInEntity(CounterStaff.class, normalizedEmail);
+    }
+
+    public boolean isDuplicateIC(String ic) {
+        String normalizedIc = ValidationUtil.normalizeIC(ic);
+        if (normalizedIc == null) {
+            return false;
+        }
+        return existsICInEntity(Customer.class, normalizedIc)
+                || existsICInEntity(Manager.class, normalizedIc)
+                || existsICInEntity(Technician.class, normalizedIc)
+                || existsICInEntity(CounterStaff.class, normalizedIc);
+    }
+
+    private boolean existsEmailInEntity(Class<?> entityClass, String normalizedEmail) {
+        Long count = em.createQuery(
+                "SELECT COUNT(e) FROM " + entityClass.getSimpleName()
+                + " e WHERE LOWER(TRIM(e.email)) = :email",
+                Long.class)
+                .setParameter("email", normalizedEmail)
+                .getSingleResult();
+        return count != null && count > 0;
+    }
+
+    private boolean existsICInEntity(Class<?> entityClass, String normalizedIc) {
+        List<String> values = em.createQuery(
+                "SELECT e.ic FROM " + entityClass.getSimpleName() + " e WHERE e.ic IS NOT NULL",
+                String.class)
+                .getResultList();
+        for (String value : values) {
+            if (normalizedIc.equals(ValidationUtil.normalizeIC(value))) {
+                return true;
+            }
+        }
+        return false;
     }
 }
