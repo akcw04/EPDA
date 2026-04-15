@@ -43,7 +43,7 @@ body {
     background: #f1f5f9; /* Soft grey background */
 }
 .login-card {
-    background: #fff; border-radius: 16px; padding: 48px;
+    background: #fff; border-radius: 16px; padding: 30px;
     width: 420px; max-width: 95vw;
     border: 1px solid var(--border-color);
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
@@ -85,6 +85,92 @@ body {
 .login-card .login-btn.ui-button:hover,
 .login-card .login-btn.ui-button:focus { background: var(--primary-hover) !important; }
 .login-card .login-btn.ui-button .ui-button-text { padding: 0 !important; }
+
+.login-card .login-messages {
+    margin: 0 0 24px;
+}
+.login-card .login-messages .ui-messages-error {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) 24px;
+    grid-template-areas: "icon message close";
+    align-items: center;
+    column-gap: 14px;
+    padding: 16px 18px;
+    border: 1px solid #fecaca !important;
+    border-left: 4px solid var(--danger) !important;
+    border-radius: 12px !important;
+    background: #fef2f2 !important;
+    color: #b91c1c !important;
+    box-shadow: none !important;
+}
+.login-card .login-messages .ui-messages-error-icon {
+    grid-area: icon;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin: 0 !important;
+    font-size: 1.2rem !important;
+    line-height: 1 !important;
+    color: var(--danger) !important;
+}
+.login-card .login-messages .ui-messages-error ul {
+    grid-area: message;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.login-card .login-messages .ui-messages-error li {
+    display: flex;
+    align-items: center;
+    min-height: 24px;
+    margin: 0;
+    padding: 0;
+}
+.login-card .login-messages .ui-messages-error li + li {
+    margin-top: 4px;
+}
+.login-card .login-messages .ui-messages-error-summary,
+.login-card .login-messages .ui-messages-error-detail {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    margin: 0 !important;
+    line-height: 1;
+}
+.login-card .login-messages .ui-messages-error-summary {
+    font-weight: 700;
+}
+.login-card .login-messages .ui-messages-close {
+    grid-area: close;
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin: 0 !important;
+    color: var(--danger) !important;
+    background: #fee2e2 !important;
+    border-radius: 999px;
+    opacity: 0.6;
+    text-decoration: none;
+}
+.login-card .login-messages .ui-messages-close:hover,
+.login-card .login-messages .ui-messages-close:focus {
+    opacity: 1;
+    background: #fecaca !important;
+}
+.login-card .login-messages .ui-messages-close .ui-icon {
+    position: static !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+}
 
 .login-footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center; }
 .login-footer p { margin: 6px 0; font-size: 12px; color: var(--text-muted); }
