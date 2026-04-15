@@ -711,11 +711,14 @@
                                                 <f:selectItem itemValue="" itemLabel="-- Select Type --" />
                                                 <f:selectItem itemValue="Normal" itemLabel="Normal" />
                                                 <f:selectItem itemValue="Major" itemLabel="Major" />
+                                                <p:ajax listener="#{managerBean.onNewServiceTypeChange}"
+                                                        update="newServicePriceInput" process="@this" />
                                             </p:selectOneMenu>
                                         </div>
                                         <div>
                                             <label>Price (RM)</label>
-                                            <h:inputText value="#{managerBean.newServicePrice}"
+                                            <h:inputText id="newServicePriceInput"
+                                                         value="#{managerBean.newServicePrice}"
                                                          styleClass="form-control"
                                                          converterMessage="Service price must be a valid number." />
                                         </div>
@@ -749,6 +752,8 @@
                                                     <p:selectOneMenu value="#{managerBean.editingService.type}" styleClass="form-control">
                                                         <f:selectItem itemValue="Normal" itemLabel="Normal" />
                                                         <f:selectItem itemValue="Major" itemLabel="Major" />
+                                                        <p:ajax listener="#{managerBean.onEditServiceTypeChange}"
+                                                                update="editServicePriceInput" process="@this" />
                                                     </p:selectOneMenu>
                                                 </div>
                                                 <div>
@@ -757,7 +762,8 @@
                                                 </div>
                                                 <div>
                                                     <label>Price (RM)</label>
-                                                    <h:inputText value="#{managerBean.editingService.basePrice}"
+                                                    <h:inputText id="editServicePriceInput"
+                                                                 value="#{managerBean.editingService.basePrice}"
                                                                  styleClass="form-control"
                                                                  converterMessage="Service price must be a valid number." />
                                                 </div>

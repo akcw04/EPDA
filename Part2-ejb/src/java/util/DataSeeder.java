@@ -18,11 +18,11 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
- * Singleton EJB that seeds initial test data into the database on
- * application deployment. Skips seeding if data already exists.
+ * Singleton EJB that seeds initial demo data into the database on
+ * application deployment. Relies on persistence.xml drop-and-create
+ * so the schema is fresh every deploy and records never collide.
  */
 @Singleton
 @Startup
@@ -42,12 +42,7 @@ public class DataSeeder {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void seedData() {
-        if (dataExists()) {
-            System.out.println("[DataSeeder] Data already exists. Checking for missing data...");
-            seedMissing();
-            return;
-        }
-
+        // persistence.xml uses drop-and-create, so the schema is fresh on every deploy.
         System.out.println("[DataSeeder] Seeding initial data...");
 
         seedManagers();
@@ -63,32 +58,12 @@ public class DataSeeder {
         System.out.println("[DataSeeder] Initial data seeded successfully.");
     }
 
-    private boolean dataExists() {
-        Long count = em.createQuery("SELECT COUNT(m) FROM Manager m", Long.class)
-                .getSingleResult();
-        return count != null && count > 0;
-    }
-
-    private void seedMissing() {
-        // Always sync the documented demo accounts so login test credentials remain valid.
-        seedManagers();
-        seedCounterStaff();
-        seedTechnicians();
-        seedCustomers();
-
-        Long svcCount = em.createQuery("SELECT COUNT(s) FROM Service s", Long.class).getSingleResult();
-        if (svcCount == null || svcCount == 0) {
-            System.out.println("[DataSeeder] Services missing. Re-seeding...");
-            seedServices();
-        }
-    }
-
     // ==================== MANAGERS ====================
 
     private void seedManagers() {
-        upsertManager("M-001", "Admin Manager", "admin@asc.com", "admin123",
+        createManager("M-001", "Admin Manager", "admin@asc.com", "admin123",
                 "M", "012-1111111", "900101-01-1111", "APU Office");
-        upsertManager("M-002", "Sarah Admin", "sarah@asc.com", "admin123",
+        createManager("M-002", "Sarah Admin", "sarah@asc.com", "admin123",
                 "F", "012-2222222", "910202-02-2222", "APU Office");
 
         System.out.println("[DataSeeder] Managers seeded.");
@@ -97,9 +72,9 @@ public class DataSeeder {
     // ==================== COUNTER STAFF ====================
 
     private void seedCounterStaff() {
-        upsertCounterStaff("CS-001", "John Counter", "staff@asc.com", "staff123",
+        createCounterStaff("CS-001", "John Counter", "staff@asc.com", "staff123",
                 "M", "013-1111111", "920301-01-3333", "Front Desk");
-        upsertCounterStaff("CS-002", "Mary Counter", "mary@asc.com", "staff123",
+        createCounterStaff("CS-002", "Mary Counter", "mary@asc.com", "staff123",
                 "F", "013-2222222", "930402-02-4444", "Front Desk");
 
         System.out.println("[DataSeeder] Counter Staff seeded.");
@@ -108,15 +83,15 @@ public class DataSeeder {
     // ==================== TECHNICIANS ====================
 
     private void seedTechnicians() {
-        upsertTechnician("T-001", "Ali Technician", "ali@asc.com", "tech123",
+        createTechnician("T-001", "Ali Technician", "ali@asc.com", "tech123",
                 "M", "014-1111111", "880501-01-5555", "Workshop A", "Engine Repair", true);
-        upsertTechnician("T-002", "Bala Technician", "bala@asc.com", "tech123",
+        createTechnician("T-002", "Bala Technician", "bala@asc.com", "tech123",
                 "M", "014-2222222", "890602-02-6666", "Workshop B", "Brake System", true);
-        upsertTechnician("T-003", "Chong Technician", "chong@asc.com", "tech123",
+        createTechnician("T-003", "Chong Technician", "chong@asc.com", "tech123",
                 "M", "014-3333333", "870703-03-7777", "Workshop C", "General Service", true);
-        upsertTechnician("T-004", "Devi Technician", "devi@asc.com", "tech123",
+        createTechnician("T-004", "Devi Technician", "devi@asc.com", "tech123",
                 "F", "014-4444444", "910804-04-8888", "Workshop D", "Transmission", true);
-        upsertTechnician("T-005", "Ethan Technician", "ethan@asc.com", "tech123",
+        createTechnician("T-005", "Ethan Technician", "ethan@asc.com", "tech123",
                 "M", "014-5555555", "920905-05-9999", "Workshop E", "Electrical System", true);
 
         System.out.println("[DataSeeder] Technicians seeded.");
@@ -125,151 +100,87 @@ public class DataSeeder {
     // ==================== CUSTOMERS ====================
 
     private void seedCustomers() {
-        upsertCustomer("C-001", "David Customer", "david@cust.com", "cust123",
+        createCustomer("C-001", "David Customer", "david@cust.com", "cust123",
                 "M", "015-1111111", "950801-01-8888", "123 Jalan Utama");
-        upsertCustomer("C-002", "Emily Customer", "emily@cust.com", "cust123",
+        createCustomer("C-002", "Emily Customer", "emily@cust.com", "cust123",
                 "F", "015-2222222", "960902-02-9999", "456 Jalan Dua");
-        upsertCustomer("C-003", "Faisal Customer", "faisal@cust.com", "cust123",
+        createCustomer("C-003", "Faisal Customer", "faisal@cust.com", "cust123",
                 "M", "015-3333333", "971003-03-0000", "789 Jalan Tiga");
-        upsertCustomer("C-004", "Grace Customer", "grace@cust.com", "cust123",
+        createCustomer("C-004", "Grace Customer", "grace@cust.com", "cust123",
                 "F", "015-4444444", "981104-04-1111", "12 Jalan Empat");
-        upsertCustomer("C-005", "Hakim Customer", "hakim@cust.com", "cust123",
+        createCustomer("C-005", "Hakim Customer", "hakim@cust.com", "cust123",
                 "M", "015-5555555", "991205-05-2222", "34 Jalan Lima");
-        upsertCustomer("C-006", "Irene Customer", "irene@cust.com", "cust123",
+        createCustomer("C-006", "Irene Customer", "irene@cust.com", "cust123",
                 "F", "015-6666666", "000106-06-3333", "56 Jalan Enam");
-        upsertCustomer("C-007", "Jason Customer", "jason@cust.com", "cust123",
+        createCustomer("C-007", "Jason Customer", "jason@cust.com", "cust123",
                 "M", "015-7777777", "010207-07-4444", "78 Jalan Tujuh");
-        upsertCustomer("C-008", "Kiran Customer", "kiran@cust.com", "cust123",
+        createCustomer("C-008", "Kiran Customer", "kiran@cust.com", "cust123",
                 "F", "015-8888888", "020308-08-5555", "90 Jalan Lapan");
-        upsertCustomer("C-009", "Liam Customer", "liam@cust.com", "cust123",
+        createCustomer("C-009", "Liam Customer", "liam@cust.com", "cust123",
                 "M", "015-9999999", "030409-09-6666", "11 Jalan Sembilan");
-        upsertCustomer("C-010", "Mira Customer", "mira@cust.com", "cust123",
+        createCustomer("C-010", "Mira Customer", "mira@cust.com", "cust123",
                 "F", "016-1010101", "040510-10-7777", "22 Jalan Sepuluh");
 
         System.out.println("[DataSeeder] Customers seeded.");
     }
 
-    private void upsertManager(String id, String name, String email, String plainPassword,
+    private void createManager(String id, String name, String email, String plainPassword,
                                String gender, String phone, String ic, String address) {
-        String hashed = SecurityUtil.hashPassword(plainPassword);
-        Manager manager = findManagerByIdOrEmail(id, email);
-        if (manager == null) {
-            manager = new Manager();
-            manager.setId(id);
-            em.persist(manager);
-        }
+        Manager manager = new Manager();
+        manager.setId(id);
         manager.setName(name);
         manager.setEmail(email);
-        manager.setPassword(hashed);
+        manager.setPassword(SecurityUtil.hashPassword(plainPassword));
         manager.setGender(gender);
         manager.setPhone(ValidationUtil.normalizePhone(phone));
         manager.setIc(ic);
         manager.setAddress(address);
+        em.persist(manager);
     }
 
-    private void upsertCounterStaff(String id, String name, String email, String plainPassword,
+    private void createCounterStaff(String id, String name, String email, String plainPassword,
                                     String gender, String phone, String ic, String address) {
-        String hashed = SecurityUtil.hashPassword(plainPassword);
-        CounterStaff counterStaff = findCounterStaffByIdOrEmail(id, email);
-        if (counterStaff == null) {
-            counterStaff = new CounterStaff();
-            counterStaff.setId(id);
-            em.persist(counterStaff);
-        }
+        CounterStaff counterStaff = new CounterStaff();
+        counterStaff.setId(id);
         counterStaff.setName(name);
         counterStaff.setEmail(email);
-        counterStaff.setPassword(hashed);
+        counterStaff.setPassword(SecurityUtil.hashPassword(plainPassword));
         counterStaff.setGender(gender);
         counterStaff.setPhone(ValidationUtil.normalizePhone(phone));
         counterStaff.setIc(ic);
         counterStaff.setAddress(address);
+        em.persist(counterStaff);
     }
 
-    private void upsertTechnician(String id, String name, String email, String plainPassword,
+    private void createTechnician(String id, String name, String email, String plainPassword,
                                   String gender, String phone, String ic, String address,
                                   String specialty, boolean available) {
-        String hashed = SecurityUtil.hashPassword(plainPassword);
-        Technician technician = findTechnicianByIdOrEmail(id, email);
-        if (technician == null) {
-            technician = new Technician();
-            technician.setId(id);
-            em.persist(technician);
-        }
+        Technician technician = new Technician();
+        technician.setId(id);
         technician.setName(name);
         technician.setEmail(email);
-        technician.setPassword(hashed);
+        technician.setPassword(SecurityUtil.hashPassword(plainPassword));
         technician.setGender(gender);
         technician.setPhone(ValidationUtil.normalizePhone(phone));
         technician.setIc(ic);
         technician.setAddress(address);
         technician.setSpecialty(specialty);
         technician.setAvailable(available);
+        em.persist(technician);
     }
 
-    private void upsertCustomer(String id, String name, String email, String plainPassword,
+    private void createCustomer(String id, String name, String email, String plainPassword,
                                 String gender, String phone, String ic, String address) {
-        String hashed = SecurityUtil.hashPassword(plainPassword);
-        Customer customer = findCustomerByIdOrEmail(id, email);
-        if (customer == null) {
-            customer = new Customer();
-            customer.setId(id);
-            em.persist(customer);
-        }
+        Customer customer = new Customer();
+        customer.setId(id);
         customer.setName(name);
         customer.setEmail(email);
-        customer.setPassword(hashed);
+        customer.setPassword(SecurityUtil.hashPassword(plainPassword));
         customer.setGender(gender);
         customer.setPhone(ValidationUtil.normalizePhone(phone));
         customer.setIc(ic);
         customer.setAddress(address);
-    }
-
-    private Manager findManagerByIdOrEmail(String id, String email) {
-        Manager manager = em.find(Manager.class, id);
-        if (manager != null) {
-            return manager;
-        }
-        List<Manager> matches = em.createQuery(
-                "SELECT m FROM Manager m WHERE m.email = :email", Manager.class)
-                .setParameter("email", email)
-                .getResultList();
-        return matches.isEmpty() ? null : matches.get(0);
-    }
-
-    private CounterStaff findCounterStaffByIdOrEmail(String id, String email) {
-        CounterStaff counterStaff = em.find(CounterStaff.class, id);
-        if (counterStaff != null) {
-            return counterStaff;
-        }
-        List<CounterStaff> matches = em.createQuery(
-                "SELECT cs FROM CounterStaff cs WHERE cs.email = :email", CounterStaff.class)
-                .setParameter("email", email)
-                .getResultList();
-        return matches.isEmpty() ? null : matches.get(0);
-    }
-
-    private Technician findTechnicianByIdOrEmail(String id, String email) {
-        Technician technician = em.find(Technician.class, id);
-        if (technician != null) {
-            return technician;
-        }
-        List<Technician> matches = em.createQuery(
-                "SELECT t FROM Technician t WHERE t.email = :email", Technician.class)
-                .setParameter("email", email)
-                .getResultList();
-        return matches.isEmpty() ? null : matches.get(0);
-    }
-
-    private Customer findCustomerByIdOrEmail(String id, String email) {
-        Customer customer = em.find(Customer.class, id);
-        if (customer != null) {
-            return customer;
-        }
-        List<Customer> matches = em.createQuery(
-                "SELECT c FROM Customer c WHERE c.email = :email", Customer.class)
-                .setParameter("email", email)
-                .getResultList();
-        return matches.isEmpty() ? null : matches.get(0);
+        em.persist(customer);
     }
 
     // ==================== SERVICES ====================

@@ -425,5 +425,40 @@
             </div>
 
         </div>
+
+        <!-- ==================== TODAY'S SERVICE REMINDER POPUP ==================== -->
+        <p:dialog header="Today's Appointment Reminders"
+                  widgetVar="serviceReminderDialog"
+                  modal="true"
+                  closable="true"
+                  resizable="false"
+                  draggable="false"
+                  width="680"
+                  styleClass="service-reminder-dialog"
+                  rendered="#{not empty technicianBean.todayAppointmentsList}">
+            <p:dataTable value="#{technicianBean.todayAppointmentsList}" var="a"
+                         emptyMessage="No appointments today.">
+                <p:column headerText="Time">
+                    <h:outputText value="#{a.appointmentDateTime}" />
+                </p:column>
+                <p:column headerText="Customer">
+                    <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}" />
+                </p:column>
+                <p:column headerText="Service">
+                    <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}" />
+                </p:column>
+                <p:column headerText="Status">
+                    <h:outputText value="#{a.status}" />
+                </p:column>
+            </p:dataTable>
+        </p:dialog>
+
+        <h:outputScript rendered="#{not empty technicianBean.todayAppointmentsList}">
+            window.addEventListener('load', function () {
+                if (typeof PF !== 'undefined' &amp;&amp; PF('serviceReminderDialog')) {
+                    PF('serviceReminderDialog').show();
+                }
+            });
+        </h:outputScript>
     </h:body>
 </html>

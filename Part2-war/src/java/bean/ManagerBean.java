@@ -548,6 +548,35 @@ public class ManagerBean implements Serializable {
         updateService(editingService);
     }
 
+    /**
+     * Auto-fill canonical price when the Add-New-Service type dropdown changes.
+     * Normal -> RM 500, Major -> RM 600, cleared selection -> empty.
+     * Price input remains editable after auto-fill.
+     */
+    public void onNewServiceTypeChange() {
+        if (Service.TYPE_NORMAL.equalsIgnoreCase(newServiceType)) {
+            newServicePrice = 500.0;
+        } else if (Service.TYPE_MAJOR.equalsIgnoreCase(newServiceType)) {
+            newServicePrice = 600.0;
+        } else {
+            newServicePrice = null;
+        }
+    }
+
+    /**
+     * Auto-fill canonical price when the Edit-Service type dropdown changes.
+     * Mirrors {@link #onNewServiceTypeChange()} but targets the editing entity.
+     */
+    public void onEditServiceTypeChange() {
+        if (editingService == null) return;
+        String type = editingService.getType();
+        if (Service.TYPE_NORMAL.equalsIgnoreCase(type)) {
+            editingService.setBasePrice(500.0);
+        } else if (Service.TYPE_MAJOR.equalsIgnoreCase(type)) {
+            editingService.setBasePrice(600.0);
+        }
+    }
+
     public void cancelEditService() {
         editingService = null;
     }

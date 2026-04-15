@@ -462,3 +462,13 @@ body .period-switch.ui-selectonebutton .ui-button:focus {
     body .main-content { margin-left: 80px; }
     .form-grid { grid-template-columns: 1fr; }
 }
+
+/* ========== SERVICE REMINDER POPUP ========== */
+.service-reminder-dialog .ui-dialog-titlebar {
+    background: var(--warning);
+    color: #ffffff;
+}
+.service-reminder-dialog .ui-dialog-titlebar .ui-dialog-title,
+.service-reminder-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon {
+    color: #ffffff;
+}

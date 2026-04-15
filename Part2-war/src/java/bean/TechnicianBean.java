@@ -46,6 +46,7 @@ public class TechnicianBean implements Serializable {
     private List<Appointment> pendingAppointmentList;
     private List<Appointment> inProgressAppointmentList;
     private List<Appointment> completedAppointmentList;
+    private List<Appointment> todayAppointmentsList;  // Pending + InProgress scheduled for today
     private List<Feedback> feedbackList;
     private List<AppointmentComment> commentsList;
 
@@ -81,6 +82,7 @@ public class TechnicianBean implements Serializable {
             pendingAppointmentList = new ArrayList<>();
             inProgressAppointmentList = new ArrayList<>();
             completedAppointmentList = new ArrayList<>();
+            todayAppointmentsList = new ArrayList<>();
 
             LocalDateTime startOfToday = LocalDateTime.now().toLocalDate().atStartOfDay();
             LocalDateTime endOfToday = startOfToday.plusDays(1);
@@ -100,10 +102,14 @@ public class TechnicianBean implements Serializable {
                     totalRevenue += a.getPaymentAmount();
                 }
 
-                if (a.getAppointmentDateTime() != null &&
-                    a.getAppointmentDateTime().isAfter(startOfToday) &&
-                    a.getAppointmentDateTime().isBefore(endOfToday)) {
+                boolean isToday = a.getAppointmentDateTime() != null &&
+                        a.getAppointmentDateTime().isAfter(startOfToday) &&
+                        a.getAppointmentDateTime().isBefore(endOfToday);
+                if (isToday) {
                     todayAppointments++;
+                    if ("Pending".equalsIgnoreCase(status) || "InProgress".equalsIgnoreCase(status)) {
+                        todayAppointmentsList.add(a);
+                    }
                 }
             }
 
@@ -391,6 +397,7 @@ public class TechnicianBean implements Serializable {
     public List<Appointment> getPendingAppointmentList() { return pendingAppointmentList; }
     public List<Appointment> getInProgressAppointmentList() { return inProgressAppointmentList; }
     public List<Appointment> getCompletedAppointmentList() { return completedAppointmentList; }
+    public List<Appointment> getTodayAppointmentsList() { return todayAppointmentsList; }
     public List<Feedback> getFeedbackList() { return feedbackList; }
     public List<AppointmentComment> getCommentsList() { return commentsList; }
 
