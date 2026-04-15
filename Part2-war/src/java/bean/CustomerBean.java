@@ -161,7 +161,7 @@ public class CustomerBean implements Serializable {
             profileData.setName(sanitizeText(profileData.getName()));
             profileData.setEmail(ValidationUtil.normalizeEmail(profileData.getEmail()));
             profileData.setGender(sanitizeText(profileData.getGender()));
-            profileData.setPhone(sanitizeText(profileData.getPhone()));
+            profileData.setPhone(ValidationUtil.normalizePhone(profileData.getPhone()));
             profileData.setIc(sanitizeText(profileData.getIc()));
             profileData.setAddress(sanitizeText(profileData.getAddress()));
 

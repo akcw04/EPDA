@@ -244,12 +244,13 @@
                                             <h:outputText value="#{a.appointmentDateTime}"/>
                                         </p:column>
                                         <p:column headerText="Amount (RM)">
-                                            <h:outputText value="#{a.paymentAmount}"/>
+                                            <h:outputText value="#{formatBean.money(a.paymentAmount)}"/>
                                         </p:column>
                                         <p:column headerText="Action">
                                             <p:commandButton value="Start"
                                                              icon="pi pi-play"
                                                              action="#{technicianBean.startAppointment(a.id)}"
+                                                             process="@this"
                                                              update=":mainForm :growl" styleClass="btn-success"/>
                                         </p:column>
                                     </p:dataTable>
@@ -273,12 +274,13 @@
                                             <h:outputText value="#{a.appointmentDateTime}"/>
                                         </p:column>
                                         <p:column headerText="Amount (RM)">
-                                            <h:outputText value="#{a.paymentAmount}"/>
+                                            <h:outputText value="#{formatBean.money(a.paymentAmount)}"/>
                                         </p:column>
                                         <p:column headerText="Action">
                                             <p:commandButton value="Complete"
                                                              icon="pi pi-check"
                                                              action="#{technicianBean.completeAppointment(a.id)}"
+                                                             process="@this"
                                                              update=":mainForm :growl" styleClass="btn-primary"/>
                                         </p:column>
                                     </p:dataTable>
@@ -303,7 +305,7 @@
                                             <h:outputText value="#{a.appointmentDateTime}"/>
                                         </p:column>
                                         <p:column headerText="Amount (RM)">
-                                            <h:outputText value="#{a.paymentAmount}"/>
+                                            <h:outputText value="#{formatBean.money(a.paymentAmount)}"/>
                                         </p:column>
                                         <p:column headerText="Status">
                                             <h:outputText value="Completed" styleClass="badge-completed"/>
@@ -376,7 +378,7 @@
                                             <h:outputText value="#{cm.appointmentId}"/>
                                         </p:column>
                                         <p:column headerText="Customer">
-                                            <h:outputText value="#{cm.customerId}"/>
+                                            <h:outputText value="#{cm.customer != null ? cm.customer.name : cm.customerId}"/>
                                         </p:column>
                                         <p:column headerText="Comment">
                                             <h:outputText value="#{cm.commentText}"/>
@@ -408,7 +410,7 @@
                                     </div>
                                     <div class="stat-card accent-cyan">
                                         <h3>Total Revenue</h3>
-                                        <p>RM #{technicianBean.totalRevenue}</p>
+                                        <p>RM #{formatBean.money(technicianBean.totalRevenue)}</p>
                                     </div>
                                 </div>
                             </h:panelGroup>

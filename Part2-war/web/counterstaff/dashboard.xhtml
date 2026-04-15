@@ -280,16 +280,18 @@
                                         <p:column headerText="IC">
                                             <h:outputText value="#{c.ic}"/>
                                         </p:column>
-                                        <p:column headerText="Actions" styleClass="actions-column" headerStyleClass="actions-column">
+                                        <p:column headerText="Actions" styleClass="actions-column">
                                             <p:commandButton value="Edit"
                                                              icon="pi pi-pencil"
                                                              styleClass="btn-edit"
                                                              action="#{counterStaffBean.loadEditCustomer(c.id)}"
+                                                             process="@this"
                                                              update=":mainForm"/>
                                             <p:commandButton value="Delete"
                                                              icon="pi pi-trash"
                                                              styleClass="btn-danger"
                                                              action="#{counterStaffBean.deleteCustomer(c.id)}"
+                                                             process="@this"
                                                              update=":mainForm :growl">
                                                 <p:confirm header="Confirm" message="Delete this customer?" icon="pi pi-exclamation-triangle"/>
                                             </p:commandButton>
@@ -367,14 +369,14 @@
                                             <p:selectOneMenu value="#{counterStaffBean.selectedServiceId}" styleClass="form-control">
                                                 <f:selectItem itemLabel="-- Select Service --" itemValue=""/>
                                                 <f:selectItems value="#{counterStaffBean.services}" var="s"
-                                                               itemLabel="#{s.serviceName} - #{s.type} (RM#{s.basePrice})" itemValue="#{s.id}"/>
+                                                               itemLabel="#{s.serviceName} - #{s.type} (RM#{formatBean.money(s.basePrice)})" itemValue="#{s.id}"/>
                                             </p:selectOneMenu>
                                         </div>
                                         <div>
                                             <label>Technician</label>
                                             <p:selectOneMenu value="#{counterStaffBean.selectedTechnicianId}" styleClass="form-control">
                                                 <f:selectItem itemLabel="-- Select Technician --" itemValue=""/>
-                                                <f:selectItems value="#{counterStaffBean.technicians}" var="t"
+                                                <f:selectItems value="#{counterStaffBean.availableTechnicians}" var="t"
                                                                itemLabel="#{t.name} - #{t.specialty}" itemValue="#{t.id}"/>
                                             </p:selectOneMenu>
                                         </div>
@@ -407,7 +409,7 @@
                                             <p:selectOneMenu value="#{counterStaffBean.paymentAppointmentId}" styleClass="form-control">
                                                 <f:selectItem itemLabel="-- Select Appointment --" itemValue=""/>
                                                 <f:selectItems value="#{counterStaffBean.completedAppointments}" var="a"
-                                                               itemLabel="#{a.id} - #{a.customer != null ? a.customer.name : a.customerId} (RM#{a.paymentAmount})" itemValue="#{a.id}"/>
+                                                               itemLabel="#{a.id} - #{a.customer != null ? a.customer.name : a.customerId} (RM#{formatBean.money(a.paymentAmount)})" itemValue="#{a.id}"/>
                                             </p:selectOneMenu>
                                         </div>
                                         <div>
@@ -440,10 +442,10 @@
                                             <h:outputText value="#{p.appointmentId}"/>
                                         </p:column>
                                         <p:column headerText="Customer">
-                                            <h:outputText value="#{p.customerId}"/>
+                                            <h:outputText value="#{p.customer != null ? p.customer.name : p.customerId}"/>
                                         </p:column>
                                         <p:column headerText="Amount (RM)">
-                                            <h:outputText value="#{p.amount}"/>
+                                            <h:outputText value="#{formatBean.money(p.amount)}"/>
                                         </p:column>
                                         <p:column headerText="Method">
                                             <h:outputText value="#{p.paymentMethod}"/>
@@ -484,7 +486,7 @@
                                                           styleClass="#{a.status == 'Pending' ? 'badge-pending' : a.status == 'Completed' ? 'badge-completed' : a.status == 'InProgress' ? 'badge-progress' : a.status == 'Cancelled' ? 'badge-cancelled' : ''}" />
                                         </p:column>
                                         <p:column headerText="Amount (RM)">
-                                            <h:outputText value="#{a.paymentAmount}"/>
+                                            <h:outputText value="#{formatBean.money(a.paymentAmount)}"/>
                                         </p:column>
                                     </p:dataTable>
                                 </div>

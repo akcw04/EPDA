@@ -113,6 +113,7 @@ public class RegistrationServlet extends HttpServlet {
                 sendJsonResponse(out, false, ValidationUtil.getErrorMessage("phone"));
                 return;
             }
+            phone = ValidationUtil.normalizePhone(phone);
 
             if (ic == null || ic.isBlank()) {
                 sendJsonResponse(out, false, "IC is required");

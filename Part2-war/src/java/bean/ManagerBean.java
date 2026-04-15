@@ -172,7 +172,7 @@ public class ManagerBean implements Serializable {
                     t.setEmail(ValidationUtil.normalizeEmail(regEmail));
                     t.setPassword(regPassword);
                     t.setGender(sanitizeText(regGender));
-                    t.setPhone(sanitizeText(regPhone));
+                    t.setPhone(ValidationUtil.normalizePhone(regPhone));
                     t.setIc(sanitizeText(regIc));
                     t.setAddress(sanitizeText(regAddress));
                     t.setSpecialty(resolveSpecialty(regSpecialty));
@@ -185,7 +185,7 @@ public class ManagerBean implements Serializable {
                     cs.setEmail(ValidationUtil.normalizeEmail(regEmail));
                     cs.setPassword(regPassword);
                     cs.setGender(sanitizeText(regGender));
-                    cs.setPhone(sanitizeText(regPhone));
+                    cs.setPhone(ValidationUtil.normalizePhone(regPhone));
                     cs.setIc(sanitizeText(regIc));
                     cs.setAddress(sanitizeText(regAddress));
                     success = userFacade.createCounterStaff(cs);
@@ -196,7 +196,7 @@ public class ManagerBean implements Serializable {
                     m.setEmail(ValidationUtil.normalizeEmail(regEmail));
                     m.setPassword(regPassword);
                     m.setGender(sanitizeText(regGender));
-                    m.setPhone(sanitizeText(regPhone));
+                    m.setPhone(ValidationUtil.normalizePhone(regPhone));
                     m.setIc(sanitizeText(regIc));
                     m.setAddress(sanitizeText(regAddress));
                     success = userFacade.createManager(m);
@@ -326,7 +326,7 @@ public class ManagerBean implements Serializable {
             editingTechnician.setName(sanitizeText(editingTechnician.getName()));
             editingTechnician.setEmail(ValidationUtil.normalizeEmail(editingTechnician.getEmail()));
             editingTechnician.setGender(sanitizeText(editingTechnician.getGender()));
-            editingTechnician.setPhone(sanitizeText(editingTechnician.getPhone()));
+            editingTechnician.setPhone(ValidationUtil.normalizePhone(editingTechnician.getPhone()));
             editingTechnician.setIc(sanitizeText(editingTechnician.getIc()));
             editingTechnician.setAddress(sanitizeText(editingTechnician.getAddress()));
             editingTechnician.setSpecialty(resolveSpecialty(editingTechnician.getSpecialty()));
@@ -375,7 +375,7 @@ public class ManagerBean implements Serializable {
             editingCounterStaff.setName(sanitizeText(editingCounterStaff.getName()));
             editingCounterStaff.setEmail(ValidationUtil.normalizeEmail(editingCounterStaff.getEmail()));
             editingCounterStaff.setGender(sanitizeText(editingCounterStaff.getGender()));
-            editingCounterStaff.setPhone(sanitizeText(editingCounterStaff.getPhone()));
+            editingCounterStaff.setPhone(ValidationUtil.normalizePhone(editingCounterStaff.getPhone()));
             editingCounterStaff.setIc(sanitizeText(editingCounterStaff.getIc()));
             editingCounterStaff.setAddress(sanitizeText(editingCounterStaff.getAddress()));
 
@@ -423,7 +423,7 @@ public class ManagerBean implements Serializable {
             editingManager.setName(sanitizeText(editingManager.getName()));
             editingManager.setEmail(ValidationUtil.normalizeEmail(editingManager.getEmail()));
             editingManager.setGender(sanitizeText(editingManager.getGender()));
-            editingManager.setPhone(sanitizeText(editingManager.getPhone()));
+            editingManager.setPhone(ValidationUtil.normalizePhone(editingManager.getPhone()));
             editingManager.setIc(sanitizeText(editingManager.getIc()));
             editingManager.setAddress(sanitizeText(editingManager.getAddress()));
 
@@ -471,7 +471,7 @@ public class ManagerBean implements Serializable {
             editingCustomer.setName(sanitizeText(editingCustomer.getName()));
             editingCustomer.setEmail(ValidationUtil.normalizeEmail(editingCustomer.getEmail()));
             editingCustomer.setGender(sanitizeText(editingCustomer.getGender()));
-            editingCustomer.setPhone(sanitizeText(editingCustomer.getPhone()));
+            editingCustomer.setPhone(ValidationUtil.normalizePhone(editingCustomer.getPhone()));
             editingCustomer.setIc(sanitizeText(editingCustomer.getIc()));
             editingCustomer.setAddress(sanitizeText(editingCustomer.getAddress()));
 

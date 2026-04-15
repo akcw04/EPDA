@@ -19,6 +19,10 @@ public class ValidationUtil {
             "^[0-9]{6}-[0-9]{2}-[0-9]{4}$|^[0-9]{12}$"  // Malaysian IC format or simple numeric
     );
 
+    private static final Pattern PHONE_ALLOWED_PATTERN = Pattern.compile(
+            "^[0-9\\-\\s]+$"
+    );
+
     private static final Pattern NAME_PATTERN = Pattern.compile(
             "^[A-Za-z][A-Za-z '\\-]{1,99}$"  // Letters, spaces, apostrophes, hyphens
     );
@@ -54,6 +58,20 @@ public class ValidationUtil {
     public static String normalizeIC(String ic) {
         String trimmed = trimToNull(ic);
         return trimmed == null ? null : trimmed.replaceAll("\\D", "");
+    }
+
+    public static String normalizePhone(String phone) {
+        String trimmed = trimToNull(phone);
+        if (trimmed == null || !PHONE_ALLOWED_PATTERN.matcher(trimmed).matches()) {
+            return null;
+        }
+
+        String digitsOnly = trimmed.replaceAll("\\D", "");
+        if (digitsOnly.matches("^011\\d{8}$") || digitsOnly.matches("^01\\d\\d{7}$")) {
+            return digitsOnly.substring(0, 3) + "-" + digitsOnly.substring(3);
+        }
+
+        return null;
     }
 
     /**
@@ -101,15 +119,8 @@ public class ValidationUtil {
      * @return true if valid, false otherwise
      */
     public static boolean isValidPhone(String phone) {
-        String trimmedPhone = trimToNull(phone);
-        if (trimmedPhone == null) {
-            return false;
-        }
-        if (!trimmedPhone.matches("^[+0-9][0-9\\-\\s]{6,19}$")) {
-            return false;
-        }
-        String digitsOnly = trimmedPhone.replaceAll("\\D", "");
-        return digitsOnly.length() >= 7 && digitsOnly.length() <= 15;
+        String normalizedPhone = normalizePhone(phone);
+        return normalizedPhone != null;
     }
 
     /**
@@ -219,7 +230,7 @@ public class ValidationUtil {
             case "password":
                 return "Password must be at least 8 characters and include uppercase, lowercase, digit, and special character.";
             case "phone":
-                return "Phone must contain 7-15 digits and may include spaces, hyphens, or a leading +.";
+                return "Phone must be a valid Malaysian mobile number such as 012-3456789 or 011-12345678. You may enter digits only and the system will format it automatically.";
             case "ic":
                 return "IC must be 12 digits, with or without hyphens, for example 900101-01-1111.";
             case "name":

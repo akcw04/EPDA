@@ -154,7 +154,7 @@ public class CounterStaffBean implements Serializable {
             profileData.setName(sanitizeText(profileData.getName()));
             profileData.setEmail(ValidationUtil.normalizeEmail(profileData.getEmail()));
             profileData.setGender(sanitizeText(profileData.getGender()));
-            profileData.setPhone(sanitizeText(profileData.getPhone()));
+            profileData.setPhone(ValidationUtil.normalizePhone(profileData.getPhone()));
             profileData.setIc(sanitizeText(profileData.getIc()));
             profileData.setAddress(sanitizeText(profileData.getAddress()));
 
@@ -189,7 +189,7 @@ public class CounterStaffBean implements Serializable {
             c.setEmail(ValidationUtil.normalizeEmail(custEmail));
             c.setPassword(custPassword);
             c.setGender(sanitizeText(custGender));
-            c.setPhone(sanitizeText(custPhone));
+            c.setPhone(ValidationUtil.normalizePhone(custPhone));
             c.setIc(sanitizeText(custIc));
             c.setAddress(sanitizeText(custAddress));
             boolean success = userFacade.createCustomer(c);
@@ -238,12 +238,44 @@ public class CounterStaffBean implements Serializable {
 
     public void saveEditCustomer() {
         try {
-            if (editingCustomer != null) {
-                userFacade.updateCustomer(editingCustomer);
+            if (editingCustomer == null) {
+                addError("Customer not found.");
+                return;
+            }
+
+            Customer existing = userFacade.getCustomerByID(editingCustomer.getId());
+            if (existing == null) {
                 editingCustomer = null;
                 loadDashboardData();
-                addInfo("Customer updated successfully.");
+                addError("Customer no longer exists.");
+                return;
             }
+
+            if (!validateUserFields(
+                    editingCustomer.getName(),
+                    editingCustomer.getEmail(),
+                    null,
+                    editingCustomer.getGender(),
+                    editingCustomer.getPhone(),
+                    editingCustomer.getIc(),
+                    editingCustomer.getAddress(),
+                    existing.getEmail(),
+                    existing.getIc(),
+                    false)) {
+                return;
+            }
+
+            editingCustomer.setName(sanitizeText(editingCustomer.getName()));
+            editingCustomer.setEmail(ValidationUtil.normalizeEmail(editingCustomer.getEmail()));
+            editingCustomer.setGender(sanitizeText(editingCustomer.getGender()));
+            editingCustomer.setPhone(ValidationUtil.normalizePhone(editingCustomer.getPhone()));
+            editingCustomer.setIc(sanitizeText(editingCustomer.getIc()));
+            editingCustomer.setAddress(sanitizeText(editingCustomer.getAddress()));
+
+            userFacade.updateCustomer(editingCustomer);
+            editingCustomer = null;
+            loadDashboardData();
+            addInfo("Customer updated successfully.");
         } catch (Exception e) { addError("Error: " + e.getMessage()); }
     }
 
@@ -274,6 +306,10 @@ public class CounterStaffBean implements Serializable {
 
             if (customer == null || service == null || technician == null) {
                 addError("Invalid selection.");
+                return;
+            }
+            if (!technician.isAvailable()) {
+                addError("Selected technician is no longer available.");
                 return;
             }
 
@@ -469,6 +505,20 @@ public class CounterStaffBean implements Serializable {
     public List<Customer> getCustomers() { if (customers == null) loadDashboardData(); return customers; }
     public List<Service> getServices() { if (services == null) loadDashboardData(); return services; }
     public List<Technician> getTechnicians() { if (technicians == null) loadDashboardData(); return technicians; }
+    public List<Technician> getAvailableTechnicians() {
+        if (technicians == null) {
+            loadDashboardData();
+        }
+        List<Technician> availableTechnicians = new ArrayList<>();
+        if (technicians != null) {
+            for (Technician technician : technicians) {
+                if (technician != null && technician.isAvailable()) {
+                    availableTechnicians.add(technician);
+                }
+            }
+        }
+        return availableTechnicians;
+    }
     public List<Appointment> getAppointments() { if (appointments == null) loadDashboardData(); return appointments; }
     public List<Payment> getPayments() { if (payments == null) loadDashboardData(); return payments; }
 

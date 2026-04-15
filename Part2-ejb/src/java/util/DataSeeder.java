@@ -145,7 +145,7 @@ public class DataSeeder {
         manager.setEmail(email);
         manager.setPassword(hashed);
         manager.setGender(gender);
-        manager.setPhone(phone);
+        manager.setPhone(ValidationUtil.normalizePhone(phone));
         manager.setIc(ic);
         manager.setAddress(address);
     }
@@ -163,7 +163,7 @@ public class DataSeeder {
         counterStaff.setEmail(email);
         counterStaff.setPassword(hashed);
         counterStaff.setGender(gender);
-        counterStaff.setPhone(phone);
+        counterStaff.setPhone(ValidationUtil.normalizePhone(phone));
         counterStaff.setIc(ic);
         counterStaff.setAddress(address);
     }
@@ -182,7 +182,7 @@ public class DataSeeder {
         technician.setEmail(email);
         technician.setPassword(hashed);
         technician.setGender(gender);
-        technician.setPhone(phone);
+        technician.setPhone(ValidationUtil.normalizePhone(phone));
         technician.setIc(ic);
         technician.setAddress(address);
         technician.setSpecialty(specialty);
@@ -202,7 +202,7 @@ public class DataSeeder {
         customer.setEmail(email);
         customer.setPassword(hashed);
         customer.setGender(gender);
-        customer.setPhone(phone);
+        customer.setPhone(ValidationUtil.normalizePhone(phone));
         customer.setIc(ic);
         customer.setAddress(address);
     }
