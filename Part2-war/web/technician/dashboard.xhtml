@@ -378,7 +378,11 @@
                                             <h:outputText value="#{cm.appointmentId}"/>
                                         </p:column>
                                         <p:column headerText="Customer">
-                                            <h:outputText value="#{cm.customer != null ? cm.customer.name : cm.customerId}"/>
+                                            <h:panelGroup rendered="#{cm.customer != null}">
+                                                <h:outputText value="#{cm.customer.name}" />
+                                                <h:outputText value=" (#{cm.customer.id})" />
+                                            </h:panelGroup>
+                                            <h:outputText rendered="#{cm.customer == null}" value="#{cm.customerId}" />
                                         </p:column>
                                         <p:column headerText="Comment">
                                             <h:outputText value="#{cm.commentText}"/>

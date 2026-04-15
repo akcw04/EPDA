@@ -366,26 +366,47 @@
                                         </div>
                                         <div>
                                             <label>Service</label>
-                                            <p:selectOneMenu value="#{counterStaffBean.selectedServiceId}" styleClass="form-control">
+                                            <p:selectOneMenu id="serviceSelect" value="#{counterStaffBean.selectedServiceId}" styleClass="form-control">
                                                 <f:selectItem itemLabel="-- Select Service --" itemValue=""/>
                                                 <f:selectItems value="#{counterStaffBean.services}" var="s"
                                                                itemLabel="#{s.serviceName} - #{s.type} (RM#{formatBean.money(s.basePrice)})" itemValue="#{s.id}"/>
+                                                <p:ajax event="change"
+                                                        listener="#{counterStaffBean.onAppointmentDetailsChange()}"
+                                                        process="@this serviceSelect dateInput"
+                                                        update="technicianWrapper bookingHint" />
                                             </p:selectOneMenu>
                                         </div>
                                         <div>
                                             <label>Technician</label>
-                                            <p:selectOneMenu value="#{counterStaffBean.selectedTechnicianId}" styleClass="form-control">
-                                                <f:selectItem itemLabel="-- Select Technician --" itemValue=""/>
-                                                <f:selectItems value="#{counterStaffBean.availableTechnicians}" var="t"
-                                                               itemLabel="#{t.name} - #{t.specialty}" itemValue="#{t.id}"/>
-                                            </p:selectOneMenu>
+                                            <h:panelGroup id="technicianWrapper" layout="block">
+                                                <p:selectOneMenu id="technicianSelect"
+                                                                 value="#{counterStaffBean.selectedTechnicianId}"
+                                                                 styleClass="form-control"
+                                                                 disabled="#{not counterStaffBean.bookingSlotReady}">
+                                                    <f:selectItem itemLabel="#{counterStaffBean.bookingSlotReady ? '-- Select Technician --' : '-- Select service and date first --'}"
+                                                                  itemValue=""/>
+                                                    <f:selectItems value="#{counterStaffBean.availableTechnicians}" var="t"
+                                                                   itemLabel="#{t.name} - #{t.specialty}" itemValue="#{t.id}"/>
+                                                </p:selectOneMenu>
+                                            </h:panelGroup>
                                         </div>
                                         <div>
                                             <label>Date &amp; Time</label>
-                                            <h:inputText value="#{counterStaffBean.appointmentDateStr}" type="datetime-local" styleClass="form-control"/>
+                                            <h:inputText id="dateInput" value="#{counterStaffBean.appointmentDateStr}" type="datetime-local" styleClass="form-control">
+                                                <p:ajax event="change"
+                                                        listener="#{counterStaffBean.onAppointmentDetailsChange()}"
+                                                        process="@this serviceSelect dateInput"
+                                                        update="technicianWrapper bookingHint" />
+                                            </h:inputText>
                                         </div>
                                     </div>
-                                    <p style="margin:12px 0 0;font-size:12px;color:#6b7280;">
+                                    <h:panelGroup id="bookingHint" layout="block">
+                                        <p style="margin:12px 0 0;font-size:12px;color:#6b7280;">
+                                            <i class="pi pi-info-circle" style="margin-right:4px;"/>
+                                            <h:outputText value="#{counterStaffBean.bookingSlotReady ? 'Only technicians available for the selected service duration and appointment time are listed.' : 'Select a service and appointment time to load available technicians.'}" />
+                                        </p>
+                                    </h:panelGroup>
+                                    <p style="margin:8px 0 0;font-size:12px;color:#6b7280;">
                                         <i class="pi pi-info-circle" style="margin-right:4px;"/>
                                         Appointments must be booked within the next 5 days. Normal service = 1 hour, Major service = 3 hours.
                                     </p>
@@ -409,7 +430,7 @@
                                             <p:selectOneMenu value="#{counterStaffBean.paymentAppointmentId}" styleClass="form-control">
                                                 <f:selectItem itemLabel="-- Select Appointment --" itemValue=""/>
                                                 <f:selectItems value="#{counterStaffBean.completedAppointments}" var="a"
-                                                               itemLabel="#{a.id} - #{a.customer != null ? a.customer.name : a.customerId} (RM#{formatBean.money(a.paymentAmount)})" itemValue="#{a.id}"/>
+                                                               itemLabel="#{a.id} - #{counterStaffBean.formatCustomerDisplay(a.customer, a.customerId)} (RM#{formatBean.money(a.paymentAmount)})" itemValue="#{a.id}"/>
                                             </p:selectOneMenu>
                                         </div>
                                         <div>
@@ -442,7 +463,7 @@
                                             <h:outputText value="#{p.appointmentId}"/>
                                         </p:column>
                                         <p:column headerText="Customer">
-                                            <h:outputText value="#{p.customer != null ? p.customer.name : p.customerId}"/>
+                                            <h:outputText value="#{counterStaffBean.formatCustomerDisplay(p.customer, p.customerId)}"/>
                                         </p:column>
                                         <p:column headerText="Amount (RM)">
                                             <h:outputText value="#{formatBean.money(p.amount)}"/>

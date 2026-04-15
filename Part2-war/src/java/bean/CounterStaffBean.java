@@ -312,6 +312,10 @@ public class CounterStaffBean implements Serializable {
                 addError("Selected technician is no longer available.");
                 return;
             }
+            if (!isTechnicianAvailableForSlot(technician, appointmentDate, service)) {
+                addError("Selected technician is not available for the chosen appointment slot.");
+                return;
+            }
 
             Appointment appointment = new Appointment();
             appointment.setCustomer(customer);
@@ -467,6 +471,39 @@ public class CounterStaffBean implements Serializable {
         return ValidationUtil.trimToNull(value);
     }
 
+    public void onAppointmentDetailsChange() {
+        if (selectedTechnicianId == null || selectedTechnicianId.isBlank()) {
+            return;
+        }
+
+        Technician technician = findTechnicianById(selectedTechnicianId);
+        if (!isTechnicianAvailableForSlot(technician, parseAppointmentDate(), findSelectedService())) {
+            selectedTechnicianId = null;
+        }
+    }
+
+    public boolean isBookingSlotReady() {
+        return findSelectedService() != null && parseAppointmentDate() != null;
+    }
+
+    public String formatCustomerDisplay(Customer customer, String customerId) {
+        String resolvedCustomerId = customerId;
+        String customerName = null;
+
+        if (customer != null) {
+            resolvedCustomerId = customer.getId() != null ? customer.getId() : resolvedCustomerId;
+            customerName = ValidationUtil.trimToNull(customer.getName());
+        }
+
+        if (customerName != null && resolvedCustomerId != null) {
+            return customerName + " (" + resolvedCustomerId + ")";
+        }
+        if (customerName != null) {
+            return customerName;
+        }
+        return resolvedCustomerId != null ? resolvedCustomerId : "-";
+    }
+
     private boolean hasPaymentForAppointment(String appointmentId) {
         if (payments == null) {
             return false;
@@ -509,10 +546,17 @@ public class CounterStaffBean implements Serializable {
         if (technicians == null) {
             loadDashboardData();
         }
+
+        Service selectedService = findSelectedService();
+        LocalDateTime appointmentDate = parseAppointmentDate();
+        if (selectedService == null || appointmentDate == null) {
+            return new ArrayList<>();
+        }
+
         List<Technician> availableTechnicians = new ArrayList<>();
         if (technicians != null) {
             for (Technician technician : technicians) {
-                if (technician != null && technician.isAvailable()) {
+                if (isTechnicianAvailableForSlot(technician, appointmentDate, selectedService)) {
                     availableTechnicians.add(technician);
                 }
             }
@@ -562,4 +606,115 @@ public class CounterStaffBean implements Serializable {
 
     public String getCurrentSection() { return currentSection; }
     public void setCurrentSection(String currentSection) { this.currentSection = currentSection; }
+
+    private Service findSelectedService() {
+        if (selectedServiceId == null || selectedServiceId.isBlank()) {
+            return null;
+        }
+
+        if (services != null) {
+            for (Service service : services) {
+                if (service != null && selectedServiceId.equals(service.getId())) {
+                    return service;
+                }
+            }
+        }
+
+        return serviceFacade.getServiceByID(selectedServiceId);
+    }
+
+    private Technician findTechnicianById(String technicianId) {
+        if (technicianId == null || technicianId.isBlank()) {
+            return null;
+        }
+
+        if (technicians != null) {
+            for (Technician technician : technicians) {
+                if (technician != null && technicianId.equals(technician.getId())) {
+                    return technician;
+                }
+            }
+        }
+
+        return userFacade.getTechnicianByID(technicianId);
+    }
+
+    private LocalDateTime parseAppointmentDate() {
+        if (appointmentDateStr == null || appointmentDateStr.isBlank()) {
+            return null;
+        }
+
+        try {
+            return LocalDateTime.parse(appointmentDateStr);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private boolean isTechnicianAvailableForSlot(Technician technician,
+                                                 LocalDateTime appointmentDate,
+                                                 Service service) {
+        if (technician == null || !technician.isAvailable() ||
+            appointmentDate == null || service == null) {
+            return false;
+        }
+
+        LocalDateTime requestedEnd = appointmentDate.plusMinutes(getDurationMinutes(service));
+        if (appointments == null) {
+            loadDashboardData();
+        }
+
+        if (appointments != null) {
+            for (Appointment appointment : appointments) {
+                if (appointment == null || !technician.getId().equals(appointment.getTechnicianId())) {
+                    continue;
+                }
+                if (!Appointment.STATUS_PENDING.equalsIgnoreCase(appointment.getStatus()) &&
+                    !Appointment.STATUS_IN_PROGRESS.equalsIgnoreCase(appointment.getStatus())) {
+                    continue;
+                }
+
+                LocalDateTime existingStart = appointment.getAppointmentDateTime();
+                if (existingStart == null) {
+                    continue;
+                }
+
+                LocalDateTime existingEnd = existingStart.plusMinutes(
+                        getDurationMinutes(resolveService(appointment)));
+                if (existingStart.isBefore(requestedEnd) && existingEnd.isAfter(appointmentDate)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private Service resolveService(Appointment appointment) {
+        if (appointment == null) {
+            return null;
+        }
+        if (appointment.getService() != null) {
+            return appointment.getService();
+        }
+        if (appointment.getServiceId() == null || appointment.getServiceId().isBlank()) {
+            return null;
+        }
+
+        if (services != null) {
+            for (Service service : services) {
+                if (service != null && appointment.getServiceId().equals(service.getId())) {
+                    return service;
+                }
+            }
+        }
+
+        return serviceFacade.getServiceByID(appointment.getServiceId());
+    }
+
+    private int getDurationMinutes(Service service) {
+        return service != null && service.getDurationMinutes() > 0
+                ? service.getDurationMinutes()
+                : Service.DURATION_NORMAL;
+    }
 }
