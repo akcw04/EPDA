@@ -34,8 +34,6 @@ public class UserFacade {
             em.persist(technician);
             return true;
         } catch (PersistenceException e) {
-            System.err.println("Error creating technician: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -86,8 +84,6 @@ public class UserFacade {
             em.persist(customer);
             return true;
         } catch (PersistenceException e) {
-            System.err.println("Error creating customer: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -137,8 +133,6 @@ public class UserFacade {
             em.persist(manager);
             return true;
         } catch (PersistenceException e) {
-            System.err.println("Error creating manager: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -186,8 +180,6 @@ public class UserFacade {
             em.persist(counterStaff);
             return true;
         } catch (PersistenceException e) {
-            System.err.println("Error creating counter staff: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

@@ -45,32 +45,19 @@ public class AuthFilter implements Filter {
         // --- Allow public resources (no authentication required) ---
 
         // Allow login page
-        if (path.equals("/login.xhtml") || path.equals("/login.jsp")) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        // Allow customer registration page
-        if (path.equals("/register-customer.jsp") || path.equals("/register-customer.xhtml")) {
+        if (path.equals("/login.xhtml")) {
             chain.doFilter(request, response);
             return;
         }
 
         // Allow JSF resource requests (CSS, JS, images)
-        if (path.startsWith("/jakarta.faces.resource/") || path.contains("javax.faces.resource")) {
+        if (path.startsWith("/jakarta.faces.resource/")) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Allow static resources (if any)
-        if (path.startsWith("/resources/") || path.startsWith("/css/") ||
-            path.startsWith("/js/") || path.startsWith("/images/")) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        // Allow servlet paths (e.g., registration servlet)
-        if (path.equals("/RegisterCustomerServlet")) {
+        // Allow static resources
+        if (path.startsWith("/resources/")) {
             chain.doFilter(request, response);
             return;
         }

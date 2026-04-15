@@ -33,8 +33,6 @@ public class AppointmentCommentFacade {
             em.persist(comment);
             return true;
         } catch (PersistenceException e) {
-            System.err.println("Error creating comment: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -158,8 +156,6 @@ public class AppointmentCommentFacade {
             em.merge(comment);
             return true;
         } catch (PersistenceException e) {
-            System.err.println("Error updating comment: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

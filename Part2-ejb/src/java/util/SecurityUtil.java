@@ -24,8 +24,6 @@ public class SecurityUtil {
             byte[] hash = digest.digest(password.getBytes());
             return bytesToHex(hash);
         } catch (NoSuchAlgorithmException e) {
-            System.err.println("SHA-256 algorithm not available: " + e.getMessage());
-            e.printStackTrace();
             throw new RuntimeException("Failed to hash password", e);
         }
     }

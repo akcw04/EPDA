@@ -128,18 +128,13 @@ public class TechnicianBean implements Serializable {
             commentsList = commentFacade.getCommentsByTechnician(techId);
 
         } catch (Exception e) {
-            System.err.println("Error loading technician dashboard: " + e.getMessage());
-            e.printStackTrace();
+            addError("Error loading dashboard: " + e.getMessage());
         }
     }
 
     public void loadProfile() {
-        try {
-            if (loginBean != null && loginBean.getUserId() != null) {
-                profileData = userFacade.getTechnicianByID(loginBean.getUserId());
-            }
-        } catch (Exception e) {
-            System.err.println("Error loading profile: " + e.getMessage());
+        if (loginBean != null && loginBean.getUserId() != null) {
+            profileData = userFacade.getTechnicianByID(loginBean.getUserId());
         }
     }
 

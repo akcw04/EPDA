@@ -29,8 +29,6 @@ public class FeedbackFacade {
             em.persist(feedback);
             return true;
         } catch (PersistenceException e) {
-            System.err.println("Error creating feedback: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -75,8 +73,6 @@ public class FeedbackFacade {
             em.merge(feedback);
             return true;
         } catch (PersistenceException e) {
-            System.err.println("Error updating feedback: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

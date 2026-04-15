@@ -9,7 +9,6 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import util.ValidationUtil;
@@ -115,18 +114,13 @@ public class CustomerBean implements Serializable {
             myComments = commentFacade.getCommentsByCustomer(custId);
 
         } catch (Exception e) {
-            System.err.println("Error loading customer dashboard: " + e.getMessage());
-            e.printStackTrace();
+            addError("Error loading dashboard: " + e.getMessage());
         }
     }
 
     public void loadProfile() {
-        try {
-            if (loginBean != null && loginBean.getUserId() != null) {
-                profileData = userFacade.getCustomerByID(loginBean.getUserId());
-            }
-        } catch (Exception e) {
-            System.err.println("Error loading profile: " + e.getMessage());
+        if (loginBean != null && loginBean.getUserId() != null) {
+            profileData = userFacade.getCustomerByID(loginBean.getUserId());
         }
     }
 

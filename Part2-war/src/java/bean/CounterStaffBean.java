@@ -106,18 +106,13 @@ public class CounterStaffBean implements Serializable {
 
             payments = paymentFacade.getAllPayments();
         } catch (Exception e) {
-            System.err.println("Error loading counter staff dashboard: " + e.getMessage());
-            e.printStackTrace();
+            addError("Error loading dashboard: " + e.getMessage());
         }
     }
 
     public void loadProfile() {
-        try {
-            if (loginBean != null && loginBean.getUserId() != null) {
-                profileData = userFacade.getCounterStaffByID(loginBean.getUserId());
-            }
-        } catch (Exception e) {
-            System.err.println("Error loading profile: " + e.getMessage());
+        if (loginBean != null && loginBean.getUserId() != null) {
+            profileData = userFacade.getCounterStaffByID(loginBean.getUserId());
         }
     }
 

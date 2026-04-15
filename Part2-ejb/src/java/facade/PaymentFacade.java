@@ -36,8 +36,6 @@ public class PaymentFacade {
             em.persist(payment);
             return true;
         } catch (PersistenceException e) {
-            System.err.println("Error creating payment: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -102,10 +100,6 @@ public class PaymentFacade {
         return getRevenueBetween(start, end);
     }
 
-    public double getDailyRevenue() {
-        return getRevenueForPeriod("daily");
-    }
-
     private double getRevenueBetween(LocalDateTime start, LocalDateTime end) {
         Double total = em.createQuery(
                 "SELECT SUM(p.amount) FROM Payment p " +
@@ -123,8 +117,6 @@ public class PaymentFacade {
             em.merge(payment);
             return true;
         } catch (PersistenceException e) {
-            System.err.println("Error updating payment: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

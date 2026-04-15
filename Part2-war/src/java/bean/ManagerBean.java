@@ -4,7 +4,6 @@ import entity.*;
 import facade.*;
 import jakarta.ejb.EJB;
 import jakarta.inject.Named;
-import jakarta.inject.Inject;
 import jakarta.faces.view.ViewScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -48,8 +47,6 @@ public class ManagerBean implements Serializable {
     private FeedbackFacade feedbackFacade;
     @EJB
     private AppointmentCommentFacade commentFacade;
-    @Inject
-    private LoginBean loginBean;
 
     // Sidebar navigation
     private String currentSection = "overview";
@@ -138,8 +135,7 @@ public class ManagerBean implements Serializable {
             allFeedback = feedbackFacade.getAllFeedback();
             allComments = commentFacade.getAllComments();
         } catch (Exception e) {
-            System.err.println("Error loading manager dashboard: " + e.getMessage());
-            e.printStackTrace();
+            addError("Error loading dashboard: " + e.getMessage());
         }
     }
 
