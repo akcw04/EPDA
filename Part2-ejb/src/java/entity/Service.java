@@ -33,6 +33,26 @@ public class Service implements java.io.Serializable {
     public static final int DURATION_NORMAL = 60;   // 1 hour
     public static final int DURATION_MAJOR = 180;   // 3 hours
 
+    // Minimum ("base") price per service type - the price floor enforced on
+    // create/edit. Managers may set a HIGHER price but never below the floor.
+    // Changes take effect for FUTURE bookings only; existing appointments
+    // keep the paymentAmount that was snapshotted at booking time.
+    public static final double BASE_PRICE_NORMAL = 500.0;
+    public static final double BASE_PRICE_MAJOR  = 600.0;
+
+    /**
+     * Returns the minimum allowable price (the "base price") for the given
+     * service type. Returns 0 if the type is null or unrecognised - callers
+     * should validate the type separately.
+     * @param type "Normal" or "Major"
+     * @return floor price in RM
+     */
+    public static double getMinPriceForType(String type) {
+        if (TYPE_NORMAL.equalsIgnoreCase(type)) return BASE_PRICE_NORMAL;
+        if (TYPE_MAJOR.equalsIgnoreCase(type))  return BASE_PRICE_MAJOR;
+        return 0.0;
+    }
+
     /**
      * Default constructor
      */

@@ -549,31 +549,26 @@ public class ManagerBean implements Serializable {
     }
 
     /**
-     * Auto-fill canonical price when the Add-New-Service type dropdown changes.
-     * Normal -> RM 500, Major -> RM 600, cleared selection -> empty.
-     * Price input remains editable after auto-fill.
+     * Auto-fill the type's BASE (minimum) price when the Add-New-Service type
+     * dropdown changes. Normal -> RM 500, Major -> RM 600, cleared -> empty.
+     * The price input remains editable - managers may increase it, but the
+     * validator on save will reject anything below the base price.
      */
     public void onNewServiceTypeChange() {
-        if (Service.TYPE_NORMAL.equalsIgnoreCase(newServiceType)) {
-            newServicePrice = 500.0;
-        } else if (Service.TYPE_MAJOR.equalsIgnoreCase(newServiceType)) {
-            newServicePrice = 600.0;
-        } else {
-            newServicePrice = null;
-        }
+        double floor = Service.getMinPriceForType(newServiceType);
+        newServicePrice = floor > 0 ? floor : null;
     }
 
     /**
-     * Auto-fill canonical price when the Edit-Service type dropdown changes.
-     * Mirrors {@link #onNewServiceTypeChange()} but targets the editing entity.
+     * Auto-fill the base price when the Edit-Service type dropdown changes.
+     * Only overwrites the current price if it falls below the new type's
+     * floor - a higher, manager-set price is preserved.
      */
     public void onEditServiceTypeChange() {
         if (editingService == null) return;
-        String type = editingService.getType();
-        if (Service.TYPE_NORMAL.equalsIgnoreCase(type)) {
-            editingService.setBasePrice(500.0);
-        } else if (Service.TYPE_MAJOR.equalsIgnoreCase(type)) {
-            editingService.setBasePrice(600.0);
+        double floor = Service.getMinPriceForType(editingService.getType());
+        if (floor > 0 && editingService.getBasePrice() < floor) {
+            editingService.setBasePrice(floor);
         }
     }
 
@@ -812,7 +807,8 @@ public class ManagerBean implements Serializable {
             valid = false;
         }
 
-        if (!ValidationUtil.isValidServiceType(serviceType)) {
+        boolean typeValid = ValidationUtil.isValidServiceType(serviceType);
+        if (!typeValid) {
             addError(ValidationUtil.getErrorMessage("serviceType"));
             valid = false;
         }
@@ -820,6 +816,16 @@ public class ManagerBean implements Serializable {
         if (!ValidationUtil.isValidServicePrice(servicePrice)) {
             addError(ValidationUtil.getErrorMessage("servicePrice"));
             valid = false;
+        } else if (typeValid) {
+            // Enforce the type-specific base-price floor. Managers may set a
+            // higher price, never lower. Changes only affect future bookings.
+            double floor = Service.getMinPriceForType(serviceType);
+            if (floor > 0 && servicePrice < floor) {
+                addError(String.format(
+                        "%s service price cannot be lower than the base price of RM %.2f.",
+                        serviceType, floor));
+                valid = false;
+            }
         }
 
         return valid;

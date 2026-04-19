@@ -35,6 +35,9 @@
                              value="#{managerBean.newServicePrice}"
                              styleClass="form-control"
                              converterMessage="Service price must be a valid number." />
+                <small style="color:var(--text-muted);display:block;margin-top:4px;">
+                    Base price: Normal RM 500, Major RM 600. Prices cannot go lower.
+                </small>
             </div>
         </div>
         <div class="form-actions">
@@ -81,6 +84,11 @@
                                      value="#{managerBean.editingService.basePrice}"
                                      styleClass="form-control"
                                      converterMessage="Service price must be a valid number." />
+                        <small style="color:var(--text-muted);display:block;margin-top:4px;">
+                            Minimum for #{managerBean.editingService.type}:
+                            RM #{managerBean.editingService.type == 'Major' ? '600.00' : '500.00'}.
+                            Price changes only affect new bookings - existing appointments keep their original amount.
+                        </small>
                     </div>
                 </div>
                 <div class="form-actions">
