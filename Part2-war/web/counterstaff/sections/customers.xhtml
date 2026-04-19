@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Counter Staff > Customers
+    Searchable customer list with edit / delete, plus an inline edit panel
+    that appears when counterStaffBean.editingCustomer is populated.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="search-bar">
+        <p:inputText value="#{counterStaffBean.searchKeyword}" styleClass="form-control" placeholder="Search by name, email, IC..."/>
+        <p:commandButton value="Search"
+                         icon="pi pi-search"
+                         action="#{counterStaffBean.searchCustomers()}"
+                         process="@form"
+                         update=":mainForm" styleClass="btn-primary"/>
+        <p:commandButton value="Clear"
+                         icon="pi pi-times"
+                         action="#{counterStaffBean.clearSearch()}"
+                         process="@this"
+                         update=":mainForm" styleClass="btn-secondary"/>
+    </div>
+
+    <div class="panel">
+        <p:dataTable value="#{counterStaffBean.customers}" var="c" paginator="true" rows="10"
+                     emptyMessage="No customers found.">
+            <p:column headerText="ID">
+                <h:outputText value="#{c.id}"/>
+            </p:column>
+            <p:column headerText="Name">
+                <h:outputText value="#{c.name}"/>
+            </p:column>
+            <p:column headerText="Email">
+                <h:outputText value="#{c.email}"/>
+            </p:column>
+            <p:column headerText="Phone">
+                <h:outputText value="#{c.phone}"/>
+            </p:column>
+            <p:column headerText="Gender">
+                <h:outputText value="#{c.gender}"/>
+            </p:column>
+            <p:column headerText="IC">
+                <h:outputText value="#{c.ic}"/>
+            </p:column>
+            <p:column headerText="Actions" styleClass="actions-column">
+                <p:commandButton value="Edit"
+                                 icon="pi pi-pencil"
+                                 styleClass="btn-edit"
+                                 action="#{counterStaffBean.loadEditCustomer(c.id)}"
+                                 process="@this"
+                                 update=":mainForm"/>
+                <p:commandButton value="Delete"
+                                 icon="pi pi-trash"
+                                 styleClass="btn-danger"
+                                 action="#{counterStaffBean.deleteCustomer(c.id)}"
+                                 process="@this"
+                                 update=":mainForm :growl">
+                    <p:confirm header="Confirm" message="Delete this customer?" icon="pi pi-exclamation-triangle"/>
+                </p:commandButton>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+    <!-- Edit Customer Panel (inline, below the table) -->
+    <h:panelGroup rendered="#{counterStaffBean.editingCustomer != null}">
+        <div class="edit-panel">
+            <h3>Edit Customer</h3>
+            <div class="form-grid">
+                <div>
+                    <label>Name</label>
+                    <p:inputText value="#{counterStaffBean.editingCustomer.name}" styleClass="form-control"/>
+                </div>
+                <div>
+                    <label>Email</label>
+                    <p:inputText value="#{counterStaffBean.editingCustomer.email}" styleClass="form-control"/>
+                </div>
+                <div>
+                    <label>Phone</label>
+                    <p:inputText value="#{counterStaffBean.editingCustomer.phone}" styleClass="form-control"/>
+                </div>
+                <div>
+                    <label>Gender</label>
+                    <p:selectOneMenu value="#{counterStaffBean.editingCustomer.gender}" styleClass="form-control">
+                        <f:selectItem itemLabel="Male" itemValue="M"/>
+                        <f:selectItem itemLabel="Female" itemValue="F"/>
+                        <f:selectItem itemLabel="Other" itemValue="Other"/>
+                    </p:selectOneMenu>
+                </div>
+                <div>
+                    <label>IC</label>
+                    <p:inputText value="#{counterStaffBean.editingCustomer.ic}" styleClass="form-control"/>
+                </div>
+                <div>
+                    <label>Address</label>
+                    <p:inputTextarea value="#{counterStaffBean.editingCustomer.address}" rows="3" styleClass="form-control"/>
+                </div>
+            </div>
+            <div class="form-actions">
+                <p:commandButton value="Save Changes"
+                                 icon="pi pi-check"
+                                 styleClass="btn-success"
+                                 action="#{counterStaffBean.saveEditCustomer()}"
+                                 process="@form"
+                                 update=":mainForm :growl"/>
+                <p:commandButton value="Cancel"
+                                 icon="pi pi-times"
+                                 styleClass="btn-secondary"
+                                 action="#{counterStaffBean.setEditingCustomer(null)}"
+                                 update=":mainForm"
+                                 process="@this"/>
+            </div>
+        </div>
+    </h:panelGroup>
+
+</ui:composition>

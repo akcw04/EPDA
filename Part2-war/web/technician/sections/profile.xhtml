@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Technician > My Profile
+    View and edit the signed-in technician's personal details and specialty.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>Edit My Profile</h3>
+        <h:panelGroup rendered="#{technicianBean.profileData != null}" layout="block">
+            <div class="form-grid">
+                <div>
+                    <label>Name</label>
+                    <p:inputText value="#{technicianBean.profileData.name}" styleClass="form-control"/>
+                </div>
+                <div>
+                    <label>Email</label>
+                    <p:inputText value="#{technicianBean.profileData.email}" styleClass="form-control"/>
+                </div>
+                <div>
+                    <label>Gender</label>
+                    <p:selectOneMenu value="#{technicianBean.profileData.gender}" styleClass="form-control">
+                        <f:selectItem itemLabel="Male" itemValue="M"/>
+                        <f:selectItem itemLabel="Female" itemValue="F"/>
+                        <f:selectItem itemLabel="Other" itemValue="Other"/>
+                    </p:selectOneMenu>
+                </div>
+                <div>
+                    <label>Phone</label>
+                    <p:inputText value="#{technicianBean.profileData.phone}" styleClass="form-control"/>
+                </div>
+                <div>
+                    <label>IC</label>
+                    <p:inputText value="#{technicianBean.profileData.ic}" styleClass="form-control"/>
+                </div>
+                <div>
+                    <label>Address</label>
+                    <p:inputTextarea value="#{technicianBean.profileData.address}" rows="3" styleClass="form-control"/>
+                </div>
+                <div>
+                    <label>Specialty</label>
+                    <p:inputText value="#{technicianBean.profileData.specialty}" styleClass="form-control"/>
+                </div>
+            </div>
+            <div class="form-actions">
+                <p:commandButton value="Update Profile"
+                                 icon="pi pi-check"
+                                 action="#{technicianBean.updateProfile()}"
+                                 process="@form"
+                                 update=":mainForm :growl" styleClass="btn-primary"/>
+            </div>
+        </h:panelGroup>
+    </div>
+
+</ui:composition>

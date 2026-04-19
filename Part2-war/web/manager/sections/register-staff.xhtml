@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Manager > Register Staff
+    Unified registration form for Technician, CounterStaff and Manager accounts.
+    Specialty field is only relevant for Technicians; other roles simply ignore it.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="jakarta.faces.passthrough"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>Register New Staff</h3>
+        <div class="form-grid">
+            <div>
+                <label>User Type</label>
+                <p:selectOneMenu value="#{managerBean.regUserType}" styleClass="form-control">
+                    <f:selectItem itemValue="Technician" itemLabel="Technician" />
+                    <f:selectItem itemValue="CounterStaff" itemLabel="Counter Staff" />
+                    <f:selectItem itemValue="Manager" itemLabel="Manager" />
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <label>Name</label>
+                <h:inputText value="#{managerBean.regName}"
+                             styleClass="form-control"
+                             pt:autocomplete="off" />
+            </div>
+            <div>
+                <label>Email</label>
+                <h:inputText value="#{managerBean.regEmail}"
+                             styleClass="form-control"
+                             pt:autocomplete="off"
+                             pt:spellcheck="false" />
+            </div>
+            <div>
+                <label>Password</label>
+                <p:password value="#{managerBean.regPassword}"
+                            styleClass="form-control"
+                            feedback="false"
+                            redisplay="true"
+                            pt:autocomplete="new-password" />
+            </div>
+            <div>
+                <label>Gender</label>
+                <p:selectOneMenu value="#{managerBean.regGender}" styleClass="form-control">
+                    <f:selectItem itemValue="" itemLabel="-- Select --" />
+                    <f:selectItem itemValue="M" itemLabel="Male" />
+                    <f:selectItem itemValue="F" itemLabel="Female" />
+                    <f:selectItem itemValue="Other" itemLabel="Other" />
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <label>Phone</label>
+                <h:inputText value="#{managerBean.regPhone}"
+                             styleClass="form-control"
+                             pt:autocomplete="off" />
+            </div>
+            <div>
+                <label>IC Number</label>
+                <h:inputText value="#{managerBean.regIc}"
+                             styleClass="form-control"
+                             pt:autocomplete="off" />
+            </div>
+            <div>
+                <label>Specialty</label>
+                <h:inputText value="#{managerBean.regSpecialty}"
+                             styleClass="form-control"
+                             pt:autocomplete="off" />
+            </div>
+            <div>
+                <label>Address</label>
+                <h:inputTextarea value="#{managerBean.regAddress}"
+                                 styleClass="form-control"
+                                 rows="3"
+                                 pt:autocomplete="off" />
+            </div>
+        </div>
+        <div class="form-actions">
+            <p:commandButton value="Register Staff"
+                             icon="pi pi-user-plus"
+                             styleClass="btn-primary"
+                             action="#{managerBean.registerStaff()}"
+                             process="@form"
+                             update=":mainForm :growl" />
+        </div>
+    </div>
+
+</ui:composition>

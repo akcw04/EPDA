@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Counter Staff > Book Appointment
+    Book a new service appointment: pick customer, service, time, then a technician.
+    Technician list is AJAX-filtered by availability based on service duration + datetime.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>Book Service Appointment</h3>
+        <div class="form-grid">
+            <div>
+                <label>Customer</label>
+                <p:selectOneMenu value="#{counterStaffBean.selectedCustomerId}" styleClass="form-control">
+                    <f:selectItem itemLabel="-- Select Customer --" itemValue=""/>
+                    <f:selectItems value="#{counterStaffBean.customers}" var="c"
+                                   itemLabel="#{c.name} (#{c.id})" itemValue="#{c.id}"/>
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <label>Service</label>
+                <p:selectOneMenu id="serviceSelect" value="#{counterStaffBean.selectedServiceId}" styleClass="form-control">
+                    <f:selectItem itemLabel="-- Select Service --" itemValue=""/>
+                    <f:selectItems value="#{counterStaffBean.services}" var="s"
+                                   itemLabel="#{s.serviceName} - #{s.type} (RM#{formatBean.money(s.basePrice)})" itemValue="#{s.id}"/>
+                    <p:ajax event="change"
+                            listener="#{counterStaffBean.onAppointmentDetailsChange()}"
+                            process="@this serviceSelect dateInput"
+                            update="technicianWrapper bookingHint" />
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <label>Technician</label>
+                <h:panelGroup id="technicianWrapper" layout="block">
+                    <p:selectOneMenu id="technicianSelect"
+                                     value="#{counterStaffBean.selectedTechnicianId}"
+                                     styleClass="form-control"
+                                     disabled="#{not counterStaffBean.bookingSlotReady}">
+                        <f:selectItem itemLabel="#{counterStaffBean.bookingSlotReady ? '-- Select Technician --' : '-- Select service and date first --'}"
+                                      itemValue=""/>
+                        <f:selectItems value="#{counterStaffBean.availableTechnicians}" var="t"
+                                       itemLabel="#{t.name} - #{t.specialty}" itemValue="#{t.id}"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+            </div>
+            <div>
+                <label>Date &amp; Time</label>
+                <h:inputText id="dateInput" value="#{counterStaffBean.appointmentDateStr}" type="datetime-local" styleClass="form-control">
+                    <p:ajax event="change"
+                            listener="#{counterStaffBean.onAppointmentDetailsChange()}"
+                            process="@this serviceSelect dateInput"
+                            update="technicianWrapper bookingHint" />
+                </h:inputText>
+            </div>
+        </div>
+        <h:panelGroup id="bookingHint" layout="block">
+            <p style="margin:12px 0 0;font-size:12px;color:#6b7280;">
+                <i class="pi pi-info-circle" style="margin-right:4px;"/>
+                <h:outputText value="#{counterStaffBean.bookingSlotReady ? 'Only technicians available for the selected service duration and appointment time are listed.' : 'Select a service and appointment time to load available technicians.'}" />
+            </p>
+        </h:panelGroup>
+        <p style="margin:8px 0 0;font-size:12px;color:#6b7280;">
+            <i class="pi pi-info-circle" style="margin-right:4px;"/>
+            Appointments must be booked within the next 5 days. Normal service = 1 hour, Major service = 3 hours.
+        </p>
+        <div class="form-actions">
+            <p:commandButton value="Book Appointment"
+                             icon="pi pi-calendar-plus"
+                             action="#{counterStaffBean.bookAppointment()}"
+                             process="@form"
+                             update=":mainForm :growl" styleClass="btn-success"/>
+        </div>
+    </div>
+
+</ui:composition>

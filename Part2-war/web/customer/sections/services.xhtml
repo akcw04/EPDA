@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Customer > Services Catalog
+    Read-only list of all services the workshop offers (for reference before booking).
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>Available Services</h3>
+        <p:dataTable value="#{customerBean.services}" var="s"
+                     emptyMessage="No services available.">
+            <p:column headerText="ID">
+                <h:outputText value="#{s.id}"/>
+            </p:column>
+            <p:column headerText="Service Name">
+                <h:outputText value="#{s.serviceName}"/>
+            </p:column>
+            <p:column headerText="Type">
+                <h:outputText value="#{s.type}"/>
+            </p:column>
+            <p:column headerText="Duration">
+                <h:outputText value="#{s.durationMinutes} min"/>
+            </p:column>
+            <p:column headerText="Price (RM)">
+                <h:outputText value="#{formatBean.money(s.basePrice)}"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

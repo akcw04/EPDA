@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Technician > Customer Comments
+    Read-only view of customer comments / ratings on this technician's completed appointments.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>Customer Comments on My Appointments</h3>
+        <p:dataTable value="#{technicianBean.commentsList}" var="cm"
+                     paginator="true" rows="10"
+                     emptyMessage="No customer comments yet.">
+            <p:column headerText="ID">
+                <h:outputText value="#{cm.id}"/>
+            </p:column>
+            <p:column headerText="Appointment">
+                <h:outputText value="#{cm.appointmentId}"/>
+            </p:column>
+            <p:column headerText="Customer">
+                <h:panelGroup rendered="#{cm.customer != null}">
+                    <h:outputText value="#{cm.customer.name}" />
+                    <h:outputText value=" (#{cm.customer.id})" />
+                </h:panelGroup>
+                <h:outputText rendered="#{cm.customer == null}" value="#{cm.customerId}" />
+            </p:column>
+            <p:column headerText="Comment">
+                <h:outputText value="#{cm.commentText}"/>
+            </p:column>
+            <p:column headerText="Rating">
+                <h:outputText value="#{cm.rating}"/>
+            </p:column>
+            <p:column headerText="Date">
+                <h:outputText value="#{cm.createdAt}"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

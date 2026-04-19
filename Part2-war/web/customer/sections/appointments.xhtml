@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Customer > My Appointments
+    Lists upcoming appointments (with option to cancel Pending ones) and completed history.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <!-- Upcoming Appointments -->
+    <div class="panel">
+        <h3>Upcoming Appointments</h3>
+        <p:dataTable value="#{customerBean.upcomingAppointments}" var="a"
+                     emptyMessage="No upcoming appointments.">
+            <p:column headerText="ID">
+                <h:outputText value="#{a.id}"/>
+            </p:column>
+            <p:column headerText="Service">
+                <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+            </p:column>
+            <p:column headerText="Technician">
+                <h:outputText value="#{a.technician != null ? a.technician.name : a.technicianId}"/>
+            </p:column>
+            <p:column headerText="Date/Time">
+                <h:outputText value="#{a.appointmentDateTime}"/>
+            </p:column>
+            <p:column headerText="Status">
+                <h:outputText value="#{a.status}"
+                              styleClass="#{a.status == 'Pending' ? 'badge-pending' : a.status == 'InProgress' ? 'badge-progress' : ''}"/>
+            </p:column>
+            <p:column headerText="Amount (RM)">
+                <h:outputText value="#{formatBean.money(a.paymentAmount)}"/>
+            </p:column>
+            <p:column headerText="Action">
+                <p:commandButton value="Cancel"
+                                 icon="pi pi-times"
+                                 action="#{customerBean.cancelAppointment(a.id)}"
+                                 process="@this"
+                                 update=":mainForm :growl" styleClass="btn-danger"
+                                 rendered="#{a.status eq 'Pending'}">
+                    <p:confirm header="Confirm" message="Cancel this appointment?" icon="pi pi-exclamation-triangle"/>
+                </p:commandButton>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+    <!-- Completed Appointments -->
+    <div class="panel">
+        <h3>Completed Appointments</h3>
+        <p:dataTable value="#{customerBean.completedAppointmentsList}" var="a"
+                     paginator="true" rows="10"
+                     emptyMessage="No completed appointments.">
+            <p:column headerText="ID">
+                <h:outputText value="#{a.id}"/>
+            </p:column>
+            <p:column headerText="Service">
+                <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+            </p:column>
+            <p:column headerText="Technician">
+                <h:outputText value="#{a.technician != null ? a.technician.name : a.technicianId}"/>
+            </p:column>
+            <p:column headerText="Date/Time">
+                <h:outputText value="#{a.appointmentDateTime}"/>
+            </p:column>
+            <p:column headerText="Status">
+                <h:outputText value="Completed" styleClass="badge-completed"/>
+            </p:column>
+            <p:column headerText="Amount (RM)">
+                <h:outputText value="#{formatBean.money(a.paymentAmount)}"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

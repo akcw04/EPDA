@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Manager > Reports
+    Five analytics panels (Revenue / Workload / Popularity / Customer Feedback / Status).
+    Data is refreshed on tab-switch through ManagerBean.navigateTo("reports").
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <!-- Report 1: Revenue Overview -->
+    <div class="report-section">
+        <div class="report-card">
+            <h3>Report 1: Revenue Overview</h3>
+            <div class="report-toolbar">
+                <span class="report-filter-label">View By</span>
+                <p:selectOneButton value="#{managerBean.revenuePeriod}" styleClass="period-switch">
+                    <f:selectItem itemLabel="Daily" itemValue="daily" />
+                    <f:selectItem itemLabel="Monthly" itemValue="monthly" />
+                    <f:selectItem itemLabel="Yearly" itemValue="yearly" />
+                    <p:ajax process="@this"
+                            listener="#{managerBean.loadReports()}"
+                            update="revenueCard" />
+                </p:selectOneButton>
+            </div>
+            <h:panelGroup id="revenueCard" layout="block">
+                <div class="report-value">
+                    RM <h:outputText value="#{formatBean.money(managerBean.dailyRevenue)}" />
+                </div>
+                <p class="report-caption">#{managerBean.revenuePeriodDescription}</p>
+            </h:panelGroup>
+        </div>
+    </div>
+
+    <!-- Report 2: Technician Workload -->
+    <div class="report-section">
+        <div class="panel">
+            <h3>Report 2: Technician Workload</h3>
+            <h:panelGroup rendered="#{managerBean.workloadChartModel != null}">
+                <div style="max-width:600px;margin:0 auto 24px;">
+                    <p:barChart model="#{managerBean.workloadChartModel}"/>
+                </div>
+            </h:panelGroup>
+            <p:dataTable value="#{managerBean.technicianWorkload.entrySet().toArray()}" var="entry"
+                         rendered="#{managerBean.technicianWorkload != null and not empty managerBean.technicianWorkload}"
+                         emptyMessage="No workload data.">
+                <p:column headerText="Technician Name">
+                    <h:outputText value="#{entry.key}" />
+                </p:column>
+                <p:column headerText="Active Tasks (Pending + In Progress)">
+                    <h:outputText value="#{entry.value}" />
+                </p:column>
+            </p:dataTable>
+            <h:panelGroup rendered="#{managerBean.technicianWorkload == null or empty managerBean.technicianWorkload}">
+                <p style="color:var(--text-muted);text-align:center;padding:24px;">No active tasks assigned to technicians.</p>
+            </h:panelGroup>
+        </div>
+    </div>
+
+    <!-- Report 3: Service Popularity -->
+    <div class="report-section">
+        <div class="panel">
+            <h3>Report 3: Service Popularity</h3>
+            <h:panelGroup rendered="#{managerBean.popularityChartModel != null}">
+                <div style="max-width:600px;margin:0 auto 24px;">
+                    <p:barChart model="#{managerBean.popularityChartModel}"/>
+                </div>
+            </h:panelGroup>
+            <p:dataTable value="#{managerBean.servicePopularity.entrySet().toArray()}" var="entry"
+                         rendered="#{managerBean.servicePopularity != null and not empty managerBean.servicePopularity}"
+                         emptyMessage="No popularity data.">
+                <p:column headerText="Service Name">
+                    <h:outputText value="#{entry.key}" />
+                </p:column>
+                <p:column headerText="Total Bookings">
+                    <h:outputText value="#{entry.value}" />
+                </p:column>
+            </p:dataTable>
+            <h:panelGroup rendered="#{managerBean.servicePopularity == null or empty managerBean.servicePopularity}">
+                <p style="color:var(--text-muted);text-align:center;padding:24px;">No appointment bookings recorded yet.</p>
+            </h:panelGroup>
+        </div>
+    </div>
+
+    <!-- Report 4: Customer Feedback Summary -->
+    <div class="report-section">
+        <div class="panel">
+            <h3>Report 4: Customer Feedback Summary</h3>
+            <p:dataTable value="#{managerBean.customerFeedback}" var="cf"
+                         rendered="#{managerBean.customerFeedback != null and not empty managerBean.customerFeedback}"
+                         emptyMessage="No feedback data.">
+                <p:column headerText="Customer">
+                    <h:outputText value="#{cf['customerName']}" />
+                </p:column>
+                <p:column headerText="Comments Submitted">
+                    <h:outputText value="#{cf['totalComments']}" />
+                </p:column>
+                <p:column headerText="Average Rating">
+                    <h:outputText value="#{cf['averageRating']}" />
+                </p:column>
+                <p:column headerText="Latest Comment">
+                    <h:outputText value="#{cf['latestComment']}" />
+                </p:column>
+                <p:column headerText="Latest Submitted">
+                    <h:outputText value="#{cf['latestCommentDate']}" />
+                </p:column>
+            </p:dataTable>
+            <h:panelGroup rendered="#{managerBean.customerFeedback == null or empty managerBean.customerFeedback}">
+                <p style="color:var(--text-muted);text-align:center;padding:24px;">No customer comments submitted yet.</p>
+            </h:panelGroup>
+        </div>
+    </div>
+
+    <!-- Report 5: Appointment Status Analytics -->
+    <div class="report-section">
+        <div class="panel">
+            <h3>Report 5: Appointment Status Analytics</h3>
+            <h:panelGroup rendered="#{managerBean.statusChartModel != null}">
+                <div style="max-width:400px;margin:0 auto 24px;">
+                    <p:pieChart model="#{managerBean.statusChartModel}"/>
+                </div>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{managerBean.statusAnalytics != null}">
+                <div class="report-grid">
+                    <div class="report-metric">
+                        <h4>Pending</h4>
+                        <p style="color:var(--warning);">#{managerBean.statusAnalytics['pending']}</p>
+                    </div>
+                    <div class="report-metric">
+                        <h4>In Progress</h4>
+                        <p style="color:var(--primary);">#{managerBean.statusAnalytics['inProgress']}</p>
+                    </div>
+                    <div class="report-metric">
+                        <h4>Completed</h4>
+                        <p style="color:var(--success);">#{managerBean.statusAnalytics['completed']}</p>
+                    </div>
+                    <div class="report-metric">
+                        <h4>Cancelled</h4>
+                        <p style="color:var(--danger);">#{managerBean.statusAnalytics['cancelled']}</p>
+                    </div>
+                    <div class="report-metric">
+                        <h4>Total Appointments</h4>
+                        <p>#{managerBean.statusAnalytics['total']}</p>
+                    </div>
+                </div>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{managerBean.statusAnalytics == null}">
+                <p style="color:var(--text-muted);text-align:center;padding:24px;">No appointment data available.</p>
+            </h:panelGroup>
+        </div>
+    </div>
+
+</ui:composition>

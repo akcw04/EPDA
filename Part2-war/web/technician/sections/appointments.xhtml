@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Technician > My Appointments
+    Work queue split by status: Pending (can Start), In Progress (can Complete), and Completed history.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <!-- Pending Appointments -->
+    <div class="panel">
+        <h3>Pending Appointments</h3>
+        <p:dataTable value="#{technicianBean.pendingAppointmentList}" var="a"
+                     emptyMessage="No pending appointments.">
+            <p:column headerText="ID">
+                <h:outputText value="#{a.id}"/>
+            </p:column>
+            <p:column headerText="Customer">
+                <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
+            </p:column>
+            <p:column headerText="Service">
+                <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+            </p:column>
+            <p:column headerText="Date/Time">
+                <h:outputText value="#{a.appointmentDateTime}"/>
+            </p:column>
+            <p:column headerText="Amount (RM)">
+                <h:outputText value="#{formatBean.money(a.paymentAmount)}"/>
+            </p:column>
+            <p:column headerText="Action">
+                <p:commandButton value="Start"
+                                 icon="pi pi-play"
+                                 action="#{technicianBean.startAppointment(a.id)}"
+                                 process="@this"
+                                 update=":mainForm :growl" styleClass="btn-success"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+    <!-- In Progress Appointments -->
+    <div class="panel">
+        <h3>In Progress</h3>
+        <p:dataTable value="#{technicianBean.inProgressAppointmentList}" var="a"
+                     emptyMessage="No appointments in progress.">
+            <p:column headerText="ID">
+                <h:outputText value="#{a.id}"/>
+            </p:column>
+            <p:column headerText="Customer">
+                <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
+            </p:column>
+            <p:column headerText="Service">
+                <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+            </p:column>
+            <p:column headerText="Date/Time">
+                <h:outputText value="#{a.appointmentDateTime}"/>
+            </p:column>
+            <p:column headerText="Amount (RM)">
+                <h:outputText value="#{formatBean.money(a.paymentAmount)}"/>
+            </p:column>
+            <p:column headerText="Action">
+                <p:commandButton value="Complete"
+                                 icon="pi pi-check"
+                                 action="#{technicianBean.completeAppointment(a.id)}"
+                                 process="@this"
+                                 update=":mainForm :growl" styleClass="btn-primary"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+    <!-- Completed Appointments -->
+    <div class="panel">
+        <h3>Completed</h3>
+        <p:dataTable value="#{technicianBean.completedAppointmentList}" var="a"
+                     paginator="true" rows="10"
+                     emptyMessage="No completed appointments.">
+            <p:column headerText="ID">
+                <h:outputText value="#{a.id}"/>
+            </p:column>
+            <p:column headerText="Customer">
+                <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
+            </p:column>
+            <p:column headerText="Service">
+                <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+            </p:column>
+            <p:column headerText="Date/Time">
+                <h:outputText value="#{a.appointmentDateTime}"/>
+            </p:column>
+            <p:column headerText="Amount (RM)">
+                <h:outputText value="#{formatBean.money(a.paymentAmount)}"/>
+            </p:column>
+            <p:column headerText="Status">
+                <h:outputText value="Completed" styleClass="badge-completed"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

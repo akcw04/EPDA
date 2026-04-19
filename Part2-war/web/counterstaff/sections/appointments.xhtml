@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Counter Staff > Appointments
+    Read-only table of every appointment in the system with status badges.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>All Appointments</h3>
+        <p:dataTable value="#{counterStaffBean.appointments}" var="a" paginator="true" rows="10"
+                     emptyMessage="No appointments found.">
+            <p:column headerText="ID">
+                <h:outputText value="#{a.id}"/>
+            </p:column>
+            <p:column headerText="Customer">
+                <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
+            </p:column>
+            <p:column headerText="Technician">
+                <h:outputText value="#{a.technician != null ? a.technician.name : a.technicianId}"/>
+            </p:column>
+            <p:column headerText="Service">
+                <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+            </p:column>
+            <p:column headerText="Date/Time">
+                <h:outputText value="#{a.appointmentDateTime}"/>
+            </p:column>
+            <p:column headerText="Status">
+                <h:outputText value="#{a.status}"
+                              styleClass="#{a.status == 'Pending' ? 'badge-pending' : a.status == 'Completed' ? 'badge-completed' : a.status == 'InProgress' ? 'badge-progress' : a.status == 'Cancelled' ? 'badge-cancelled' : ''}" />
+            </p:column>
+            <p:column headerText="Amount (RM)">
+                <h:outputText value="#{formatBean.money(a.paymentAmount)}"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Technician > Write Feedback
+    Submit written feedback on a completed appointment, and review previously submitted entries.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>Submit Feedback for Completed Appointment</h3>
+        <div class="form-grid">
+            <div>
+                <label>Appointment</label>
+                <p:selectOneMenu value="#{technicianBean.feedbackAppointmentId}" styleClass="form-control">
+                    <f:selectItem itemLabel="-- Select Completed Appointment --" itemValue=""/>
+                    <f:selectItems value="#{technicianBean.completedAppointmentList}" var="a"
+                                   itemLabel="#{a.id} - #{a.customer != null ? a.customer.name : a.customerId}"
+                                   itemValue="#{a.id}"/>
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <label>Feedback</label>
+                <p:inputTextarea value="#{technicianBean.feedbackText}" rows="5" styleClass="form-control"
+                                 placeholder="Write your feedback here..."/>
+            </div>
+        </div>
+        <div class="form-actions">
+            <p:commandButton value="Submit Feedback"
+                             icon="pi pi-check"
+                             action="#{technicianBean.submitFeedback()}"
+                             process="@form"
+                             update=":mainForm :growl" styleClass="btn-success"/>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>My Submitted Feedback</h3>
+        <p:dataTable value="#{technicianBean.feedbackList}" var="fb"
+                     paginator="true" rows="10"
+                     emptyMessage="No feedback submitted yet.">
+            <p:column headerText="ID">
+                <h:outputText value="#{fb.id}"/>
+            </p:column>
+            <p:column headerText="Appointment">
+                <h:outputText value="#{fb.appointmentId}"/>
+            </p:column>
+            <p:column headerText="Feedback">
+                <h:outputText value="#{fb.feedbackText}"/>
+            </p:column>
+            <p:column headerText="Date">
+                <h:outputText value="#{fb.createdAt}"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

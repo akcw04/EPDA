@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Technician > Overview
+    At-a-glance workload stats plus a quick list of pending and in-progress jobs.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <h3>Today's Appointments</h3>
+            <p>#{technicianBean.todayAppointments}</p>
+        </div>
+        <div class="stat-card accent-red">
+            <h3>Pending Tasks</h3>
+            <p>#{technicianBean.pendingAppointments}</p>
+        </div>
+        <div class="stat-card accent-green">
+            <h3>Completed This Month</h3>
+            <p>#{technicianBean.completedThisMonth}</p>
+        </div>
+        <div class="stat-card accent-orange">
+            <h3>Average Rating</h3>
+            <p>#{technicianBean.averageRating}</p>
+        </div>
+    </div>
+
+    <!-- Quick Pending Summary -->
+    <div class="panel">
+        <h3>Pending Appointments</h3>
+        <p:dataTable value="#{technicianBean.pendingAppointmentList}" var="a"
+                     emptyMessage="No pending appointments." rows="5">
+            <p:column headerText="ID">
+                <h:outputText value="#{a.id}"/>
+            </p:column>
+            <p:column headerText="Customer">
+                <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
+            </p:column>
+            <p:column headerText="Service">
+                <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+            </p:column>
+            <p:column headerText="Date/Time">
+                <h:outputText value="#{a.appointmentDateTime}"/>
+            </p:column>
+            <p:column headerText="Status">
+                <h:outputText value="Pending" styleClass="badge-pending"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+    <!-- Quick In Progress Summary -->
+    <div class="panel">
+        <h3>In Progress</h3>
+        <p:dataTable value="#{technicianBean.inProgressAppointmentList}" var="a"
+                     emptyMessage="No appointments in progress." rows="5">
+            <p:column headerText="ID">
+                <h:outputText value="#{a.id}"/>
+            </p:column>
+            <p:column headerText="Customer">
+                <h:outputText value="#{a.customer != null ? a.customer.name : a.customerId}"/>
+            </p:column>
+            <p:column headerText="Service">
+                <h:outputText value="#{a.service != null ? a.service.serviceName : a.serviceId}"/>
+            </p:column>
+            <p:column headerText="Date/Time">
+                <h:outputText value="#{a.appointmentDateTime}"/>
+            </p:column>
+            <p:column headerText="Status">
+                <h:outputText value="In Progress" styleClass="badge-progress"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

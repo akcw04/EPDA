@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Customer > Payments
+    Chronological history of receipts issued against this customer's appointments.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>Payment History</h3>
+        <p:dataTable value="#{customerBean.paymentHistory}" var="p"
+                     paginator="true" rows="10"
+                     emptyMessage="No payments yet.">
+            <p:column headerText="Receipt #">
+                <h:outputText value="#{p.receiptNumber}"/>
+            </p:column>
+            <p:column headerText="Amount (RM)">
+                <h:outputText value="#{formatBean.money(p.amount)}"/>
+            </p:column>
+            <p:column headerText="Method">
+                <h:outputText value="#{p.paymentMethod}"/>
+            </p:column>
+            <p:column headerText="Date">
+                <h:outputText value="#{p.paymentDate}"/>
+            </p:column>
+            <p:column headerText="Status">
+                <h:outputText value="#{p.status}"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

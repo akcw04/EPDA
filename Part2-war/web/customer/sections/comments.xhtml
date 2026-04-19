@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Customer > Write Comment
+    Submit a rating + written comment for a completed appointment, and view prior comments.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>Comment on Completed Appointment</h3>
+        <div class="form-grid">
+            <div>
+                <label>Appointment</label>
+                <p:selectOneMenu value="#{customerBean.commentAppointmentId}" styleClass="form-control">
+                    <f:selectItem itemLabel="-- Select Completed Appointment --" itemValue=""/>
+                    <f:selectItems value="#{customerBean.completedAppointmentsList}" var="a"
+                                   itemLabel="#{a.id} - #{a.service != null ? a.service.serviceName : ''}"
+                                   itemValue="#{a.id}"/>
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <label>Comment</label>
+                <p:inputTextarea value="#{customerBean.commentText}" rows="5" styleClass="form-control"
+                                 placeholder="Write your comment here..."/>
+            </div>
+            <div>
+                <label>Rating</label>
+                <p:selectOneMenu value="#{customerBean.commentRating}" styleClass="form-control">
+                    <f:selectItem itemLabel="-- Select Rating --" itemValue=""/>
+                    <f:selectItem itemLabel="1 - Poor" itemValue="1"/>
+                    <f:selectItem itemLabel="2 - Fair" itemValue="2"/>
+                    <f:selectItem itemLabel="3 - Good" itemValue="3"/>
+                    <f:selectItem itemLabel="4 - Very Good" itemValue="4"/>
+                    <f:selectItem itemLabel="5 - Excellent" itemValue="5"/>
+                </p:selectOneMenu>
+            </div>
+        </div>
+        <div class="form-actions">
+            <p:commandButton value="Submit Comment"
+                             icon="pi pi-check"
+                             action="#{customerBean.submitComment()}"
+                             process="@form"
+                             update=":mainForm :growl" styleClass="btn-success"/>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>My Comments</h3>
+        <p:dataTable value="#{customerBean.myComments}" var="cm"
+                     paginator="true" rows="10"
+                     emptyMessage="No comments submitted yet.">
+            <p:column headerText="ID">
+                <h:outputText value="#{cm.id}"/>
+            </p:column>
+            <p:column headerText="Appointment">
+                <h:outputText value="#{cm.appointmentId}"/>
+            </p:column>
+            <p:column headerText="Comment">
+                <h:outputText value="#{cm.commentText}"/>
+            </p:column>
+            <p:column headerText="Rating">
+                <h:outputText value="#{cm.rating}"/>
+            </p:column>
+            <p:column headerText="Date">
+                <h:outputText value="#{cm.createdAt}"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

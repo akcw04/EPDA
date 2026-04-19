@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Counter Staff > Overview
+    Key counts + quick-jump buttons into the most common counter workflows.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <h3>Total Customers</h3>
+            <p>#{counterStaffBean.totalCustomers}</p>
+        </div>
+        <div class="stat-card accent-green">
+            <h3>Total Services</h3>
+            <p>#{counterStaffBean.totalServices}</p>
+        </div>
+        <div class="stat-card accent-orange">
+            <h3>Today's Appointments</h3>
+            <p>#{counterStaffBean.todayAppointments}</p>
+        </div>
+        <div class="stat-card accent-red">
+            <h3>Pending Bookings</h3>
+            <p>#{counterStaffBean.pendingBookings}</p>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>Quick Actions</h3>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <p:commandButton value="Register Customer" icon="pi pi-user-plus" styleClass="btn-primary"
+                             action="#{counterStaffBean.navigateTo('register-customer')}" update=":pageTitle :contentArea :sidebarForm" process="@this"/>
+            <p:commandButton value="Book Appointment" icon="pi pi-calendar-plus" styleClass="btn-success"
+                             action="#{counterStaffBean.navigateTo('book-appointment')}" update=":pageTitle :contentArea :sidebarForm" process="@this"/>
+            <p:commandButton value="Collect Payment" icon="pi pi-wallet" styleClass="btn-primary"
+                             action="#{counterStaffBean.navigateTo('payment')}" update=":pageTitle :contentArea :sidebarForm" process="@this"/>
+        </div>
+    </div>
+
+</ui:composition>

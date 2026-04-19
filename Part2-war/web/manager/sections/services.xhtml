@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Manager > Services &amp; Pricing
+    Add new services, edit existing ones (with type-driven auto-pricing), and delete.
+    Auto-pricing is wired through <p:ajax> on the type dropdowns -
+    Normal -> RM 500, Major -> RM 600. Price remains fully editable afterwards.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <!-- Add New Service -->
+    <div class="panel">
+        <h3>Add New Service</h3>
+        <div class="form-grid">
+            <div>
+                <label>Service Name</label>
+                <h:inputText value="#{managerBean.newServiceName}" styleClass="form-control" />
+            </div>
+            <div>
+                <label>Service Type</label>
+                <p:selectOneMenu value="#{managerBean.newServiceType}" styleClass="form-control">
+                    <f:selectItem itemValue="" itemLabel="-- Select Type --" />
+                    <f:selectItem itemValue="Normal" itemLabel="Normal" />
+                    <f:selectItem itemValue="Major" itemLabel="Major" />
+                    <p:ajax listener="#{managerBean.onNewServiceTypeChange}"
+                            update="newServicePriceInput" process="@this" />
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <label>Price (RM)</label>
+                <h:inputText id="newServicePriceInput"
+                             value="#{managerBean.newServicePrice}"
+                             styleClass="form-control"
+                             converterMessage="Service price must be a valid number." />
+            </div>
+        </div>
+        <div class="form-actions">
+            <p:commandButton value="Add Service"
+                             icon="pi pi-plus"
+                             styleClass="btn-primary"
+                             action="#{managerBean.createService()}"
+                             process="@form"
+                             update=":mainForm :growl" />
+        </div>
+    </div>
+
+    <!-- All Services Table + Inline Edit Panel -->
+    <div class="panel">
+        <h3>All Services</h3>
+        <h:panelGroup rendered="#{managerBean.editingService != null}">
+            <div class="edit-panel" style="margin-bottom:16px;">
+                <h3>Edit Service</h3>
+                <div class="form-grid">
+                    <div>
+                        <label>Service ID</label>
+                        <p:inputText value="#{managerBean.editingService.id}" readonly="true" styleClass="form-control" />
+                    </div>
+                    <div>
+                        <label>Service Name</label>
+                        <p:inputText value="#{managerBean.editingService.serviceName}" styleClass="form-control" />
+                    </div>
+                    <div>
+                        <label>Service Type</label>
+                        <p:selectOneMenu value="#{managerBean.editingService.type}" styleClass="form-control">
+                            <f:selectItem itemValue="Normal" itemLabel="Normal" />
+                            <f:selectItem itemValue="Major" itemLabel="Major" />
+                            <p:ajax listener="#{managerBean.onEditServiceTypeChange}"
+                                    update="editServicePriceInput" process="@this" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div>
+                        <label>Duration</label>
+                        <p:inputText value="#{managerBean.editingService.durationMinutes}" readonly="true" styleClass="form-control" />
+                    </div>
+                    <div>
+                        <label>Price (RM)</label>
+                        <h:inputText id="editServicePriceInput"
+                                     value="#{managerBean.editingService.basePrice}"
+                                     styleClass="form-control"
+                                     converterMessage="Service price must be a valid number." />
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <p:commandButton value="Save Changes"
+                                     icon="pi pi-check"
+                                     styleClass="btn-success"
+                                     action="#{managerBean.saveEditService()}"
+                                     process="@form"
+                                     update=":mainForm :growl" />
+                    <p:commandButton value="Cancel"
+                                     icon="pi pi-times"
+                                     styleClass="btn-secondary"
+                                     action="#{managerBean.cancelEditService()}"
+                                     update=":mainForm"
+                                     process="@this" />
+                </div>
+            </div>
+        </h:panelGroup>
+        <p:dataTable value="#{managerBean.services}" var="s"
+                     emptyMessage="No services found.">
+            <p:column headerText="ID">
+                <h:outputText value="#{s.id}" />
+            </p:column>
+            <p:column headerText="Service Name">
+                <h:outputText value="#{s.serviceName}" />
+            </p:column>
+            <p:column headerText="Type">
+                <h:outputText value="#{s.type}" />
+            </p:column>
+            <p:column headerText="Duration">
+                <h:outputText value="#{s.durationMinutes} min" />
+            </p:column>
+            <p:column headerText="Price (RM)">
+                <h:outputText value="#{formatBean.money(s.basePrice)}" />
+            </p:column>
+            <p:column headerText="Actions" styleClass="actions-column">
+                <p:commandButton value="Edit"
+                                 icon="pi pi-pencil"
+                                 styleClass="btn-edit"
+                                 action="#{managerBean.loadEditService(s.id)}"
+                                 process="@this"
+                                 update=":mainForm" />
+                <p:commandButton value="Delete"
+                                 icon="pi pi-trash"
+                                 styleClass="btn-danger"
+                                 action="#{managerBean.deleteService(s.id)}"
+                                 process="@this"
+                                 update=":mainForm :growl">
+                    <p:confirm header="Confirm" message="Delete this service?" icon="pi pi-exclamation-triangle" />
+                </p:commandButton>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

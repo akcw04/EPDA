@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Counter Staff > Payment & Receipt
+    Collect payment for completed appointments and view the full payment history.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>Collect Payment &amp; Generate Receipt</h3>
+        <div class="form-grid">
+            <div>
+                <label>Appointment</label>
+                <p:selectOneMenu value="#{counterStaffBean.paymentAppointmentId}" styleClass="form-control">
+                    <f:selectItem itemLabel="-- Select Appointment --" itemValue=""/>
+                    <f:selectItems value="#{counterStaffBean.completedAppointments}" var="a"
+                                   itemLabel="#{a.id} - #{counterStaffBean.formatCustomerDisplay(a.customer, a.customerId)} (RM#{formatBean.money(a.paymentAmount)})" itemValue="#{a.id}"/>
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <label>Payment Method</label>
+                <p:selectOneMenu value="#{counterStaffBean.paymentMethod}" styleClass="form-control">
+                    <f:selectItem itemLabel="-- Select Method --" itemValue=""/>
+                    <f:selectItem itemLabel="Cash" itemValue="Cash"/>
+                    <f:selectItem itemLabel="Card" itemValue="Card"/>
+                    <f:selectItem itemLabel="Online Transfer" itemValue="Online"/>
+                </p:selectOneMenu>
+            </div>
+        </div>
+        <div class="form-actions">
+            <p:commandButton value="Collect Payment"
+                             icon="pi pi-wallet"
+                             action="#{counterStaffBean.collectPayment()}"
+                             process="@form"
+                             update=":mainForm :growl" styleClass="btn-success"/>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>Payment History</h3>
+        <p:dataTable value="#{counterStaffBean.payments}" var="p" paginator="true" rows="10"
+                     emptyMessage="No payments recorded yet.">
+            <p:column headerText="Receipt #">
+                <h:outputText value="#{p.receiptNumber}"/>
+            </p:column>
+            <p:column headerText="Appointment">
+                <h:outputText value="#{p.appointmentId}"/>
+            </p:column>
+            <p:column headerText="Customer">
+                <h:outputText value="#{counterStaffBean.formatCustomerDisplay(p.customer, p.customerId)}"/>
+            </p:column>
+            <p:column headerText="Amount (RM)">
+                <h:outputText value="#{formatBean.money(p.amount)}"/>
+            </p:column>
+            <p:column headerText="Method">
+                <h:outputText value="#{p.paymentMethod}"/>
+            </p:column>
+            <p:column headerText="Date">
+                <h:outputText value="#{p.paymentDate}"/>
+            </p:column>
+            <p:column headerText="Status">
+                <h:outputText value="#{p.status}"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

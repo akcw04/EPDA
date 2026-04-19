@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Customer > Overview
+    Key stats at a glance: total / completed / pending appointments and total spent.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <h3>Total Appointments</h3>
+            <p>#{customerBean.totalAppointments}</p>
+        </div>
+        <div class="stat-card accent-green">
+            <h3>Completed</h3>
+            <p>#{customerBean.completedAppointmentCount}</p>
+        </div>
+        <div class="stat-card accent-orange">
+            <h3>Total Spent</h3>
+            <p>RM #{formatBean.money(customerBean.totalSpent)}</p>
+        </div>
+        <div class="stat-card accent-red">
+            <h3>Pending</h3>
+            <p>#{customerBean.pendingAppointments}</p>
+        </div>
+    </div>
+
+</ui:composition>

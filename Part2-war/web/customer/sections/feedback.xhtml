@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Customer > Feedback
+    Read-only feed of technician feedback entries attached to this customer's appointments.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>Technician Feedback on My Appointments</h3>
+        <p:dataTable value="#{customerBean.feedbackList}" var="fb"
+                     paginator="true" rows="10"
+                     emptyMessage="No feedback yet.">
+            <p:column headerText="ID">
+                <h:outputText value="#{fb.id}"/>
+            </p:column>
+            <p:column headerText="Appointment">
+                <h:outputText value="#{fb.appointmentId}"/>
+            </p:column>
+            <p:column headerText="Feedback">
+                <h:outputText value="#{fb.feedbackText}"/>
+            </p:column>
+            <p:column headerText="Date">
+                <h:outputText value="#{fb.createdAt}"/>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

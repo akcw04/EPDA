@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Manager > Feedback &amp; Comments
+    Read-only aggregated view of all technician feedback and customer comments.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>All Technician Feedback</h3>
+        <p:dataTable value="#{managerBean.allFeedback}" var="fb"
+                     emptyMessage="No feedback found.">
+            <p:column headerText="ID">
+                <h:outputText value="#{fb.id}" />
+            </p:column>
+            <p:column headerText="Appointment ID">
+                <h:outputText value="#{fb.appointmentId}" />
+            </p:column>
+            <p:column headerText="Technician ID">
+                <h:outputText value="#{fb.technicianId}" />
+            </p:column>
+            <p:column headerText="Feedback">
+                <h:outputText value="#{fb.feedbackText}" />
+            </p:column>
+            <p:column headerText="Created At">
+                <h:outputText value="#{fb.createdAt}" />
+            </p:column>
+        </p:dataTable>
+    </div>
+
+    <div class="panel">
+        <h3>All Customer Comments</h3>
+        <p:dataTable value="#{managerBean.allComments}" var="cm"
+                     emptyMessage="No comments found.">
+            <p:column headerText="ID">
+                <h:outputText value="#{cm.id}" />
+            </p:column>
+            <p:column headerText="Appointment ID">
+                <h:outputText value="#{cm.appointmentId}" />
+            </p:column>
+            <p:column headerText="Customer ID">
+                <h:outputText value="#{cm.customerId}" />
+            </p:column>
+            <p:column headerText="Comment">
+                <h:outputText value="#{cm.commentText}" />
+            </p:column>
+            <p:column headerText="Rating">
+                <h:outputText value="#{cm.rating}" />
+            </p:column>
+            <p:column headerText="Created At">
+                <h:outputText value="#{cm.createdAt}" />
+            </p:column>
+        </p:dataTable>
+    </div>
+
+</ui:composition>

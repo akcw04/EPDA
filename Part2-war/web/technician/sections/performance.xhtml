@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Technician > Performance
+    Lifetime KPI cards: totals, monthly completed, rating, and revenue contribution.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <h3>Total Appointments</h3>
+            <p>#{technicianBean.totalAppointments}</p>
+        </div>
+        <div class="stat-card accent-green">
+            <h3>Completed This Month</h3>
+            <p>#{technicianBean.completedThisMonth}</p>
+        </div>
+        <div class="stat-card accent-orange">
+            <h3>Average Rating</h3>
+            <p>#{technicianBean.averageRating}</p>
+        </div>
+        <div class="stat-card accent-cyan">
+            <h3>Total Revenue</h3>
+            <p>RM #{formatBean.money(technicianBean.totalRevenue)}</p>
+        </div>
+    </div>
+
+</ui:composition>

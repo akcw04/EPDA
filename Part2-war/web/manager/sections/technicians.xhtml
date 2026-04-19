@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Manager > Technicians
+    Search, edit, delete, and inspect all registered technicians.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="search-bar">
+        <p:inputText value="#{managerBean.searchKeyword}" styleClass="form-control" placeholder="Search by name, email, specialty..."/>
+        <p:commandButton value="Search"
+                         icon="pi pi-search"
+                         styleClass="btn-primary"
+                         action="#{managerBean.searchStaff()}"
+                         process="@form"
+                         update=":mainForm" />
+        <p:commandButton value="Clear"
+                         icon="pi pi-times"
+                         styleClass="btn-secondary"
+                         action="#{managerBean.clearSearch()}"
+                         process="@this"
+                         update=":mainForm" />
+    </div>
+
+    <div class="panel">
+        <p:dataTable value="#{managerBean.technicians}" var="t"
+                     emptyMessage="No technicians found.">
+            <p:column headerText="ID">
+                <h:outputText value="#{t.id}" />
+            </p:column>
+            <p:column headerText="Name">
+                <h:outputText value="#{t.name}" />
+            </p:column>
+            <p:column headerText="Email">
+                <h:outputText value="#{t.email}" />
+            </p:column>
+            <p:column headerText="Phone">
+                <h:outputText value="#{t.phone}" />
+            </p:column>
+            <p:column headerText="Gender">
+                <h:outputText value="#{t.gender}" />
+            </p:column>
+            <p:column headerText="IC">
+                <h:outputText value="#{t.ic}" />
+            </p:column>
+            <p:column headerText="Specialty">
+                <h:outputText value="#{t.specialty}" />
+            </p:column>
+            <p:column headerText="Available">
+                <h:outputText value="Yes" rendered="#{t.available}" styleClass="badge-yes" />
+                <h:outputText value="No" rendered="#{!t.available}" styleClass="badge-no" />
+            </p:column>
+            <p:column headerText="Actions" styleClass="actions-column">
+                <p:commandButton value="Edit"
+                                 icon="pi pi-pencil"
+                                 styleClass="btn-edit"
+                                 action="#{managerBean.loadEditTechnician(t.id)}"
+                                 process="@this"
+                                 update=":mainForm" />
+                <p:commandButton value="Delete"
+                                 icon="pi pi-trash"
+                                 styleClass="btn-danger"
+                                 action="#{managerBean.deleteTechnician(t.id)}"
+                                 process="@this"
+                                 update=":mainForm :growl">
+                    <p:confirm header="Confirm" message="Delete this technician?" icon="pi pi-exclamation-triangle" />
+                </p:commandButton>
+            </p:column>
+        </p:dataTable>
+    </div>
+
+    <!-- Edit Technician Panel -->
+    <h:panelGroup rendered="#{managerBean.editingTechnician != null}">
+        <div class="edit-panel">
+            <h3>Edit Technician</h3>
+            <div class="form-grid">
+                <div>
+                    <label>Name</label>
+                    <h:inputText value="#{managerBean.editingTechnician.name}" styleClass="form-control" />
+                </div>
+                <div>
+                    <label>Email</label>
+                    <h:inputText value="#{managerBean.editingTechnician.email}" styleClass="form-control" />
+                </div>
+                <div>
+                    <label>Phone</label>
+                    <h:inputText value="#{managerBean.editingTechnician.phone}" styleClass="form-control" />
+                </div>
+                <div>
+                    <label>Gender</label>
+                    <p:selectOneMenu value="#{managerBean.editingTechnician.gender}" styleClass="form-control">
+                        <f:selectItem itemValue="M" itemLabel="Male" />
+                        <f:selectItem itemValue="F" itemLabel="Female" />
+                        <f:selectItem itemValue="Other" itemLabel="Other" />
+                    </p:selectOneMenu>
+                </div>
+                <div>
+                    <label>IC</label>
+                    <h:inputText value="#{managerBean.editingTechnician.ic}" styleClass="form-control" />
+                </div>
+                <div>
+                    <label>Specialty</label>
+                    <h:inputText value="#{managerBean.editingTechnician.specialty}" styleClass="form-control" />
+                </div>
+                <div>
+                    <label>Available</label>
+                    <p:selectOneMenu value="#{managerBean.editingTechnician.available}" styleClass="form-control">
+                        <f:selectItem itemValue="#{true}" itemLabel="Yes" />
+                        <f:selectItem itemValue="#{false}" itemLabel="No" />
+                    </p:selectOneMenu>
+                </div>
+                <div>
+                    <label>Address</label>
+                    <h:inputTextarea value="#{managerBean.editingTechnician.address}" styleClass="form-control" rows="3" />
+                </div>
+            </div>
+            <div class="form-actions">
+                <p:commandButton value="Save Changes"
+                                 icon="pi pi-check"
+                                 styleClass="btn-success"
+                                 action="#{managerBean.saveEditTechnician()}"
+                                 process="@form"
+                                 update=":mainForm :growl" />
+                <p:commandButton value="Cancel"
+                                 icon="pi pi-times"
+                                 styleClass="btn-secondary"
+                                 action="#{managerBean.setEditingTechnician(null)}"
+                                 update=":mainForm"
+                                 process="@this" />
+            </div>
+        </div>
+    </h:panelGroup>
+
+</ui:composition>

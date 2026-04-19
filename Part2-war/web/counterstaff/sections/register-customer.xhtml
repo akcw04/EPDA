@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Counter Staff > Register Customer
+    Walk-in customer registration form - creates a Customer account with login credentials.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="panel">
+        <h3>Register New Customer</h3>
+        <div class="form-grid">
+            <div>
+                <label>Name</label>
+                <p:inputText value="#{counterStaffBean.custName}" required="true" requiredMessage="Name is required" styleClass="form-control"/>
+            </div>
+            <div>
+                <label>Email</label>
+                <p:inputText value="#{counterStaffBean.custEmail}" required="true" requiredMessage="Email is required" styleClass="form-control"/>
+            </div>
+            <div>
+                <label>Password</label>
+                <p:password value="#{counterStaffBean.custPassword}" required="true" requiredMessage="Password is required" styleClass="form-control"/>
+            </div>
+            <div>
+                <label>Gender</label>
+                <p:selectOneMenu value="#{counterStaffBean.custGender}" styleClass="form-control">
+                    <f:selectItem itemLabel="-- Select --" itemValue=""/>
+                    <f:selectItem itemLabel="Male" itemValue="M"/>
+                    <f:selectItem itemLabel="Female" itemValue="F"/>
+                    <f:selectItem itemLabel="Other" itemValue="Other"/>
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <label>Phone</label>
+                <p:inputText value="#{counterStaffBean.custPhone}" styleClass="form-control"/>
+            </div>
+            <div>
+                <label>IC</label>
+                <p:inputText value="#{counterStaffBean.custIc}" styleClass="form-control"/>
+            </div>
+            <div>
+                <label>Address</label>
+                <p:inputTextarea value="#{counterStaffBean.custAddress}" rows="3" styleClass="form-control"/>
+            </div>
+        </div>
+        <div class="form-actions">
+            <p:commandButton value="Register Customer"
+                             icon="pi pi-user-plus"
+                             action="#{counterStaffBean.registerCustomer()}"
+                             process="@form"
+                             update=":mainForm :growl" styleClass="btn-success"/>
+        </div>
+    </div>
+
+</ui:composition>
