@@ -10,24 +10,15 @@
                 xmlns:ui="jakarta.faces.facelets">
 
     <div class="search-bar">
-        <p:inputText value="#{managerBean.searchKeyword}" styleClass="form-control" placeholder="Search by name, email, phone..."/>
-        <p:commandButton value="Search"
-                         icon="pi pi-search"
-                         styleClass="btn-primary"
-                         action="#{managerBean.searchStaff()}"
-                         process="@form"
-                         update=":mainForm" />
-        <p:commandButton value="Clear"
-                         icon="pi pi-times"
-                         styleClass="btn-secondary"
-                         action="#{managerBean.clearSearch()}"
-                         process="@this"
-                         update=":mainForm" />
+        <h:inputText id="searchInput" onkeyup="filterTable()" styleClass="form-control">
+            <f:passThroughAttribute name="placeholder" value="Type anything..." />
+        </h:inputText>
     </div>
 
     <div class="panel">
         <p:dataTable value="#{managerBean.customers}" var="c"
-                     emptyMessage="No customers found.">
+                     emptyMessage="No customers found."
+                     id="staffTable">
             <p:column headerText="ID">
                 <h:outputText value="#{c.id}" />
             </p:column>
@@ -112,5 +103,5 @@
             </div>
         </div>
     </h:panelGroup>
-
+    
 </ui:composition>

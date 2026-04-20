@@ -200,5 +200,29 @@
             <p:commandButton value="Yes" type="button" styleClass="btn-danger ui-confirmdialog-yes" icon="pi pi-check" />
             <p:commandButton value="No" type="button" styleClass="btn-secondary ui-confirmdialog-no" icon="pi pi-times" />
         </p:confirmDialog>
+
+        <script type="text/javascript">
+            //<![CDATA[
+            function filterTable() {
+                var input = document.getElementById("#{facesContext.viewRoot.findComponent('mainForm:searchInput').clientId}");
+                var filter = input.value.toLowerCase();
+                var table = document.getElementById("#{facesContext.viewRoot.findComponent('mainForm:staffTable').clientId}");
+                var trs = table.getElementsByTagName("tr");
+
+                // Start from 1 to skip the header row
+                for (var i = 1; i < trs.length; i++) {
+                    var tds = trs[i].getElementsByTagName("td");
+                    var show = false;
+                    for (var j = 0; j < tds.length; j++) {
+                        if (tds[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                            show = true;
+                            break;
+                        }
+                    }
+                    trs[i].style.display = show ? "" : "none";
+                }
+            }
+            //]]>
+        </script>
     </h:body>
 </html>
