@@ -73,12 +73,6 @@
                                          action="#{technicianBean.navigateTo('comments')}"
                                          update=":pageTitle :contentArea :sidebarForm"
                                          process="@this" />
-                        <p:commandButton value="Performance"
-                                         icon="pi pi-chart-bar"
-                                         styleClass="nav-link #{technicianBean.currentSection == 'performance' ? 'active' : ''}"
-                                         action="#{technicianBean.navigateTo('performance')}"
-                                         update=":pageTitle :contentArea :sidebarForm"
-                                         process="@this" />
                     </nav>
                 </h:form>
 
@@ -104,7 +98,6 @@
                             <h:outputText value="My Appointments" rendered="#{technicianBean.currentSection == 'appointments'}" />
                             <h:outputText value="Write Feedback" rendered="#{technicianBean.currentSection == 'feedback'}" />
                             <h:outputText value="Customer Comments" rendered="#{technicianBean.currentSection == 'comments'}" />
-                            <h:outputText value="Performance" rendered="#{technicianBean.currentSection == 'performance'}" />
                         </h1>
                     </h:panelGroup>
                 </div>
@@ -135,10 +128,6 @@
 
                             <h:panelGroup rendered="#{technicianBean.currentSection == 'comments'}">
                                 <ui:include src="sections/comments.xhtml" />
-                            </h:panelGroup>
-
-                            <h:panelGroup rendered="#{technicianBean.currentSection == 'performance'}">
-                                <ui:include src="sections/performance.xhtml" />
                             </h:panelGroup>
 
                         </h:form>

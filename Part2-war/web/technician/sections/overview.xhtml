@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Technician > Overview
-    At-a-glance workload stats plus a quick list of pending and in-progress jobs.
+    Workload + lifetime KPIs at a glance, followed by quick lists of pending
+    and in-progress jobs. The lifetime KPI cards used to live on a separate
+    Performance tab - they were merged in because the tab held too few widgets
+    to stand on its own.
 -->
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="jakarta.faces.facelets">
 
+    <!-- Live workload (day / week scoped) -->
     <div class="stats-row">
         <div class="stat-card">
             <h3>Today's Appointments</h3>
@@ -21,9 +25,21 @@
             <h3>Completed This Month</h3>
             <p>#{technicianBean.completedThisMonth}</p>
         </div>
+    </div>
+
+    <!-- Lifetime KPIs -->
+    <div class="stats-row">
+        <div class="stat-card accent-cyan">
+            <h3>Total Appointments</h3>
+            <p>#{technicianBean.totalAppointments}</p>
+        </div>
         <div class="stat-card accent-orange">
             <h3>Average Rating</h3>
             <p>#{technicianBean.averageRating}</p>
+        </div>
+        <div class="stat-card accent-green">
+            <h3>Total Revenue</h3>
+            <p>RM #{formatBean.money(technicianBean.totalRevenue)}</p>
         </div>
     </div>
 
