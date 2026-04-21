@@ -7,7 +7,6 @@
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <explicit-platform explicit-source-supported="true"/>
             <included-library dirs="200">libs.jakartaee-api-10.0.classpath</included-library>
-            <included-library dirs="200">file.reference.primefaces-13.0.0-jakarta.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>
